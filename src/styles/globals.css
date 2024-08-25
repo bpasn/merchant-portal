@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Light Theme */
+:root {
+  --gradient: #00416A; /* ใช้สี #00416A */
+  --background: 216 100% 98.42%;
+  --foreground: 216 10% 0.84%;
+  --muted: 216 10% 92.1%;
+  --muted-foreground: 216 5% 42.1%;
+  --popover: 216 10% 92.1%;
+  --popover-foreground: 216 10% 1.05%;
+  --card: 216 10% 92.1%;
+  --card-foreground: 216 10% 1.05%;
+  --border: 216 15% 89.84%;
+  --input: 216 15% 89.84%;
+  --primary: 210 100% 21%; /* ใช้สี #00416A */
+  --primary-foreground: 216 2% 92.1%;
+  --secondary: 216 5% 96.05%;
+  --secondary-foreground: 216 7% 12.1%; /* ใช้สี #00416A */
+  --accent: 216 5% 96.05%;
+  --accent-foreground: 216 7% 12.1%; /* ใช้สี #00416A */
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --ring: 210 100% 21%; /* ใช้สี #00416A */
+  --radius: 0.5rem;
+}
+
+/* Dark Theme */
+.dark {
+  --background: 0 47% 29%; /* ใช้สี #00416A */
+  --foreground: 210 40% 98%;
+  --card: 0 47% 29%; /* ใช้สี #00416A */
+  --card-foreground: 210 40% 98%;
+  --popover: 0 47% 29%; /* ใช้สี #00416A */
+  --popover-foreground: 210 40% 98%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 0 47% 29%; /* ใช้สี #00416A */
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+  --chart-1: 220 70% 50%;
+  --chart-2: 160 60% 45%;
+  --chart-3: 30 80% 55%;
+  --chart-4: 280 65% 60%;
+  --chart-5: 340 75% 55%;
+}
+
+  
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  .menu svg {
+    width: 20px;
+    height: 20px;
+  }
+
+
+  .sub-menu {
+    @apply  font-medium list-none mt-2
+  }
+  .sub-menu span {
+    @apply ml-[10px]
+  }
+  .sub-menu .sub-menu-item {
+    @apply flex w-full items-center py-[.5rem] text-foreground hover:bg-gray-100 transition-all ease-in-out duration-300
+  }
+  .sub-menu .sub-menu-item .sub-menu-item-text {
+    @apply ml-[.8rem]
+  }
+  
+
+
+}
