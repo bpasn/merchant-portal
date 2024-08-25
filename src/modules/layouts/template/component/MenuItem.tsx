@@ -1,3 +1,4 @@
+import { useSidebarContext } from '@/lib/context/side-bar-context';
 import IconLucide from '@/lib/hooks/icon-lucide';
 import { EachElement } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react';
@@ -19,11 +20,11 @@ const MenuItem = ({
     };
 
     const hasChildren = menu.children && menu.children.length;
-
+    const sideBarContext = useSidebarContext();
     return (
         <li className={`menu ${expanded ? 'expanded' : ''}`}>
             {!hasChildren ? (
-                <Link href={menu.href} className='flex flex-row items-center py-3 px-3 space-x-4 hover:bg-gray-100 cursor-pointer'>
+                <Link href={menu.href} onClick={() => sideBarContext.setOpen(false)} className='flex flex-row items-center py-3 px-3 space-x-4 hover:bg-gray-100 cursor-pointer'>
                     {menu.icon ? <IconLucide name={menu.icon} /> : null}
                     <span className='text-[14px] '>{menu.label}</span>
                 </Link>

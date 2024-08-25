@@ -1,29 +1,54 @@
 'use client';
 import { menus } from '@/lib/data/menu';
-import { EachElement } from '@/lib/utils';
+import { cn, EachElement } from '@/lib/utils';
 import React from 'react';
 import MenuItem from './component/MenuItem';
-const SideBar = ({
-    isOpen
-}:{
-    isOpen:boolean;
-}) => {
-    return (
-        <aside id="default-sidebar" className="flex-col border-none shadown-[0px_calc(56px_+_8px)_4px_rgba(0,0,0,0.08)] hidden md:block fixed top-0 left-0 z-40 w-[240px] h-screen ease-in-out duration-300 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-            <div className="h-full overflow-y-auto  ">
-                <div className='flex items-center min-h-[64px] bg-[rgb(255,255,255)] justify-center transition-[background-color_150ms_cubic-bezier(0.4,0,0.2,1)_0m]'>
-                    <h1>Merchant Portal Loto</h1>
-                </div>
-                <hr />
-                <ul>
-                    <EachElement
-                        of={menus}
-                        render={(menu,index) => <MenuItem key={index} menu={menu}/>}
-                    />
-                </ul>
+import { useSidebarContext } from '@/lib/context/side-bar-context';
+const SideBar = () => {
+    const sidebarContext = useSidebarContext();
 
-            </div>
-        </aside>
+    React.useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 768) {
+                sidebarContext.setOpen(false);
+            }
+        };
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+    return (
+        <>
+            <div className={
+                cn(
+                    "fixed inset-0 bg-black transition-opacity",
+                    sidebarContext.open ? "opacity-50 z-30" : "opacity-0 pointer-events-none"
+                )
+            } onClick={() => sidebarContext.setOpen(!open)} />
+            <aside id="default-sidebar"
+                className={cn(
+                    sidebarContext.open ? "translate-x-0" : "-translate-x-full",
+                    "mdl:translate-x-0",
+                    "fixed top-0 left-0 z-40 w-[240px] h-screen bg-white shadow-lg",
+                    "ease-in-out duration-300 transition-transform"
+                )}
+                aria-label="Sidebar">
+                <div className="h-full overflow-y-auto">
+                    <div className='flex items-center min-h-[64px] bg-[rgb(255,255,255)] justify-center'>
+                        <h1>Merchant Portal Logo</h1>
+                    </div>
+                    <hr />
+                    <ul>
+                        <EachElement
+                            of={menus}
+                            render={(menu, index) => <MenuItem key={index} menu={menu} />}
+                        />
+                    </ul>
+                </div>
+            </aside>
+        </>
     );
 };
 

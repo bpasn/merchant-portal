@@ -16,7 +16,6 @@ const Combobox = ({
 }: ComboboxProps) => {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState();
-    console.log(`w-${size}px`);
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
