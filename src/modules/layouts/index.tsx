@@ -15,7 +15,7 @@ const LayoutModule = ({
                 <SideBar />
                 <div className='mdl:ml-[240px]'>
                     <Header />
-                    <main className="bg-gray-50 p-0 m-auto mt-[64px] px-5">
+                    <main className="bg-gray-100 p-0 m-auto mt-[64px] px-5">
                         {children}
                     </main>
                 </div>

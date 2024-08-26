@@ -1,8 +1,6 @@
 'use client';
-import React from 'react'
-import HeadingModule from '../common/heading-module';
 import Combobox from '../common/combobox';
-import ManageItemTemplate from './template/manage-item-template';
+import HeadingModule from '../common/heading-module';
 import TabsItem from './component/tabs-item';
 
 type Props = {}

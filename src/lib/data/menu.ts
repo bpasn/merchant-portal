@@ -12,6 +12,16 @@ export const menus: IMenu[] = [
         slug: "manage-items",
         icon: "List",
         href: "/manage-items",
+        paths:[
+            {
+                path:"create",
+                label:"Create Item"
+            },
+            {
+                path:"edit",
+                label:"Edit Item"
+            },
+        ]
     },
     {
         label: "Promotion",
