@@ -27,7 +27,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         e.preventDefault();
         const files = e.dataTransfer.files;
         if (files && files.length > 0) {
-            for(let i = 0 ; i < files.length; i++){
+            for (let i = 0; i < files.length; i++) {
                 onChange(files.item(i)!);
             }
         }
@@ -51,18 +51,21 @@ const FileUpload: React.FC<FileUploadProps> = ({
                             of={value}
                             render={(file, index) => (
                                 <div key={index} className="relative w-[224px] h-[224px] flex flex-row justify-start gap-2">
-                                    <Image
+                                    {/* <Image
                                         layout='fill'
                                         objectFit='cover'
                                         className="object-cover "
                                         src={URL.createObjectURL(file)}
                                         alt="Image"
-                                    />
+                                    /> */}
+                                    <Image
+                                        src={URL.createObjectURL(file)}
+                                        fill alt={''} />
                                     <div className="absolute top-2 right-2">
                                         <Button
                                             className="w-10 h-10"
                                             type="button"
-                                            onClick={() => {}}
+                                            onClick={() => { }}
                                             variant={"destructive"}
                                             size={"icon"}
                                         >
