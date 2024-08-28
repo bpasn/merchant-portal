@@ -30,25 +30,26 @@ import {
 import { Button } from '@/components/ui/button';
 import { ChevronDownIcon, Plus } from 'lucide-react';
 import Link from 'next/link';
+import FilterHeader from '../filter-header';
 
 interface IDataTable<T> {
     data: T[];
     columnsDef: ColumnDef<T>[];
     sortInputBy: keyof T;
-    customHeader?:React.ReactNode
+    customHeader?: React.ReactNode;
 }
 
 const DataTable = <T,>({
     data,
     sortInputBy,
-    columnsDef:columns,
+    columnsDef: columns,
     customHeader
 }: IDataTable<T>) => {
-    const [sorting,setSorting] = React.useState<SortingState>([]);
-    const [columnFilters,setColumnFilters] = React.useState<ColumnFiltersState>([])
-    
-    const[columnVisibility,setColumnVisibility] = React.useState<VisibilityState>({});
-    const [rowSelection,setRowSelection] = React.useState({});
+    const [sorting, setSorting] = React.useState<SortingState>([]);
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+    const [rowSelection, setRowSelection] = React.useState({});
     const table = useReactTable({
         data,
         columns,
@@ -70,52 +71,25 @@ const DataTable = <T,>({
     });
     return (
         <div className="w-full">
-            <div className="overflow-auto py-4  ">
-                <div className='flex gap-2 items-center min-w-[500px]'>
-                    <div className='min-w-[300px]'>
-                        <Input
-                            placeholder={`Filter ${sortInputBy.toString()}s...`}
-                            value={(table.getColumn(sortInputBy.toString())?.getFilterValue() as string) ?? ""}
-                            onChange={(event) =>
-                                table.getColumn(sortInputBy.toString())?.setFilterValue(event.target.value)
-                            }
-                        />
-                    </div>
-                    <div className='min-w-[250px]'>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild >
-                                <Button variant="outline" className="ml-auto w-[250px]">
-                                    Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                {table
-                                    .getAllColumns()
-                                    .filter((column) => column.getCanHide())
-                                    .map((column) => {
-                                        return (
-                                            <DropdownMenuCheckboxItem
-                                                key={column.id}
-                                                className="capitalize"
-                                                checked={column.getIsVisible()}
-                                                onCheckedChange={(value) =>
-                                                    column.toggleVisibility(!!value)
-                                                }
-                                            >
-                                                {column.id}
-                                            </DropdownMenuCheckboxItem>
-                                        );
-                                    })}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                    <div className='ml-auto' style={{
-                        marginLeft: "auto"
-                    }}>
-                        {customHeader}
-                    </div>
-                </div>
-            </div>
+            <FilterHeader
+                value={table.getColumn(sortInputBy.toString())?.getFilterValue() as string}
+                sortBy={sortInputBy}
+                onInputChange={(e) => table.getColumn(sortInputBy.toString())?.setFilterValue(e.target.value)}
+                renderDropdownContent={() => (
+                    <EachElement
+                        of={table.getAllColumns().filter(c => c.getCanHide())}
+                        render={(column) => (
+                            <DropdownMenuCheckboxItem
+                                key={column.id}
+                                className="capitalize"
+                                checked={column.getIsVisible()}
+                                onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                            >
+                                {column.id}
+                            </DropdownMenuCheckboxItem>
+                        )} />
+                )}
+                customHeader={customHeader} />
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>

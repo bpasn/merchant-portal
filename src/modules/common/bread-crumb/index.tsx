@@ -1,31 +1,57 @@
 'use client';
-import { menus } from '@/lib/data/menu';
+import useBranchContext from '@/lib/context/branch-context';
+import { routes } from '@/lib/data/menu';
+import { IRoute } from '@/types/global';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 
-const findMenuLabel = (
-    path: string[], menus: IMenu[], index: number = 0
-): string | undefined => {
-    for (const menu of menus) {
-        const currentPath = `/${path.slice(0, index + 1).join("/")}`;
-        if (menu.href === currentPath) {
-            // if (menu.paths) {
-            //     const subPath = path[index + 1];
-            //     const matchedPath = menu.paths.find(p => p.path === subPath);
-            //     if (matchedPath) return `${menu.label} > ${matchedPath.label}`;
-            // }
-            return menu.label;
-        } else if (menu.children) {
-            const label = findMenuLabel(path, menu.children, index + 1);
-            if (label) return `${menu.label} > ${label}`;
-        }
-    }
-    return undefined;
-};
+function generateBreadcrumbs(currentPath: string,id?: string): IRoute[] {
+    const breadcrumbs: IRoute[] = [];
+    const addBreadcrumbs = (routes: IRoute[], parentPath = "") => {
+        routes.forEach(route => {
+            let fullPath = `${parentPath}${route.href}`;
+            // จับคู่เส้นทางที่มี [id]
+            if (fullPath.includes("[id]") && id) {
+                fullPath = fullPath.replace("[id]", id);
+            }
+            // ตรวจสอบว่าปัจจุบันอยู่ในเส้นทางนี้หรือไม่
+            if (currentPath.startsWith(fullPath)) {
+                breadcrumbs.push({
+                    label: route.label,
+                    href: fullPath,
+                });
+                
+                // เช็คว่า route นี้มี paths ย่อยหรือไม่
+                if (route.paths) {
+                    route.paths.forEach(subPath => {
+                        let fullSubPath = `${fullPath}/${subPath.path}`;
+                        if(fullSubPath.includes("[id]") && id){
+                            fullSubPath = fullSubPath.replace("[id]",id);
+                        }
+                        if (currentPath.startsWith(fullSubPath)) {
+                            breadcrumbs.push({
+                                label: subPath.label,
+                                href: fullSubPath,
+                            });
+                        }
+                    });
+                }
+    
+                // ถ้า route นี้มี children ให้ทำการเรียกซ้ำ
+                if (route.children) {
+                    addBreadcrumbs(route.children, fullPath);
+                }
+            }
+        });
+    };
+    addBreadcrumbs(routes.slice(1));
+    return breadcrumbs;
+}
 const Breadcrumb = () => {
     const router = usePathname();
+    const { id } = useBranchContext();
     if (router === "/") {
         return (
             <div className='flex flex-row'>
@@ -33,29 +59,43 @@ const Breadcrumb = () => {
             </div>
         );
     }
-    const pathArray = router.split("/").filter(path => path);
-    const breadcrumb = pathArray.map((_, index) => {
-        const currentPath = `/${pathArray.slice(0, index + 1).join("/")}`;
-        const label = findMenuLabel(pathArray, menus, index);
-        
-        return (
-            <div key={index} className='flex flex-row items-center space-x-2'>
-                {
-                    index === (pathArray.length - 1)? (
-                        <span>{label || currentPath.replace(/-/g, " ").split("/").pop()}</span>
-                    ) :
-                        (
-                            <Link href={currentPath}> {label || currentPath.replace(/-/g, " ").split("/").pop()}</Link>
-                        )
-                }
-                {index < pathArray.length - 1 && <ChevronRight size={16} />}
-            </div>
-        );
-    });
+    const pathArray = router.startsWith(`/bussinesses/${id}`) ? router.replace(`/bussinesses/${id}`, "").split("/").filter(p => p) : router.split("/").filter(p => p);
+    // const breadcrumb = pathArray.map((_, index) => {
+    //     const currentPath = `/${pathArray.slice(0, index + 1).join("/")}`;
+    //     const label = findMenuLabel(pathArray, menus, index);
+
+    //     return (
+    //         <div key={index} className='flex flex-row items-center space-x-2'>
+    //             {
+    //                 index === (pathArray.length - 1)? (
+    //                     <span>{label || currentPath.replace(/-/g, " ").split("/").pop()}</span>
+    //                 ) :
+    //                     (
+    //                         <Link href={currentPath}> {label || currentPath.replace(/-/g, " ").split("/").pop()}</Link>
+    //                     )
+    //             }
+    //             {index < pathArray.length - 1 && <ChevronRight size={16} />}
+    //         </div>
+    //     );
+    // });
+    const breadcrumbTrail = generateBreadcrumbs(router,id ?? undefined);
+    console.log(breadcrumbTrail)
     return (
-        <div className='flex flex-row space-x-2'>
-            {breadcrumb}
-        </div>
+        <nav className='flex flex-row space-x-2'>
+            {breadcrumbTrail.map((crumb, index) => (
+                <div key={index} className='flex flex-row items-center space-x-2'>
+                    {
+                        index === (pathArray.length - 1) ? (
+                            <span>{crumb.label}</span>
+                        ) :
+                            (
+                                <Link href={`${crumb.href}`}> {crumb.label}</Link>
+                            )
+                    }
+                    {index < pathArray.length - 1 && <ChevronRight size={16} />}
+                </div>
+            ))}
+        </nav>
     );
 };
 

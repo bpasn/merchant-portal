@@ -1,5 +1,5 @@
 'use client';
-import { menus } from '@/lib/data/menu';
+import { routes } from '@/lib/data/menu';
 import { cn, EachElement } from '@/lib/utils';
 import React from 'react';
 import MenuItem from './component/MenuItem';
@@ -42,8 +42,8 @@ const SideBar = () => {
                     <hr />
                     <ul>
                         <EachElement
-                            of={menus}
-                            render={(menu, index) => <MenuItem key={index} menu={menu} />}
+                            of={routes}
+                            render={(route, index) => <MenuItem key={index} route={route} />}
                         />
                     </ul>
                 </div>

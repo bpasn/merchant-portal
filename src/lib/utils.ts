@@ -13,3 +13,7 @@ export const EachElement = <T>({
     of: T[];
     render: (element: T, index: number) => React.ReactNode;
   }) => Children.toArray(of.map(render));
+
+export const toUpperCase = (str: string) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
+export const delay = (duration:number) => new Promise((res) => setTimeout(res,duration))

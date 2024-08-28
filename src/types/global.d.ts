@@ -1,17 +1,19 @@
+import { icons } from "lucide-react";
+import { IconName } from "./icon";
 
-
-interface IMenu {
+interface IRoute {
     label: string;
-    slug:string;
+    slug?: string;
     href: string;
-    expanded?:boolean;
-    icon?: IconProps['name'];
-    children?: IMenu[];
-    paths?:IPathMenu[]
+    icon?: IconName;
+    root?: boolean; // To mark breadcrumb roots
+    paths?: ISubPath[]; // For paths like create, edit under manage-items
+    children?: IRoute[];
 }
-interface IPathMenu {
-    path:string;
-    label:string;
+
+interface ISubPath {
+    path: string;
+    label: string;
 }
 
 interface IItemsProduct {

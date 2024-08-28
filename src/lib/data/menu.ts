@@ -1,75 +1,49 @@
+import { IRoute } from "@/types/global";
 import { BadgePercent, ChartArea, HomeIcon, List, Settings } from "lucide-react";
 
-export const menus: IMenu[] = [
+export const routes: IRoute[] = [
     {
         label: "Home",
         slug: "home",
-        icon: "House",
         href: "/",
+        icon: "House",
+        root: true, // Root for breadcrumb
     },
     {
         label: "Manage items",
         slug: "manage-items",
         icon: "List",
-        href: "/manage-items",
-        paths:[
-            {
-                path:"create",
-                label:"Create Item"
-            },
-            {
-                path:"edit",
-                label:"Edit Item"
-            },
-        ]
-    },
-    {
-        label: "Promotion",
-        slug: "",
-        icon: "BadgePercent",
-        href: "/",
+        href: "/bussinesses",
+        root: true,
+        paths: [
+            { path: "[id]/menu/", label: "Create Item" },
+            { path: "[id]/menu-option/", label: "Create option Item" },
+            { path: "[id]/menu-group/", label: "Create option Item" },
+        ],
     },
     {
         label: "Merchant Report",
-        slug: "",
-        href: "/",
+        slug: "merchant-report",
         icon: "ChartArea",
-        expanded:false,
+        href: "/merchant-report",
         children: [
             {
                 label: "Sales",
-                slug: "",
-                href: "/",
-                expanded:false,
+                slug: "sales",
+                href: "/merchant-report/sales",
                 children: [
-                    {
-                        label: "Sales1",
-                        slug: "",
-                        href: "/",
-                    }
-                ]
+                    { label: "Sales1", slug: "sales1", href: "/merchant-report/sales/sales1" },
+                ],
             },
-            {
-                label: "Item report",
-                slug: "",
-                href: "/",
-            },
-            {
-                label: "Promotion",
-                slug: "",
-                href: "/",
-            },
-            {
-                label: "Branches",
-                slug: "",
-                href: "/",
-            },
-        ]
+            { label: "Item Report", slug: "item-report", href: "/merchant-report/item-report" },
+            { label: "Promotion", slug: "promotion", href: "/merchant-report/promotion" },
+            { label: "Branches", slug: "branches", href: "/merchant-report/branches" },
+        ],
     },
     {
-        label: "setting",
-        slug: "",
+        label: "Settings",
+        slug: "settings",
         icon: "Settings",
-        href: "/",
+        href: "/settings",
     },
 ];

@@ -1,9 +1,10 @@
 import LayoutModule from '@/modules/layouts';
+import axios from 'axios';
 import React from 'react';
-const RootLayout = ({
+const RootLayout = async ({
   children
-}:{
-  children:React.ReactNode;
+}: {
+  children: React.ReactNode;
 }) => {
   return (
     <LayoutModule>
