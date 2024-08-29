@@ -1,12 +1,7 @@
-import { FormField } from "@/components/ui/form";
+import { FormItemSchema } from "@/lib/schema/itemsSchema";
 import { handleError } from "@/lib/utils/handler-exception";
-import { formItemSchema, FormItemSchema } from "@/modules/manage-item-module/template/create-or-update-form";
 import { NextRequest, NextResponse } from "next/server";
-export const config = {
-    api: {
-        bodyParser: false
-    }
-};
+
 export const GET = async (req: NextRequest) => {
     try {
         return NextResponse.json("Aready");
@@ -24,9 +19,10 @@ export const POST = async (req: NextRequest) => {
         price: parseFloat(formData.get("price") as string),
         descriptionTH: formData.get("descriptionTH") as string,
         descriptionEN: formData.get("descriptionEN") as string,
-        images: formData.getAll("images").map(e => e) as File[]
+        images: formData.getAll("images").map(e => e) as File[],
+        itemOption: [],
+        itemGroup: []
     };
-    console.log(formProduct)
     try {
         return NextResponse.json("SUCCESS");
     } catch (error) {

@@ -1,7 +1,7 @@
 'use client';
 import useBranchContext from '@/lib/context/branch-context';
 import { routes } from '@/lib/data/menu';
-import { IRoute } from '@/types/global';
+import { IRoute } from '@/types/router-menu';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
