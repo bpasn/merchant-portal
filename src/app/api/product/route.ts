@@ -1,4 +1,4 @@
-import { FormItemSchema } from "@/lib/schema/itemsSchema";
+import { FormItemSchema } from "@/lib/schema/productSchema";
 import { handleError } from "@/lib/utils/handler-exception";
 import { NextRequest, NextResponse } from "next/server";
 

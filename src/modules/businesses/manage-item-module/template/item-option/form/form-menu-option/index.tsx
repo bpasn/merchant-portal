@@ -17,7 +17,6 @@ import {
 } from '@/modules/common/form-field';
 import _ from 'lodash';
 import { cn, EachElement, toUpperCase } from '@/lib/utils';
-import { itemOptionSchema, ItemOptionSchema } from '@/lib/schema/itemOptionSchema';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Minus, Plus, X } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -35,19 +34,20 @@ import {
 } from '@/lib/schema/optionChioceSchema';
 import { useModalContext } from '@/lib/context/modal-context';
 import FormChoice from '../form-choice';
+import { productOptionSchema, ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 
 
 
 interface FormMenuOptionProps {
-    itemOption: ItemOptionSchema | null;
+    itemOption: ProductOptionSchema | null;
 };
 const FormMenuOption = ({
     itemOption,
 }: FormMenuOptionProps) => {
     const title = itemOption !== null ? "Edit Item" : "Create Item";
     const modalContext = useModalContext();
-    const form = useForm<ItemOptionSchema & { lengthSelect?: number; }>({
-        resolver: zodResolver(itemOptionSchema),
+    const form = useForm<ProductOptionSchema & { lengthSelect?: number; }>({
+        resolver: zodResolver(productOptionSchema),
         defaultValues: itemOption || {
             name: "",
             manyCanBeChosen: false,
@@ -116,6 +116,9 @@ const FormMenuOption = ({
                                                             <Checkbox
                                                                 checked={field.value}
                                                                 onCheckedChange={(c) => {
+                                                                    if (!c) {
+                                                                        form.setValue("lengthSelect", 1);
+                                                                    }
                                                                     field.onChange(c);
                                                                 }}
                                                             />
@@ -138,12 +141,22 @@ const FormMenuOption = ({
                                         `flex flex-row gap-5 items-center overflow-hidden transition-all duration-300 ease-in-out ${form.getValues("manyCanBeChosen") ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
                                         <h2 className="text-sm">Can select at most</h2>
                                         <div className="flex flex-row gap-5 items-center">
-                                            <div className="rounded-full p-2 cursor-pointer bg-gray-300 text-center">
-                                                <Minus className='text-center' size={14} />
+                                            <div className="rounded-full p-2 cursor-pointer bg-gray-300 text-center" onClick={() => {
+                                                if (form.getValues("lengthSelect") === 1) {
+                                                    return;
+                                                }
+                                                form.setValue("lengthSelect", form.getValues("lengthSelect") - 1);
+                                            }}>
+                                                <Minus className={`text-center ${form.getValues("lengthSelect") === 1 ? "disabled" : ""}`} size={14} />
                                             </div>
-                                            <span>{form.getValues("lengthSelect")}</span>
-                                            <div className="rounded-full cursor-pointer p-2 bg-gray-300 text-center">
-                                                <Plus className='text-center' size={14} />
+                                            <span>{form.watch("lengthSelect")}</span>
+                                            <div className="rounded-full cursor-pointer p-2 bg-gray-300 text-center" onClick={() => {
+                                                if (form.getValues("lengthSelect") >= form.getValues("choice").length) {
+                                                    return;
+                                                }
+                                                form.setValue("lengthSelect", form.getValues("lengthSelect") + 1);
+                                            }}>
+                                                <Plus className={`text-center ${form.getValues("lengthSelect") >= form.getValues("choice").length ? "disabled" : ""}`} size={14} />
                                             </div>
                                         </div>
                                     </div>

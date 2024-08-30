@@ -1,15 +1,26 @@
-import React from 'react';
+'use client'
+import useBranchContext from '@/lib/context/branch-context';
+import React, { useEffect } from 'react'
 
-type Props = {};
 
-const BussinessesLayout = ({
+const layout = ({
+    params,
     children
 }: {
-    children: React.ReactNode;
+    params: {
+        bId: string
+    };
+    children: React.ReactNode
 }) => {
+    const branch = useBranchContext();
+    useEffect(() => {
+        if (branch.id !== params.bId) {
+            branch.setId(params.bId);
+        }
+    }, [])
     return (
-        <React.Fragment>{children}</React.Fragment>
-    );
-};
+        <div>{children}</div>
+    )
+}
 
-export default BussinessesLayout;
+export default layout

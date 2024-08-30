@@ -2,18 +2,18 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
 } from '@/components/ui/form';
 import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
 import useBranchContext from '@/lib/context/branch-context';
-import { ItemGroupSchema } from '@/lib/schema/itemGroupSchema';
-import { ItemOptionSchema } from '@/lib/schema/itemOptionSchema';
-import { formItemSchema, FormItemSchema } from '@/lib/schema/itemsSchema';
+import { ProductGroupSchema } from '@/lib/schema/productGroupSchema';
+import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
+import { productSchema, ProductSchema } from '@/lib/schema/productSchema';
 import { EachElement } from '@/lib/utils';
 import FileUpload from '@/modules/businesses/manage-item-module/component/upload-image-form';
 import { FormFieldCommon } from '@/modules/common/form-field';
@@ -22,13 +22,15 @@ import LinkButton from '@/modules/common/link-button';
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from 'axios';
 import { useForm } from "react-hook-form";
+import OptionFormComponent from '../component/option-form-component';
+import StockFormComponent from '../component/stock-form-component';
 
 
 
 interface FormItemMenuProps {
-    dataForm: FormItemSchema | undefined;
-    itemOption: Omit<ItemOptionSchema, "choice">[];
-    itemGroup: ItemGroupSchema[];
+    dataForm: ProductSchema | undefined;
+    itemOption: Omit<ProductOptionSchema, "choice">[];
+    itemGroup: ProductGroupSchema[];
 };
 const FormItemMenu = ({
     dataForm,
@@ -39,21 +41,28 @@ const FormItemMenu = ({
     const title = dataForm !== undefined ? "Edit Item" : "Create Item";
     const { toast } = useToast();
 
-    const form = useForm<FormItemSchema>({
-        resolver: zodResolver(formItemSchema),
+    const form = useForm<ProductSchema>({
+        resolver: zodResolver(productSchema),
         defaultValues: dataForm || {
             nameEN: "",
             nameTH: "",
             price: 0,
             descriptionEN: "",
             descriptionTH: "",
+            stock: {
+                unitQuantity: 0,
+                unitType: "piece",
+                quantity: 0,
+                status: "inStock",
+                reOrder: false
+            },
             images: [],
             itemGroup: [],
             itemOption: []
         }
     });
 
-    const handleSave = async (data: FormItemSchema) => {
+    const handleSave = async (data: ProductSchema) => {
         const formData = new FormData();
         formData.append("nameEN", data.nameEN);
         formData.append("nameTH", data.nameTH);
@@ -63,7 +72,7 @@ const FormItemMenu = ({
         data.images.map((file, index) => {
             formData.append(`images`, file);
         });
-        console.log(formItemSchema.safeParse(formData));
+        console.log(productSchema.safeParse(formData));
         const response = await axios.post('/api/product', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -160,49 +169,10 @@ const FormItemMenu = ({
                             />
                         </div>
                     </div>
-                    <div className="content-container px-8 py-8 flex flex-col gap-5 ">
-                        <div className="flex flex-row">
-                            <h2 className='font-bold text-md'>Item options</h2>
-                            <div className="ml-auto">
-                                <LinkButton className="border-none text-primary text-sm" href={`/bussinesses/${branchContext.id}/menu-option/create`} label="Create item option" />
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-3">
-                            <EachElement
-                                of={itemOption}
-                                render={(option) => {
-                                    return (
-                                        <FormField
-                                            control={form.control}
-                                            name={"itemOption"}
-                                            render={({ field }) => {
-                                                const isChecked = Array.isArray(field.value) && field.value.some((value) => value.name === option.name);
-                                                return (
-                                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                                                        <FormControl>
-                                                            <Checkbox
-                                                                checked={isChecked}
-                                                                onCheckedChange={(c) => {
-                                                                    const currentValue = Array.isArray(field.value) ? field.value : [];
-                                                                    const updatedValue = c
-                                                                        ? [...currentValue, option]
-                                                                        : currentValue.filter((value) => value.name !== option.name);
-                                                                    field.onChange(updatedValue);
-                                                                }}
-                                                            />
-                                                        </FormControl>
-                                                        <FormLabel className="text-sm font-normal">
-                                                            {option.name}
-                                                        </FormLabel>
-                                                    </FormItem>
-                                                );
-                                            }}
-                                        />
-                                    );
-                                }}
-                            />
-                        </div>
-                    </div>
+
+                    <StockFormComponent stock={dataForm?.stock} control={form.control} />
+
+                    <OptionFormComponent itemOption={itemOption} control={form.control} />
                     <div className="content-container px-8 py-8 flex flex-col gap-5 ">
                         <div className="flex flex-row items-center">
                             <h2 className='font-bold text-md'>Item Group</h2>
@@ -211,7 +181,7 @@ const FormItemMenu = ({
                             </div>
                         </div>
                         <div className="flex flex-col gap-3">
-                        <EachElement
+                            <EachElement
                                 of={itemGroup}
                                 render={(group) => {
                                     return (
@@ -246,6 +216,49 @@ const FormItemMenu = ({
                             />
                         </div>
                     </div>
+                    {/* <div className="content-container px-8 py-8 flex flex-col gap-5 ">
+                        <div className="flex flex-row items-center">
+                            <h2 className='font-bold text-md'>Item Group</h2>
+                            <div className="ml-auto">
+                                <LinkButton className="border-none text-sm text-primary" href={`/bussinesses/${branchContext.id}/menu-group/create`} label="Create item groups" />
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-3">
+                            <EachElement
+                                of={itemGroup}
+                                render={(group) => {
+                                    return (
+                                        <FormField
+                                            control={form.control}
+                                            name={"itemGroup"}
+                                            render={({ field }) => {
+                                                const isChecked = Array.isArray(field.value) && field.value.some((value) => value.name === group.name);
+                                                return (
+                                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                                                        <FormControl>
+                                                            <Checkbox
+                                                                checked={isChecked}
+                                                                onCheckedChange={(c) => {
+                                                                    const currentValue = Array.isArray(field.value) ? field.value : [];
+                                                                    const updatedValue = c
+                                                                        ? [...currentValue, group]
+                                                                        : currentValue.filter((value) => value.name !== group.name);
+                                                                    field.onChange(updatedValue);
+                                                                }}
+                                                            />
+                                                        </FormControl>
+                                                        <FormLabel className="text-sm font-normal">
+                                                            {group.name}
+                                                        </FormLabel>
+                                                    </FormItem>
+                                                );
+                                            }}
+                                        />
+                                    );
+                                }}
+                            />
+                        </div>
+                    </div> */}
                     {/* <div className='content-container sticky h-[350px] top-[100px] col-span-3 gap-4 basis-[300px] shrink-0'>
               <div className="p-6">
                 <h4>Warning: Sale of regulated goods is not allowed</h4>

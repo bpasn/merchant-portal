@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import {
     FormField,
     FormItem,
@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { CheckedState } from '@radix-ui/react-checkbox';
-
+import Combobox from '@/modules/common/combobox';
 export declare interface UseControllerProps<
     TFieldValues extends FieldValues = FieldValues,
     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -51,41 +51,15 @@ export const FormFieldCommon = <T extends FieldValues,>({
             )} />
     );
 };
-// <FormField
-                                    //     key={item.name}
-                                    //     control={form.control}
-                                    //     name="itemOption"
-                                    //     render={({ field }) => {
-                                    //         const isChecked = Array.isArray(field.value) && field.value.some((value) => value.name === item.name);
-                                    //         return (
-                                    //             <FormItem key={item.name} className="flex flex-row items-start space-x-3 space-y-0">
-                                    //                 <FormControl>
-                                    //                     <Checkbox
-                                    //                         checked={isChecked}
-                                    //                         onCheckedChange={(checked) => {
-                                    //                             const currentValue = Array.isArray(field.value) ? field.value : [];
-                                    //                             const updatedValue = checked
-                                    //                                 ? [...currentValue, { name: item.name }]
-                                    //                                 : currentValue.filter((value) => value.name !== item.name);
-                                    //                             field.onChange(updatedValue);
-                                    //                         }}
-                                    //                     />
-                                    //                 </FormControl>
-                                    //                 <FormLabel className="text-sm font-normal">
-                                    //                     {item.name}
-                                    //                 </FormLabel>
-                                    //             </FormItem>
-                                    //         );
-                                    //     }}
-                                    // />
-interface FormFieldCheckboxCommonProps<T extends FieldValues,TName extends FieldPath<T> = FieldPath<T>> extends UseControllerProps<T,TName> {
+
+interface FormFieldCheckboxCommonProps<T extends FieldValues, TName extends FieldPath<T> = FieldPath<T>> extends UseControllerProps<T, TName> {
     checked: boolean;
-    onCheckedChange?: (checkState: CheckedState,field: ControllerRenderProps<T, TName>) => void;
+    onCheckedChange?: (checkState: CheckedState, field: ControllerRenderProps<T, TName>) => void;
     id?: string;
     value?: string;
     label?: string;
 }
-export const FormFieldCheckboxCommon = <T extends FieldValues,TName extends FieldPath<T>>({
+export const FormFieldCheckboxCommon = <T extends FieldValues, TName extends FieldPath<T>>({
     label,
     checked,
     id,
@@ -93,7 +67,7 @@ export const FormFieldCheckboxCommon = <T extends FieldValues,TName extends Fiel
     name,
     control,
     onCheckedChange,
-}: FormFieldCheckboxCommonProps<T,TName>) => {
+}: FormFieldCheckboxCommonProps<T, TName>) => {
     return (
         <FormField
             control={control}
@@ -102,7 +76,7 @@ export const FormFieldCheckboxCommon = <T extends FieldValues,TName extends Fiel
                 return (
                     <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                         <FormControl>
-                        <Checkbox
+                            <Checkbox
                                 checked={checked}
                                 onCheckedChange={(c) => {
                                     const isChecked = Boolean(c);
@@ -112,7 +86,7 @@ export const FormFieldCheckboxCommon = <T extends FieldValues,TName extends Fiel
                                         if (isChecked) {
                                             updatedValue = [...field.value, id];
                                         } else {
-                                            updatedValue = field.value.filter((value:PathValue<T, TName>) => value !== id);
+                                            updatedValue = field.value.filter((value: PathValue<T, TName>) => value !== id);
                                         }
                                     } else {
                                         updatedValue = isChecked ? [id] : [];
@@ -135,6 +109,35 @@ export const FormFieldCheckboxCommon = <T extends FieldValues,TName extends Fiel
         />
     );
 };
+
+
+interface FormFieldSelectCommonProps<T extends FieldValues> extends UseControllerProps<T> {
+    options: { value: string, label: string }[];
+}
+
+export const FormSelectCommon = <T extends FieldValues,>({
+    control,
+    name,
+    label,
+    options
+}: FormFieldSelectCommonProps<T>) => {
+    return (
+        <FormField
+            control={control}
+            name={name}
+            render={({ field }) => {
+                return (
+                    <FormItem className='flex flex-row gap-4 items-center'>
+                        <FormLabel>{label}</FormLabel>
+                        <FormControl>
+                            <Combobox {...field} items={options} changeValue={field.onChange}/>
+                        </FormControl>
+                    </FormItem>
+                )
+            }}
+        />
+    )
+}
 const renderElement = <T extends FieldValues,>(type: string, field: ControllerRenderProps<T, Path<T>> & { placeholder?: string; }): React.ReactNode => {
     if (type === 'input') {
         return (<Input {...field} className='rounded-lg' />);

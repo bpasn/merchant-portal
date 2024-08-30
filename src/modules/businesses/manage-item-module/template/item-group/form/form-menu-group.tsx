@@ -9,19 +9,19 @@ import {
 } from '@/components/ui/form';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import _ from 'lodash';
-import { itemGroupSchema, ItemGroupSchema } from '@/lib/schema/itemGroupSchema';
+import { ProductGroupSchema, productGroupSchema} from '@/lib/schema/productGroupSchema';
 
 
 
 interface FormMenuGroupProps {
-    itemGroup: ItemGroupSchema | null;
+    itemGroup: ProductGroupSchema | null;
 };
 const FormMenuGroup = ({
     itemGroup
 }: FormMenuGroupProps) => {
     const title = itemGroup !== null ? "Edit Item" : "Create Item";
-    const form = useForm<ItemGroupSchema>({
-        resolver: zodResolver(itemGroupSchema),
+    const form = useForm<ProductGroupSchema>({
+        resolver: zodResolver(productGroupSchema),
         defaultValues: itemGroup || {
             name: ""
         }

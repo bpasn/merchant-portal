@@ -32,7 +32,7 @@ const ManageItemLayout = async ({
                 title="Manage items"
             />
             <div className='mb-5'>
-                <Combobox items={branch.data.payload.map(e => ({ label: e.name, value: e.id }))} size={300} />
+                <Combobox items={branch.data.payload.map(e => ({ label: e.name, value: e.id }))} size={300}  />
             </div>
             <Tabs defaultValue={`/businesses/${params.bId}/menu`} className="w-full">
                 <TabComponent

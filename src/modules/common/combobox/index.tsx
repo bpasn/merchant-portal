@@ -16,22 +16,17 @@ export interface IOptionCombobox {
 interface ComboboxProps<T> extends PopoverTriggerProps {
     items: T[];
     size?: number;
+    changeValue:(v:string) => void
 };
 
 const Combobox = <T extends IOptionCombobox,>({
     items,
-    size
+    size,
+    changeValue
 }: ComboboxProps<T>) => {
-    const params = useParams();
-    const router = useRouter();
     const [open, setOpen] = useState(false);
-    const branchContext = useBranchContext();
-
-    const handleSwitcher = (store: IOptionCombobox) => {
-        setOpen(false);
-        branchContext.setId(store.value);
-        router.push(`/businesses/${store.value}/menu`);
-    };
+    const [value,setValue] = useState(items[0].value);
+    
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -44,7 +39,7 @@ const Combobox = <T extends IOptionCombobox,>({
                         width: `${size}px`
                     }}
                 >
-                    {items.find(e => e.value === params.bId)?.label}
+                    {items.find(e => e.value === value)?.label}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
@@ -56,18 +51,22 @@ const Combobox = <T extends IOptionCombobox,>({
                     <CommandInput placeholder="Search framework..." className="h-9" />
                     <CommandList>
                         <CommandEmpty>No framework found.</CommandEmpty>
-                        <CommandGroup>
+                        <CommandGroup >
                             {items.map((branch: IOptionCombobox) => (
                                 <CommandItem
                                     key={branch.value}
                                     value={branch.label}
-                                    onSelect={() => handleSwitcher(branch)}
+                                    onSelect={(v) => {
+                                        setValue(v);
+                                        changeValue?.(v)
+                                        setOpen(!open)
+                                    }}
                                 >
                                     {branch.label}
                                     <CheckIcon
                                         className={cn(
                                             "ml-auto h-4 w-4",
-                                            params.bId === branch.value ? "opacity-100" : "opacity-0"
+                                            value === branch.value ? "opacity-100" : "opacity-0"
                                         )}
                                     />
                                 </CommandItem>

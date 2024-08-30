@@ -79,7 +79,6 @@ const Breadcrumb = () => {
     //     );
     // });
     const breadcrumbTrail = generateBreadcrumbs(router,id ?? undefined);
-    console.log(breadcrumbTrail)
     return (
         <nav className='flex flex-row space-x-2'>
             {breadcrumbTrail.map((crumb, index) => (
