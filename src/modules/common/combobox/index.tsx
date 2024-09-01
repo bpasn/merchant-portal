@@ -5,8 +5,6 @@ import { ChevronsUpDown, CheckIcon } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import useBranchContext from '@/lib/context/branch-context';
-import { useParams, useRouter } from 'next/navigation';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>;
 export interface IOptionCombobox {
@@ -16,7 +14,7 @@ export interface IOptionCombobox {
 interface ComboboxProps<T> extends PopoverTriggerProps {
     items: T[];
     size?: number;
-    changeValue:(v:string) => void
+    changeValue?:(v:string) => void
 };
 
 const Combobox = <T extends IOptionCombobox,>({
@@ -52,21 +50,21 @@ const Combobox = <T extends IOptionCombobox,>({
                     <CommandList>
                         <CommandEmpty>No framework found.</CommandEmpty>
                         <CommandGroup >
-                            {items.map((branch: IOptionCombobox) => (
+                            {items.map((item: IOptionCombobox) => (
                                 <CommandItem
-                                    key={branch.value}
-                                    value={branch.label}
+                                    key={item.value}
+                                    value={item.label}
                                     onSelect={(v) => {
                                         setValue(v);
                                         changeValue?.(v)
                                         setOpen(!open)
                                     }}
                                 >
-                                    {branch.label}
+                                    {item.label}
                                     <CheckIcon
                                         className={cn(
                                             "ml-auto h-4 w-4",
-                                            value === branch.value ? "opacity-100" : "opacity-0"
+                                            value === item.value ? "opacity-100" : "opacity-0"
                                         )}
                                     />
                                 </CommandItem>

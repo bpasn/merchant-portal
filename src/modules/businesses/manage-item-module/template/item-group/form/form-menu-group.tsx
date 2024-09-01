@@ -9,7 +9,10 @@ import {
 } from '@/components/ui/form';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import _ from 'lodash';
-import { ProductGroupSchema, productGroupSchema} from '@/lib/schema/productGroupSchema';
+import { ProductGroupSchema, productGroupSchema } from '@/lib/schema/productGroupSchema';
+import axiosInstance from '@/lib/utils/axios-config';
+import { useRouter } from 'next/navigation';
+import useBranchContext from '@/lib/context/branch-context';
 
 
 
@@ -20,16 +23,23 @@ const FormMenuGroup = ({
     itemGroup
 }: FormMenuGroupProps) => {
     const title = itemGroup !== null ? "Edit Item" : "Create Item";
+    const router = useRouter();
+    const { id } = useBranchContext();
     const form = useForm<ProductGroupSchema>({
         resolver: zodResolver(productGroupSchema),
         defaultValues: itemGroup || {
-            name: ""
+            groupName: "",
+            isRequired: false
         }
     });
 
+    const handleSave = async (data: ProductGroupSchema) => {
+        await axiosInstance.post("/api/group", data);
+       return router.push(`/businesses/${id}/menu-group`);
+    };
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit((d) => { })} className='container '>
+            <form onSubmit={form.handleSubmit(handleSave)} className='container '>
                 <HeadingModule title={title} >
                     <Button
                         className='rounded-lg'
@@ -45,7 +55,7 @@ const FormMenuGroup = ({
                                 <div className="flex flex-col gap-8 mb-5">
                                     <FormFieldCommon
                                         control={form.control}
-                                        name={"name"}
+                                        name={"groupName"}
                                         placeholder='Item group name'
                                         description={"e.g., Main Course, Dessert, Beverage"}
                                     />

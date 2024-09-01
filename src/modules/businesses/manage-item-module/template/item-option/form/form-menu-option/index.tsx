@@ -16,7 +16,7 @@ import {
     FormFieldCommon,
 } from '@/modules/common/form-field';
 import _ from 'lodash';
-import { cn, EachElement, toUpperCase } from '@/lib/utils';
+import { cn, EachElement, report, toUpperCase } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Minus, Plus, X } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -35,6 +35,8 @@ import {
 import { useModalContext } from '@/lib/context/modal-context';
 import FormChoice from '../form-choice';
 import { productOptionSchema, ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
+import { toast } from '@/components/ui/use-toast';
+import axiosInstance from '@/lib/utils/axios-config';
 
 
 
@@ -49,22 +51,33 @@ const FormMenuOption = ({
     const form = useForm<ProductOptionSchema & { lengthSelect?: number; }>({
         resolver: zodResolver(productOptionSchema),
         defaultValues: itemOption || {
-            name: "",
+            optionName: "",
             manyCanBeChosen: false,
             oneMustBeChosen: false,
             lengthSelect: 1,
-            choice: []
+            choices: []
         }
     });
-    const { fields: fieldChoices, append, prepend, remove, swap, move, insert } = useFieldArray({ control: form.control, name: "choice" });
+    const { fields: fieldChoices, append, prepend, remove, swap, move, insert } = useFieldArray({ control: form.control, name: "choices" });
 
     const handleSubmitChoice = (data: OptionChoiceSchema) => {
-        append(data)
+        append(data);
         modalContext.closeModal();
+    };
+
+    const handleSaveOption = async (data: ProductOptionSchema) => {
+        try {
+            await axiosInstance.post("/api/option",data);
+        } catch (error) {
+            toast({
+                title:"ERROR",
+                description: report(error)
+            })
+        }
     };
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit((d) => { })} className='container '>
+            <form onSubmit={form.handleSubmit(handleSaveOption)} className='container '>
                 <HeadingModule title={title} >
                     <Button
                         className='rounded-lg'
@@ -80,7 +93,7 @@ const FormMenuOption = ({
                                 <div className="flex flex-col gap-8 mb-5">
                                     <FormFieldCommon
                                         control={form.control}
-                                        name={"name"}
+                                        name={"optionName"}
                                         placeholder='Item option name'
                                         description={"e.g., Sweetness, Size, Toppings"}
                                     />
@@ -151,12 +164,12 @@ const FormMenuOption = ({
                                             </div>
                                             <span>{form.watch("lengthSelect")}</span>
                                             <div className="rounded-full cursor-pointer p-2 bg-gray-300 text-center" onClick={() => {
-                                                if (form.getValues("lengthSelect") >= form.getValues("choice").length) {
+                                                if (form.getValues("lengthSelect") >= form.getValues("choices").length) {
                                                     return;
                                                 }
                                                 form.setValue("lengthSelect", form.getValues("lengthSelect") + 1);
                                             }}>
-                                                <Plus className={`text-center ${form.getValues("lengthSelect") >= form.getValues("choice").length ? "disabled" : ""}`} size={14} />
+                                                <Plus className={`text-center ${form.getValues("lengthSelect") >= form.getValues("choices").length ? "disabled" : ""}`} size={14} />
                                             </div>
                                         </div>
                                     </div>
@@ -176,17 +189,17 @@ const FormMenuOption = ({
                                                 <div className="w-full">
                                                     <FormFieldCommon
                                                         control={form.control}
-                                                        name={`choice.${index}.name`}
+                                                        name={`choices.${index}.name`}
                                                     />
                                                 </div>
                                                 <Select
-                                                    value={form.watch(`choice.${index}.status`)}
-                                                    onValueChange={v => form.setValue(`choice.${index}.status`, v as ChoiceStatusEnum)}
+                                                    value={form.watch(`choices.${index}.status`)}
+                                                    onValueChange={v => form.setValue(`choices.${index}.status`, v as ChoiceStatusEnum)}
                                                 >
                                                     <SelectTrigger className={
                                                         cn(
                                                             "w-[152px] h-[30px] rounded-lg flex flex-row gap-4 p-3 justify-center focus:ring-0",
-                                                            form.watch(`choice.${index}.status`) === choiceStatusEnum.Enum.available
+                                                            form.watch(`choices.${index}.status`) === choiceStatusEnum.Enum.available
                                                                 ? "text-[rgba(0,168,56)] bg-[rgba(0,168,56)]/30"
                                                                 : "text-[rgba(123,132,136)] bg-[rgba(123,132,136)]/30"
                                                         )

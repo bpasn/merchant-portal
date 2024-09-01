@@ -1,8 +1,9 @@
 import { Tabs } from "@/components/ui/tabs";
 import TabComponent from "@/modules/businesses/manage-item-module/component/tab-component";
-import Combobox from "@/modules/common/combobox";
 import HeadingModule from "@/modules/common/heading-module";
-import axios from "axios";
+import SwitchBranch from "./component/switch-branch";
+import axiosInstance from "@/lib/utils/axios-config";
+import TabsClient from "./component/tabs-client";
 
 const ManageItemLayout = async ({
     params,
@@ -11,35 +12,19 @@ const ManageItemLayout = async ({
     params: { bId: string; };
     children: React.ReactNode;
 }) => {
-    const itemTabs = [
-        {
-            label: "Item menu",
-            href: `/businesses/${params.bId}/menu`
-        },
-        {
-            label: "Item option",
-            href: `/businesses/${params.bId}/menu-option`
-        },
-        {
-            label: "Item group",
-            href: `/businesses/${params.bId}/menu-group`
-        },
-    ];
-    const branch = await axios.get<{ payload: IBranch[]; }>("http://localhost:3000/api/store");
+   
+    const branch = await axiosInstance.get<{ payload: IBranch[]; }>(`${process.env.NEXT_PUBLIC_APP_URL}/api/store`);
     return (
         <div className='flex flex-col'>
             <HeadingModule
                 title="Manage items"
             />
             <div className='mb-5'>
-                <Combobox items={branch.data.payload.map(e => ({ label: e.name, value: e.id }))} size={300}  />
+                <SwitchBranch branchs={branch.data.payload} />
             </div>
-            <Tabs defaultValue={`/businesses/${params.bId}/menu`} className="w-full">
-                <TabComponent
-                    items={itemTabs}
-                />
+            <TabsClient>
                 {children}
-            </Tabs>
+            </TabsClient>
             <div className="mb-10"></div>
         </div>
     );

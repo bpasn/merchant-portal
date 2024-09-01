@@ -52,16 +52,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
                             of={value}
                             render={(file, index) => (
                                 <div key={index} className="relative w-[224px] h-[224px] flex flex-row justify-start gap-2">
-                                    {/* <Image
-                                        layout='fill'
-                                        objectFit='cover'
-                                        className="object-cover "
-                                        src={URL.createObjectURL(file)}
-                                        alt="Image"
-                                    /> */}
                                     <Image
                                         src={URL.createObjectURL(file)}
-                                        fill alt={''} />
+                                        fill
+                                        className='object-cover'
+                                        alt={''} />
                                     <div className="absolute top-2 right-2">
                                         <Button
                                             className="w-10 h-10"

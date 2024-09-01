@@ -25,7 +25,7 @@ const OptionFormComponent = ({
             <div className="flex flex-row">
                 <h2 className='font-bold text-md'>Item options</h2>
                 <div className="ml-auto">
-                    <LinkButton className="border-none text-primary text-sm" href={`/bussinesses/${branchContext.id}/menu-option/create`} label="Create item option" />
+                    <LinkButton className="border-none text-primary text-sm" href={`/businesses/${branchContext.id}/menu-option/create`} label="Create item option" />
                 </div>
             </div>
             <div className="flex flex-col gap-3">
@@ -35,9 +35,9 @@ const OptionFormComponent = ({
                         return (
                             <FormField
                                 control={control}
-                                name={"itemOption"}
+                                name={"productOptions"}
                                 render={({ field }) => {
-                                    const isChecked = Array.isArray(field.value) && field.value.some((value) => value.name === option.name);
+                                    const isChecked = Array.isArray(field.value) && field.value.some((value) => value.optionName === option.optionName);
                                     return (
                                         <FormItem className="flex flex-row items-center space-x-3 space-y-0">
                                             <FormControl>
@@ -47,13 +47,13 @@ const OptionFormComponent = ({
                                                         const currentValue = Array.isArray(field.value) ? field.value : [];
                                                         const updatedValue = c
                                                             ? [...currentValue, option]
-                                                            : currentValue.filter((value) => value.name !== option.name);
+                                                            : currentValue.filter((value) => value.optionName !== option.optionName);
                                                         field.onChange(updatedValue);
                                                     }}
                                                 />
                                             </FormControl>
                                             <FormLabel className="text-sm font-normal">
-                                                {option.name}
+                                                {option.optionName}
                                             </FormLabel>
                                         </FormItem>
                                     );

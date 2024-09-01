@@ -1,7 +1,10 @@
+import { AxiosError } from 'axios';
 import { NextResponse } from 'next/server';
 
 export const handleError = (error: any, defaultMessage: string = "An unexpected error occurred") => {
-  console.error("Error:", error);
+  if(error instanceof AxiosError){
+    return NextResponse.json({error:error.response!.data || defaultMessage},{status:error.response!.status})
+  }
   return NextResponse.json({ error: error.message || defaultMessage }, { status: 500 });
 };
 

@@ -7,6 +7,7 @@ import {
     FormField,
     FormItem,
     FormLabel,
+    FormMessage,
 } from '@/components/ui/form';
 import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
@@ -20,22 +21,23 @@ import { FormFieldCommon } from '@/modules/common/form-field';
 import HeadingModule from '@/modules/common/heading-module';
 import LinkButton from '@/modules/common/link-button';
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from 'axios';
 import { useForm } from "react-hook-form";
 import OptionFormComponent from '../component/option-form-component';
 import StockFormComponent from '../component/stock-form-component';
+import axiosInstance from '@/lib/utils/axios-config';
+import { omit } from 'lodash';
 
 
 
 interface FormItemMenuProps {
     dataForm: ProductSchema | undefined;
-    itemOption: Omit<ProductOptionSchema, "choice">[];
-    itemGroup: ProductGroupSchema[];
+    productOptions: Omit<ProductOptionSchema, "choice">[];
+    productGroups: ProductGroupSchema[];
 };
 const FormItemMenu = ({
     dataForm,
-    itemOption,
-    itemGroup
+    productOptions,
+    productGroups
 }: FormItemMenuProps) => {
     const branchContext = useBranchContext();
     const title = dataForm !== undefined ? "Edit Item" : "Create Item";
@@ -51,33 +53,32 @@ const FormItemMenu = ({
             descriptionTH: "",
             stock: {
                 unitQuantity: 0,
-                unitType: "piece",
+                unitType: "PIECE",
                 quantity: 0,
-                status: "inStock",
+                status: "IN_STOCK",
                 reOrder: false
             },
             images: [],
-            itemGroup: [],
-            itemOption: []
+            productOptions: [],
+            productGroups: []
         }
     });
-
     const handleSave = async (data: ProductSchema) => {
-        const formData = new FormData();
-        formData.append("nameEN", data.nameEN);
-        formData.append("nameTH", data.nameTH);
-        formData.append("descriptionTH", data.descriptionTH as string);
-        formData.append("descriptionEN", data.descriptionEN as string);
-        formData.append("price", data.price.toString());
-        data.images.map((file, index) => {
-            formData.append(`images`, file);
-        });
-        console.log(productSchema.safeParse(formData));
-        const response = await axios.post('/api/product', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        });
+        try {
+            const productsObject = omit(data, "images");
+            const formData = new FormData();
+            data.images.map((file) => {
+                formData.append(`productImages`, file);
+            });
+            formData.append("products",JSON.stringify(productsObject))
+            await axiosInstance.post("/api/product", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+        } catch (error) {
+            toast({ title: (error as Error).name, description: (error as Error).message });
+        }
 
     };
 
@@ -146,8 +147,7 @@ const FormItemMenu = ({
                                             value={field.value?.map(file => (file as File))!}
                                             onChange={(e: File) => {
                                                 let newFile: File = e;
-
-                                                if (newFile.size >= 2) {
+                                                if (newFile.size >= 2 * 1024 * 1024) {
                                                     toast({
                                                         title: "Scheduled: Catch up ",
                                                         description: "Friday, February 10, 2023 at 5:57 PM",
@@ -164,6 +164,7 @@ const FormItemMenu = ({
                                                 return field.onChange(field.value);
                                             }}
                                         />
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -172,24 +173,24 @@ const FormItemMenu = ({
 
                     <StockFormComponent stock={dataForm?.stock} control={form.control} />
 
-                    <OptionFormComponent itemOption={itemOption} control={form.control} />
+                    <OptionFormComponent itemOption={productOptions} control={form.control} />
                     <div className="content-container px-8 py-8 flex flex-col gap-5 ">
                         <div className="flex flex-row items-center">
                             <h2 className='font-bold text-md'>Item Group</h2>
                             <div className="ml-auto">
-                                <LinkButton className="border-none text-sm text-primary" href={`/bussinesses/${branchContext.id}/menu-group/create`} label="Create item groups" />
+                                <LinkButton className="border-none text-sm text-primary" href={`/businesses/${branchContext.id}/menu-group/create`} label="Create item groups" />
                             </div>
                         </div>
                         <div className="flex flex-col gap-3">
                             <EachElement
-                                of={itemGroup}
+                                of={productGroups}
                                 render={(group) => {
                                     return (
                                         <FormField
                                             control={form.control}
-                                            name={"itemGroup"}
+                                            name={"productGroups"}
                                             render={({ field }) => {
-                                                const isChecked = Array.isArray(field.value) && field.value.some((value) => value.name === group.name);
+                                                const isChecked = Array.isArray(field.value) && field.value.some((value) => value.groupName === group.groupName);
                                                 return (
                                                     <FormItem className="flex flex-row items-center space-x-3 space-y-0">
                                                         <FormControl>
@@ -199,13 +200,13 @@ const FormItemMenu = ({
                                                                     const currentValue = Array.isArray(field.value) ? field.value : [];
                                                                     const updatedValue = c
                                                                         ? [...currentValue, group]
-                                                                        : currentValue.filter((value) => value.name !== group.name);
+                                                                        : currentValue.filter((value) => value.groupName !== group.groupName);
                                                                     field.onChange(updatedValue);
                                                                 }}
                                                             />
                                                         </FormControl>
                                                         <FormLabel className="text-sm font-normal">
-                                                            {group.name}
+                                                            {group.groupName}
                                                         </FormLabel>
                                                     </FormItem>
                                                 );
@@ -216,57 +217,12 @@ const FormItemMenu = ({
                             />
                         </div>
                     </div>
-                    {/* <div className="content-container px-8 py-8 flex flex-col gap-5 ">
-                        <div className="flex flex-row items-center">
-                            <h2 className='font-bold text-md'>Item Group</h2>
-                            <div className="ml-auto">
-                                <LinkButton className="border-none text-sm text-primary" href={`/bussinesses/${branchContext.id}/menu-group/create`} label="Create item groups" />
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-3">
-                            <EachElement
-                                of={itemGroup}
-                                render={(group) => {
-                                    return (
-                                        <FormField
-                                            control={form.control}
-                                            name={"itemGroup"}
-                                            render={({ field }) => {
-                                                const isChecked = Array.isArray(field.value) && field.value.some((value) => value.name === group.name);
-                                                return (
-                                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                                                        <FormControl>
-                                                            <Checkbox
-                                                                checked={isChecked}
-                                                                onCheckedChange={(c) => {
-                                                                    const currentValue = Array.isArray(field.value) ? field.value : [];
-                                                                    const updatedValue = c
-                                                                        ? [...currentValue, group]
-                                                                        : currentValue.filter((value) => value.name !== group.name);
-                                                                    field.onChange(updatedValue);
-                                                                }}
-                                                            />
-                                                        </FormControl>
-                                                        <FormLabel className="text-sm font-normal">
-                                                            {group.name}
-                                                        </FormLabel>
-                                                    </FormItem>
-                                                );
-                                            }}
-                                        />
-                                    );
-                                }}
-                            />
-                        </div>
-                    </div> */}
-                    {/* <div className='content-container sticky h-[350px] top-[100px] col-span-3 gap-4 basis-[300px] shrink-0'>
-              <div className="p-6">
-                <h4>Warning: Sale of regulated goods is not allowed</h4>
-                <div>
-
-                </div>
-              </div>
-            </div> */}
+                    <div className='flex justify-end'>
+                        <Button
+                            className='rounded-lg  w-[250px]'
+                            type='submit'
+                        >Save</Button>
+                    </div>
                 </div>
             </form>
             <div className="mb-10" />

@@ -1,10 +1,14 @@
+import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
+import axiosInstance from '@/lib/utils/axios-config';
 import ManageItemOptionTemplate from '@/modules/businesses/manage-item-module/template/item-option';
 
 type Props = {}
 
-const MenuOptionPage = (props: Props) => {
+const MenuOptionPage = async (props: Props) => {
+  const { data } = await axiosInstance.get<ApiResponse<ProductOptionSchema[]>>("/api/option");
+
   return (
-    <ManageItemOptionTemplate />
+    <ManageItemOptionTemplate productOption={data.payload}/>
   )
 }
 

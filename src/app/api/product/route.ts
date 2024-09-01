@@ -1,6 +1,7 @@
-import { FormItemSchema } from "@/lib/schema/productSchema";
 import { handleError } from "@/lib/utils/handler-exception";
 import { NextRequest, NextResponse } from "next/server";
+import { axiosConfig } from "../axios.config";
+import { productSchema, ProductSchema } from "@/lib/schema/productSchema";
 
 export const GET = async (req: NextRequest) => {
     try {
@@ -12,18 +13,14 @@ export const GET = async (req: NextRequest) => {
 };
 
 export const POST = async (req: NextRequest) => {
-    const formData = await req.formData();
-    const formProduct: FormItemSchema = {
-        nameTH: formData.get("nameTH") as string,
-        nameEN: formData.get("nameEN") as string,
-        price: parseFloat(formData.get("price") as string),
-        descriptionTH: formData.get("descriptionTH") as string,
-        descriptionEN: formData.get("descriptionEN") as string,
-        images: formData.getAll("images").map(e => e) as File[],
-        itemOption: [],
-        itemGroup: []
-    };
+    const formData: FormData = await req.formData();
     try {
+       
+        const response = await axiosConfig.post(`${process.env.API_URL}/api/v1/products`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
         return NextResponse.json("SUCCESS");
     } catch (error) {
         return handleError(error);

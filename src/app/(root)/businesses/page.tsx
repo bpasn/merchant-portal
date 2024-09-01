@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import axios from 'axios';
 import useBranchContext from '@/lib/context/branch-context';
 import { useRouter } from 'next/navigation';
+import axiosInstance from '@/lib/utils/axios-config';
 
 const BusinessesPage = () => {
   const branchContext = useBranchContext();
@@ -15,7 +15,7 @@ const BusinessesPage = () => {
         if(branchContext.id !== null){
           router.push(`/businesses/${branchContext.id}/menu`)
         }
-        const response = await axios.get<{ payload: IBranch[] }>("http://localhost:3000/api/store");
+        const response = await axiosInstance.get<{ payload: IBranch[] }>(`/api/store`);
         if (response.status === 200 && response.data) {
           const branches = response.data.payload;
           if (branches.length > 0) {

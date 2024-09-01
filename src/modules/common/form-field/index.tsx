@@ -14,6 +14,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { CheckedState } from '@radix-ui/react-checkbox';
 import Combobox from '@/modules/common/combobox';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { CheckIcon, ChevronsUpDown } from 'lucide-react';
+import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { cn } from '@/lib/utils';
 export declare interface UseControllerProps<
     TFieldValues extends FieldValues = FieldValues,
     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -43,7 +48,7 @@ export const FormFieldCommon = <T extends FieldValues,>({
                 <FormItem >
                     {label ? <FormLabel>{label}</FormLabel> : null}
                     <FormControl>
-                        {renderElement(type, { ...field, placeholder: placeholder || "Enter your " + field.name })}
+                        {renderElement(type, { ...field, placeholder: placeholder || "Enter your " + field.name,  })}
                     </FormControl>
                     {description ? <FormDescription className='text-xs text-gray-500'>{description}</FormDescription> : null}
                     <FormMessage className='mb-2' />
@@ -110,37 +115,85 @@ export const FormFieldCheckboxCommon = <T extends FieldValues, TName extends Fie
     );
 };
 
-
+interface OptionSelectProps {
+    value: string, label: string;
+}
 interface FormFieldSelectCommonProps<T extends FieldValues> extends UseControllerProps<T> {
-    options: { value: string, label: string }[];
+    options: OptionSelectProps[];
+    defaultValue?: string;
 }
 
 export const FormSelectCommon = <T extends FieldValues,>({
     control,
     name,
     label,
-    options
+    options,
+    defaultValue = options[0].value
 }: FormFieldSelectCommonProps<T>) => {
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState<string>(defaultValue);
     return (
         <FormField
             control={control}
             name={name}
             render={({ field }) => {
                 return (
-                    <FormItem className='flex flex-row gap-4 items-center'>
-                        <FormLabel>{label}</FormLabel>
+                    <FormItem className='flex flex-col gap-2 items-start'>
+                        <FormLabel className="text-sm font-normal">
+                            {label}
+                        </FormLabel>
                         <FormControl>
-                            <Combobox {...field} items={options} changeValue={field.onChange}/>
+                            <Popover open={open} onOpenChange={setOpen}>
+                                <PopoverTrigger asChild className='m'>
+                                    <Button
+                                        variant={"outline"}
+                                        role="combobox"
+                                        aria-expanded={open}
+                                        className={`justify-between w-full`}
+                                    >
+                                        {options.find(e => e.value === value)?.label}
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className={`p-0 w-[250px]`}>
+                                    <Command>
+                                        {/* <CommandInput placeholder="Search framework..." className="h-9" /> */}
+                                        <CommandList>
+                                            <CommandGroup >
+                                                {options.map((item: OptionSelectProps) => (
+                                                    <CommandItem
+                                                        key={item.value}
+                                                        value={item.label}
+                                                        onSelect={(v) => {
+                                                            setValue(v);
+                                                            field.onChange(v);
+                                                            setOpen(!open);
+                                                        }}
+                                                    >
+                                                        {item.label}
+                                                        <CheckIcon
+                                                            className={cn(
+                                                                "ml-auto h-4 w-4",
+                                                                value === item.value ? "opacity-100" : "opacity-0"
+                                                            )}
+                                                        />
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
                         </FormControl>
                     </FormItem>
-                )
+                );
             }}
         />
-    )
-}
-const renderElement = <T extends FieldValues,>(type: string, field: ControllerRenderProps<T, Path<T>> & { placeholder?: string; }): React.ReactNode => {
+    );
+};
+const renderElement = <T extends FieldValues,>(type: string, field: ControllerRenderProps<T, Path<T>> & { placeholder?: string }): React.ReactNode => {
     if (type === 'input') {
-        return (<Input {...field} className='rounded-lg' />);
+        return (<Input {...field} className='rounded-lg'/>);
     } else if (type === "textarea") {
         return (<Textarea {...field} className='rounded-lg' />);
     }

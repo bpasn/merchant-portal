@@ -1,14 +1,37 @@
 'use client';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { TabsContent } from '@/components/ui/tabs';
 import useBranchContext from '@/lib/context/branch-context';
+import { ChoiceStatusEnum, choiceStatusEnum } from '@/lib/schema/optionChioceSchema';
+import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
+import { cn, EachElement, toUpperCase } from '@/lib/utils';
 import LinkButton from '@/modules/common/link-button';
+import { X } from 'lucide-react';
 import React from 'react';
 
-type Props = {};
 
-const ManageItemOption = (props: Props) => {
+const ManageItemOption = ({
+  productOption
+}: {
+  productOption: ProductOptionSchema[];
+}) => {
   const { id } = useBranchContext();
+  const handleChange = (v: string, optionIndex: number, choiceIndex: number) => {
+    productOption[optionIndex].choices[choiceIndex].status = v as ChoiceStatusEnum;
+  };
   return (
     <TabsContent value={`/businesses/${id}/menu-option`}>
       <div className='p-4'>
@@ -30,6 +53,59 @@ const ManageItemOption = (props: Props) => {
             </div>
           </div>
         </div>
+        <Accordion type="single" collapsible className="w-full px-3">
+          {productOption.length ? (
+            <EachElement
+              of={productOption}
+              render={(option, optionIndex) => {
+                return (
+                  <AccordionItem key={option.optionName} value={option.optionName}>
+                    <AccordionTrigger>{option.optionName}</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="ml-5">
+                        <EachElement
+                          of={option.choices}
+                          render={(choice, choiceIndex) => (
+                            <div key={choiceIndex} className='flex flex-row gap-5 items-center border-b-2 border-b-gray-100 py-3 px-3'>
+                              <div className="w-full">
+                                <h1>{choice.name}</h1>
+                              </div>
+                              <Select
+                                value={choice.status}
+                                onValueChange={(v) => handleChange(v, optionIndex, choiceIndex)}
+                              >
+                                <SelectTrigger className={
+                                  cn(
+                                    "w-[157px] h-[30px] rounded-lg flex flex-row gap-4 p-3 justify-center focus:ring-0",
+                                    choice.status === choiceStatusEnum.Enum.available
+                                      ? "text-[rgba(0,168,56)] bg-[rgba(0,168,56)]/30"
+                                      : "text-[rgba(123,132,136)] bg-[rgba(123,132,136)]/30"
+                                  )
+                                }>
+                                  <SelectValue placeholder={choice.status} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <EachElement
+                                    of={choiceStatusEnum.options}
+                                    render={(status) => (
+                                      <SelectItem key={status} value={status}>{toUpperCase(status)}</SelectItem>
+                                    )}
+                                  />
+                                </SelectContent>
+                              </Select>
+                              <X size={32} className='cursor-pointer ' onClick={() => { }} />
+                            </div>
+                          )}
+                        />
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                );
+              }}
+            />
+          ) : null}
+        </Accordion>
+
       </div>
     </TabsContent>
 
