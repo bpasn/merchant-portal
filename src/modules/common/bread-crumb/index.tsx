@@ -1,6 +1,6 @@
 'use client';
-import useBranchContext from '@/lib/context/branch-context';
 import { routes } from '@/lib/data/menu';
+import { useBranchStore } from '@/lib/hooks/store-branch';
 import { IRoute } from '@/types/router-menu';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
@@ -51,7 +51,7 @@ function generateBreadcrumbs(currentPath: string,id?: string): IRoute[] {
 }
 const Breadcrumb = () => {
     const router = usePathname();
-    const { id } = useBranchContext();
+    const { id } = useBranchStore();
     if (router === "/") {
         return (
             <div className='flex flex-row'>

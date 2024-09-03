@@ -1,13 +1,11 @@
-import { ProductGroupSchema } from '@/lib/schema/productGroupSchema';
+import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
-import axiosInstance from '@/lib/utils/axios-config';
+import axiosClient from '@/lib/utils/axios-client';
 import FormItemMenu from '@/modules/businesses/manage-item-module/template/item/form/form-item';
 
-type Props = {};
-
 const MenuItemPage = async () => {
-    const { data: options } = await axiosInstance.get<ApiResponse<ProductOptionSchema[]>>(`/api/option`);
-    const { data: groups } = await axiosInstance.get<ApiResponse<ProductGroupSchema[]>>(`/api/group`);
+    const { data: options } = await axiosClient.get<ApiResponse<ProductOptionSchema[]>>(`/api/option`);
+    const { data: groups } = await axiosClient.get<ApiResponse<CategoriesSchema[]>>(`/api/group`);
     return (
         <FormItemMenu dataForm={undefined} productOptions={options.payload} productGroups={groups.payload} />
     );

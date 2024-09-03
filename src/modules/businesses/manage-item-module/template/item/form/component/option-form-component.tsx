@@ -1,7 +1,7 @@
 'use client';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
-import useBranchContext from '@/lib/context/branch-context';
+import { useBranchStore } from '@/lib/hooks/store-branch';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { ProductSchema } from '@/lib/schema/productSchema';
 import { EachElement } from '@/lib/utils';
@@ -19,7 +19,7 @@ const OptionFormComponent = ({
     itemOption,
     control
 }: OptionFormComponentProps) => {
-    const branchContext = useBranchContext();
+    const branchContext = useBranchStore();
     return (
         <div className="content-container px-8 py-8 flex flex-col gap-5 ">
             <div className="flex flex-row">

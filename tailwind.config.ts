@@ -10,7 +10,7 @@ const config = {
   ],
   prefix: "",
   theme: {
-    
+
     container: {
       center: true,
       padding: "2rem",
@@ -29,6 +29,9 @@ const config = {
       xl: "1280px",
     },
     extend: {
+      fontSize: {
+        "mdl": "1.7rem"
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

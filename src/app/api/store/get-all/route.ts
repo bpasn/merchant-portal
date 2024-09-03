@@ -7,16 +7,16 @@ import { NextRequest } from "next/server";
 
 
 export const GET = async () => {
-    const { data } = await axiosServer.get<ApiResponse<StoreModal>>("/store/find-one");
+    const { data } = await axiosServer.get<ApiResponse<StoreModal>>("/store");
     return handleResponse(data, HttpStatus.OK);
 };
 
-export const POST = async (req: NextRequest) => {
-    const body = await req.json();
-    try {
-        const { data } = await axiosServer.post<ApiResponse<StoreSchema>>("/store", body);
-        return handleResponse<StoreSchema>(data, HttpStatus.OK);
-    } catch (error) {
-        return handleError(error);
-    }
-};
+// export const POST = async (req: NextRequest) => {
+//     const body = await req.json();
+//     try {
+//         const { data } = await axiosServer.post<ApiResponse<StoreSchema>>("/store", body);
+//         return handleResponse<StoreSchema>(data, HttpStatus.OK);
+//     } catch (error) {
+//         return handleError(error);
+//     }
+// };

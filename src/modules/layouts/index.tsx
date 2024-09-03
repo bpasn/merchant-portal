@@ -13,22 +13,16 @@ const LayoutModule = ({
 }: { children: React.ReactNode; }) => {
 
     return (
-        <BranchProvider>
-            <SideBarProvider>
-                <ModelStoreProvider>
-                    <div className=''>
-                        <SideBar />
-                        <div className='mdl:ml-[240px]'>
-                            <Header />
-                            <main className="p-0 m-auto mt-[64px] px-5">
-                                {children}
-                                <ModalProvider />
-                            </main>
-                        </div>
-                    </div>
-                </ModelStoreProvider>
-            </SideBarProvider>
-        </BranchProvider>
+        <div className=''>
+            <SideBar />
+            <div className='mdl:ml-[240px]'>
+                <Header />
+                <main className="p-0 m-auto mt-[64px] px-5">
+                    {children}
+                    <ModalProvider />
+                </main>
+            </div>
+        </div>
     );
 };
 

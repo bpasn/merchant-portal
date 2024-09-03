@@ -1,15 +1,16 @@
 'use client';
 import React from "react";
-import { useModalContext } from "@/lib/context/modal-context";
 import Modal from "@/components/ui/modal";
+import { useStoreModal } from "@/lib/hooks/store-modal";
 
 const StoreModal = () => {
-    const storeModel = useModalContext();
+    const storeModel = useStoreModal();
     return (
         <Modal
             title={storeModel.title}
             isOpen={storeModel.open}
             onClose={storeModel.closeModal}
+            description={storeModel.description!}
         >
             {storeModel.content}
         </Modal>

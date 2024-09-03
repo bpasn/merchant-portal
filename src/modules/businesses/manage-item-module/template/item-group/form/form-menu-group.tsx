@@ -1,40 +1,37 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import HeadingModule from '@/modules/common/heading-module';
-import React from 'react';
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import {
     Form
 } from '@/components/ui/form';
+import { useBranchStore } from '@/lib/hooks/store-branch';
+import { CategoriesSchema, categoriesSchema } from '@/lib/schema/categoriesSchema';
+import axiosClient from '@/lib/utils/axios-client';
 import { FormFieldCommon } from '@/modules/common/form-field';
-import _ from 'lodash';
-import { ProductGroupSchema, productGroupSchema } from '@/lib/schema/productGroupSchema';
-import axiosInstance from '@/lib/utils/axios-config';
+import HeadingModule from '@/modules/common/heading-module';
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from 'next/navigation';
-import useBranchContext from '@/lib/context/branch-context';
+import { useForm } from "react-hook-form";
 
 
 
 interface FormMenuGroupProps {
-    itemGroup: ProductGroupSchema | null;
+    itemGroup: CategoriesSchema | null;
 };
 const FormMenuGroup = ({
     itemGroup
 }: FormMenuGroupProps) => {
     const title = itemGroup !== null ? "Edit Item" : "Create Item";
     const router = useRouter();
-    const { id } = useBranchContext();
-    const form = useForm<ProductGroupSchema>({
-        resolver: zodResolver(productGroupSchema),
+    const { id } = useBranchStore();
+    const form = useForm<CategoriesSchema>({
+        resolver: zodResolver(categoriesSchema),
         defaultValues: itemGroup || {
             groupName: "",
-            isRequired: false
         }
     });
 
-    const handleSave = async (data: ProductGroupSchema) => {
-        await axiosInstance.post("/api/group", data);
+    const handleSave = async (data: CategoriesSchema) => {
+        await axiosClient.post("/api/group", data);
        return router.push(`/businesses/${id}/menu-group`);
     };
     return (

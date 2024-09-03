@@ -1,15 +1,14 @@
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ProductGroupSchema } from '@/lib/schema/productGroupSchema';
-import { MoreHorizontal, Copy, Edit2, Trash } from 'lucide-react';
-import React from 'react';
+import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
+import { Copy, Edit2, MoreHorizontal, Trash } from 'lucide-react';
 
 type Props = {};
 
 const ProductGroupAction = ({
     group
 }: {
-    group: ProductGroupSchema;
+    group: CategoriesSchema;
 }) => {
     const onCopy = () => {};
     const onEdit = () => {};

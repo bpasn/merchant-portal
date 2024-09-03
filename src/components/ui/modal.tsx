@@ -42,8 +42,8 @@ const Modal: React.FC<ModalProps> = ({
                     "overflow-auto max-h-[calc(100%_-_64px)] max-w-md"
                 )}>
                     <DialogHeader>
-                        <DialogTitle>{title}</DialogTitle>
-                        <DialogDescription>{description}</DialogDescription>
+                        <DialogTitle className="text-md">{title}</DialogTitle>
+                        <DialogDescription className="text-sm">{description}</DialogDescription>
                     </DialogHeader>
                     <div className="overflow-auto">{children}</div>
                 </DialogContent>

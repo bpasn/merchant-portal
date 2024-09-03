@@ -1,30 +1,28 @@
 'use client';
 import { Tabs } from '@/components/ui/tabs';
-import useBranchContext from '@/lib/context/branch-context';
 import TabComponent from '@/modules/businesses/manage-item-module/component/tab-component';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import React from 'react';
 
-type Props = {};
 
 const TabsClient = ({
     children
 }: {
     children: React.ReactNode;
 }) => {
-    const { id } = useBranchContext();
+    const param = useParams();
     const itemTabs = [
         {
             label: "Item menu",
-            href: `/businesses/${id}/menu`
+            href: `/businesses/${param.bId}/menu`
         },
         {
             label: "Item option",
-            href: `/businesses/${id}/menu-option`
+            href: `/businesses/${param.bId}/menu-option`
         },
         {
             label: "Item group",
-            href: `/businesses/${id}/menu-group`
+            href: `/businesses/${param.bId}/menu-group`
         },
     ];
     const pathName = usePathname();

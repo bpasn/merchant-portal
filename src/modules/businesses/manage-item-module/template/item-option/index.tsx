@@ -14,12 +14,13 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { TabsContent } from '@/components/ui/tabs';
-import useBranchContext from '@/lib/context/branch-context';
+import { useBranchStore } from '@/lib/hooks/store-branch';
 import { ChoiceStatusEnum, choiceStatusEnum } from '@/lib/schema/optionChioceSchema';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { cn, EachElement, toUpperCase } from '@/lib/utils';
 import LinkButton from '@/modules/common/link-button';
 import { X } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import React from 'react';
 
 
@@ -28,12 +29,13 @@ const ManageItemOption = ({
 }: {
   productOption: ProductOptionSchema[];
 }) => {
-  const { id } = useBranchContext();
+  const params = useParams();
   const handleChange = (v: string, optionIndex: number, choiceIndex: number) => {
     productOption[optionIndex].choices[choiceIndex].status = v as ChoiceStatusEnum;
   };
+  console.log(productOption)
   return (
-    <TabsContent value={`/businesses/${id}/menu-option`}>
+    <TabsContent value={`/businesses/${params.bId}/menu-option`}>
       <div className='p-4'>
         <div className="w-full">
           <div className="py-4 overflow-auto">
@@ -48,7 +50,7 @@ const ManageItemOption = ({
               <div className='ml-auto' style={{
                 marginLeft: "auto"
               }}>
-                <LinkButton href={`/businesses/${id}/menu-option/create`} label='Create item option' />
+                <LinkButton href={`/businesses/${params.bId}/menu-option/create`} label='Create item option' />
               </div>
             </div>
           </div>
@@ -56,7 +58,7 @@ const ManageItemOption = ({
         <Accordion type="single" collapsible className="w-full px-3">
           {productOption.length ? (
             <EachElement
-              of={productOption}
+              of={productOption || []}
               render={(option, optionIndex) => {
                 return (
                   <AccordionItem key={option.optionName} value={option.optionName}>

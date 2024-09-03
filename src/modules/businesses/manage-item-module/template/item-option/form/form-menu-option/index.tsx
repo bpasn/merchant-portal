@@ -32,11 +32,11 @@ import {
     choiceStatusEnum,
     OptionChoiceSchema
 } from '@/lib/schema/optionChioceSchema';
-import { useModalContext } from '@/lib/context/modal-context';
 import FormChoice from '../form-choice';
 import { productOptionSchema, ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { toast } from '@/components/ui/use-toast';
-import axiosInstance from '@/lib/utils/axios-config';
+import { useStoreModal } from '@/lib/hooks/store-modal';
+import axiosClient from '@/lib/utils/axios-client';
 
 
 
@@ -47,7 +47,7 @@ const FormMenuOption = ({
     itemOption,
 }: FormMenuOptionProps) => {
     const title = itemOption !== null ? "Edit Item" : "Create Item";
-    const modalContext = useModalContext();
+    const modalContext = useStoreModal();
     const form = useForm<ProductOptionSchema & { lengthSelect?: number; }>({
         resolver: zodResolver(productOptionSchema),
         defaultValues: itemOption || {
@@ -67,7 +67,7 @@ const FormMenuOption = ({
 
     const handleSaveOption = async (data: ProductOptionSchema) => {
         try {
-            await axiosInstance.post("/api/option",data);
+            await axiosClient.post("/api/option",data);
         } catch (error) {
             toast({
                 title:"ERROR",

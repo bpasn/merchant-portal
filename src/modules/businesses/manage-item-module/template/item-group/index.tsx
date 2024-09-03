@@ -1,26 +1,26 @@
 'use client';
-import { TabsContent } from '@/components/ui/tabs';
-import useBranchContext from '@/lib/context/branch-context';
-import React from 'react';
 import { Input } from '@/components/ui/input';
-import LinkButton from '@/modules/common/link-button';
+import { TabsContent } from '@/components/ui/tabs';
+import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
 import { EachElement } from '@/lib/utils';
-import { ProductGroupSchema } from '@/lib/schema/productGroupSchema';
-import { EllipsisVertical } from 'lucide-react';
+import LinkButton from '@/modules/common/link-button';
 import ProductGroupAction from './component/product-group-cell-action';
+import { useBranchStore } from '@/lib/hooks/store-branch';
+import { useParams } from 'next/navigation';
 
 
 const ManageItemGroup = ({
   productGroups
 }: {
-  productGroups: ProductGroupSchema[];
+  productGroups: CategoriesSchema[];
 }) => {
-  const { id } = useBranchContext();
+const params = useParams();
+console.log(productGroups)
   const handleAction = () => {
 
   };
   return (
-    <TabsContent value={`/businesses/${id}/menu-group`}>
+    <TabsContent value={`/businesses/${params.bId}/menu-group`}>
       <div className='p-4'>
         <div className="w-full">
           <div className="py-4 overflow-auto">
@@ -35,7 +35,7 @@ const ManageItemGroup = ({
               <div className='ml-auto' style={{
                 marginLeft: "auto"
               }}>
-                <LinkButton href={`/businesses/${id}/menu-group/create`} label='Create item group' />
+                <LinkButton href={`/businesses/${params.bId}/menu-group/create`} label='Create item group' />
               </div>
             </div>
           </div>

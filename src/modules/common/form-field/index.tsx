@@ -29,6 +29,7 @@ export declare interface UseControllerProps<
     label?: string;
     type?: 'input' | 'textarea';
     description?: string | null;
+    disabled?: boolean;
 };
 
 
@@ -38,7 +39,8 @@ export const FormFieldCommon = <T extends FieldValues,>({
     placeholder,
     label,
     type = "input",
-    description
+    description,
+    disabled
 }: UseControllerProps<T>) => {
     return (
         <FormField
@@ -48,7 +50,7 @@ export const FormFieldCommon = <T extends FieldValues,>({
                 <FormItem >
                     {label ? <FormLabel>{label}</FormLabel> : null}
                     <FormControl>
-                        {renderElement(type, { ...field, placeholder: placeholder || "Enter your " + field.name,  })}
+                        {renderElement(type, { ...field, placeholder: placeholder || "Enter your " + field.name, disabled })}
                     </FormControl>
                     {description ? <FormDescription className='text-xs text-gray-500'>{description}</FormDescription> : null}
                     <FormMessage className='mb-2' />
@@ -86,7 +88,6 @@ export const FormFieldCheckboxCommon = <T extends FieldValues, TName extends Fie
                                 onCheckedChange={(c) => {
                                     const isChecked = Boolean(c);
                                     let updatedValue = [];
-
                                     if (Array.isArray(field.value)) {
                                         if (isChecked) {
                                             updatedValue = [...field.value, id];
@@ -191,9 +192,11 @@ export const FormSelectCommon = <T extends FieldValues,>({
         />
     );
 };
-const renderElement = <T extends FieldValues,>(type: string, field: ControllerRenderProps<T, Path<T>> & { placeholder?: string }): React.ReactNode => {
+const renderElement = <T extends FieldValues,>(
+    type: string,
+    field: ControllerRenderProps<T, Path<T>> & { placeholder?: string; disabled?: boolean; }): React.ReactNode => {
     if (type === 'input') {
-        return (<Input {...field} className='rounded-lg'/>);
+        return (<Input {...field} className='rounded-lg' />);
     } else if (type === "textarea") {
         return (<Textarea {...field} className='rounded-lg' />);
     }

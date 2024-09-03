@@ -22,10 +22,14 @@ export const delay = (duration: number) => new Promise((res) => setTimeout(res, 
 
 export const report = (error: unknown):string => {
   if (error instanceof AxiosError) {
+    console.log(error.response?.data ? error.response.data : error.message)
     return error.response?.data ? error.response.data : error.message;
   }
   if (error instanceof Error) {
+    console.log(error.message)
     return error.message;
   }
+  console.log("Internal server error")
+
   return "Internal server error";
 };

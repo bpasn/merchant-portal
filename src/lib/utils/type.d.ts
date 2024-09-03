@@ -1,4 +1,4 @@
-type ApiResponse<Data extends object> = {
+type ApiResponse<Data extends object > = {
     payload: Data;
     status: number
 }

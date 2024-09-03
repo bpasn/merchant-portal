@@ -11,8 +11,7 @@ import {
 } from '@/components/ui/form';
 import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
-import useBranchContext from '@/lib/context/branch-context';
-import { ProductGroupSchema } from '@/lib/schema/productGroupSchema';
+import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { productSchema, ProductSchema } from '@/lib/schema/productSchema';
 import { EachElement } from '@/lib/utils';
@@ -21,25 +20,26 @@ import { FormFieldCommon } from '@/modules/common/form-field';
 import HeadingModule from '@/modules/common/heading-module';
 import LinkButton from '@/modules/common/link-button';
 import { zodResolver } from "@hookform/resolvers/zod";
+import { omit } from 'lodash';
 import { useForm } from "react-hook-form";
 import OptionFormComponent from '../component/option-form-component';
 import StockFormComponent from '../component/stock-form-component';
-import axiosInstance from '@/lib/utils/axios-config';
-import { omit } from 'lodash';
+import { useBranchStore } from '@/lib/hooks/store-branch';
+import axiosClient from '@/lib/utils/axios-client';
 
 
 
 interface FormItemMenuProps {
     dataForm: ProductSchema | undefined;
     productOptions: Omit<ProductOptionSchema, "choice">[];
-    productGroups: ProductGroupSchema[];
+    productGroups: CategoriesSchema[];
 };
 const FormItemMenu = ({
     dataForm,
     productOptions,
     productGroups
 }: FormItemMenuProps) => {
-    const branchContext = useBranchContext();
+    const branchContext = useBranchStore();
     const title = dataForm !== undefined ? "Edit Item" : "Create Item";
     const { toast } = useToast();
 
@@ -60,7 +60,7 @@ const FormItemMenu = ({
             },
             images: [],
             productOptions: [],
-            productGroups: []
+            categories: []
         }
     });
     const handleSave = async (data: ProductSchema) => {
@@ -71,7 +71,7 @@ const FormItemMenu = ({
                 formData.append(`productImages`, file);
             });
             formData.append("products",JSON.stringify(productsObject))
-            await axiosInstance.post("/api/product", formData, {
+            await axiosClient.post("/api/product", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
@@ -188,7 +188,7 @@ const FormItemMenu = ({
                                     return (
                                         <FormField
                                             control={form.control}
-                                            name={"productGroups"}
+                                            name={"categories"}
                                             render={({ field }) => {
                                                 const isChecked = Array.isArray(field.value) && field.value.some((value) => value.groupName === group.groupName);
                                                 return (

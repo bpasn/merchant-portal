@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { productOptionSchema } from "./ProductOptionSchema";
-import { productGroupSchema } from "./productGroupSchema";
+import { categoriesSchema } from "./categoriesSchema";
 import { stockProductSchema } from "./productStockSchema";
 
 export const productSchema = z.object({
@@ -28,7 +28,7 @@ export const productSchema = z.object({
     productOptions: z.array(productOptionSchema.pick({
         optionName: true
     })),
-    productGroups: z.array(productGroupSchema)
+    categories: z.array(categoriesSchema)
 });
 
 export type ProductSchema = z.infer<typeof productSchema>;

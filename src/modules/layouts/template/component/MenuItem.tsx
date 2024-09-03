@@ -1,5 +1,5 @@
-import { useSidebarContext } from '@/lib/context/side-bar-context';
 import IconLucide from '@/lib/hooks/icon-lucide';
+import { useSidebarStore } from '@/lib/hooks/store-sidebar';
 import { EachElement } from '@/lib/utils';
 import { IRoute } from '@/types/router-menu';
 import { ChevronDown } from 'lucide-react';
@@ -21,7 +21,7 @@ const MenuItem = ({
     };
 
     const hasChildren = route.children && route.children.length;
-    const sideBarContext = useSidebarContext();
+    const sideBarContext = useSidebarStore();
     return (
         <li className={`menu ${expanded ? 'expanded' : ''}`}>
             {!hasChildren ? (

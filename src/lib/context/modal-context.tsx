@@ -2,26 +2,26 @@ import React, { createContext, useContext } from "react";
 
 interface ModalStoreContextProps {
     open: boolean;
-    openModal: (content: React.ReactNode, title: string) => void;
+    openModal: (content: React.ReactNode, title: string, options?: { description?: string }) => void;
     closeModal: () => void;
     content: React.ReactNode;
     title: string;
+    description?: string | null;
 }
 
 const ModelStoreContext = createContext<ModalStoreContextProps | null>(null);
 
-export const ModelStoreProvider = ({ children }: { children: React.ReactNode }) => {
+export const ModelStoreProvider = ({ children }: { children: React.ReactNode; }) => {
     const [open, setOpen] = React.useState(false);
     const [content, setContent] = React.useState<React.ReactNode>(null);
     const [title, setTitle] = React.useState("");
+    const [description, setDescription] = React.useState<string | null>(null);
 
-    const openModal = (content: React.ReactNode, title: string) => {
+    const openModal = (content: React.ReactNode, title: string, options?: { description?: string | null; }) => {
         setContent(content);
         setTitle(title);
         setOpen(true);
-        console.log(content)
-        console.log(title)
-        console.log(open)
+        setDescription(options?.description!);
     };
 
     const closeModal = () => setOpen(false);
@@ -32,7 +32,8 @@ export const ModelStoreProvider = ({ children }: { children: React.ReactNode }) 
             openModal,
             closeModal,
             content,
-            title
+            title,
+            description
         }}>
             {children}
         </ModelStoreContext.Provider>
