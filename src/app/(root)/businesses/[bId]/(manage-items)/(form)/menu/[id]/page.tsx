@@ -5,9 +5,9 @@ import FormItemMenu from '@/modules/businesses/manage-item-module/template/item/
 
 const MenuItemPage = async () => {
     const { data: options } = await axiosClient.get<ApiResponse<ProductOptionSchema[]>>(`/api/option`);
-    const { data: groups } = await axiosClient.get<ApiResponse<CategoriesSchema[]>>(`/api/group`);
+    const { data: categories } = await axiosClient.get<ApiResponse<CategoriesSchema[]>>(`/api/categories`);
     return (
-        <FormItemMenu dataForm={undefined} productOptions={options.payload} productGroups={groups.payload} />
+        <FormItemMenu dataForm={undefined} productOptions={options.payload} categories={categories.payload} />
     );
 };
 

@@ -5,14 +5,14 @@ import { handleError } from "@/lib/utils/handler-exception";
 import { HttpStatus } from "@/lib/utils/http-status";
 import { NextRequest, NextResponse } from "next/server";
 
-export const dynamic = 'force-static'
-export const revalidate = 0
-export const GET = async () => {
+export const dynamic = 'force-static';
+export const revalidate = 0;
+export const GET = async (req: NextRequest) => {
     try {
         const { data } = await axiosServer.get<ApiResponse<StoreModal>>("/store/find-one");
         return handleResponse<StoreModal>(data, HttpStatus.OK);
     } catch (error) {
-        return handleError(error)
+        return handleError(error);
     }
 };
 

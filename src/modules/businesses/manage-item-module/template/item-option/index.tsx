@@ -33,7 +33,6 @@ const ManageItemOption = ({
   const handleChange = (v: string, optionIndex: number, choiceIndex: number) => {
     productOption[optionIndex].choices[choiceIndex].status = v as ChoiceStatusEnum;
   };
-  console.log(productOption)
   return (
     <TabsContent value={`/businesses/${params.bId}/menu-option`}>
       <div className='p-4'>

@@ -6,15 +6,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { StoreModal, StoreSchema, storeSchema } from '@/lib/schema/storeSchema';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import { Button } from '@/components/ui/button';
-import { useStoreModal } from '@/lib/hooks/store-modal';
-import { useRouter } from 'next/navigation';
 import { report } from '@/lib/utils';
 import axiosClient from '@/lib/utils/axios-client';
+import { useParams } from 'next/navigation';
+import { useStoreModal } from '@/lib/hooks/store-modal';
 
 const StoreForm = () => {
-  const { closeModal } = useStoreModal();
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const { closeModal } = useStoreModal();
+  const params = useParams();
   const form = useForm<StoreSchema>({
     resolver: zodResolver(storeSchema),
     defaultValues: {
@@ -25,7 +25,7 @@ const StoreForm = () => {
     setLoading(true);
     try {
       const { data: store } = await axiosClient.post<ApiResponse<StoreModal>>('/api/store', data);
-      window.location.assign(`/businesses/${store.payload.id}/menu`)
+      window.location.assign(`/businesses/${store.payload.id}/menu`);
     } catch (error) {
       report(error);
     } finally {
@@ -46,7 +46,10 @@ const StoreForm = () => {
           />
           <div className='flex flex-row ml-auto gap-5'>
             <Button className='ml-auto ' disabled={loading} type="button" variant={"outline"} onClick={() => {
-              window.location.assign('/')
+              // if (params.bId == "menu") {
+              //   return window.location.assign("/");
+              // }
+              closeModal();
             }}>Cancle</Button>
             <Button className='ml-auto' disabled={loading}>Save</Button>
           </div>

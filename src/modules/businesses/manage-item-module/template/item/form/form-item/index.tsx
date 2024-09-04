@@ -26,20 +26,22 @@ import OptionFormComponent from '../component/option-form-component';
 import StockFormComponent from '../component/stock-form-component';
 import { useBranchStore } from '@/lib/hooks/store-branch';
 import axiosClient from '@/lib/utils/axios-client';
+import { useParams } from 'next/navigation';
+import CategoryFormComponent from '../component/category-form-component';
 
 
 
 interface FormItemMenuProps {
     dataForm: ProductSchema | undefined;
     productOptions: Omit<ProductOptionSchema, "choice">[];
-    productGroups: CategoriesSchema[];
+    categories: CategoriesSchema[];
 };
 const FormItemMenu = ({
     dataForm,
     productOptions,
-    productGroups
+    categories
 }: FormItemMenuProps) => {
-    const branchContext = useBranchStore();
+    const params = useParams();
     const title = dataForm !== undefined ? "Edit Item" : "Create Item";
     const { toast } = useToast();
 
@@ -70,21 +72,22 @@ const FormItemMenu = ({
             data.images.map((file) => {
                 formData.append(`productImages`, file);
             });
-            formData.append("nameTH", data.nameTH);
-            formData.append("nameEN", data.nameEN);
-            formData.append("descriptionTH", data.descriptionTH!);
-            formData.append("descriptionEN", data.descriptionEN!);
-            formData.append("stock.unitQuantity", data.stock.unitQuantity.toString());
-            formData.append("stock.unitType", data.stock.unitType);
-            formData.append("stock.quantity", data.stock.quantity.toString());
-            formData.append("stock.status", data.stock.status);
-            formData.append("stock.reOrder", Boolean(data.stock.reOrder).valueOf().toString());
+            formData.append("products.nameTH", data.nameTH);
+            formData.append("products.nameEN", data.nameEN);
+            formData.append("products.price", data.price.toFixed(2).toString());
+            formData.append("products.descriptionTH", data.descriptionTH!);
+            formData.append("products.descriptionEN", data.descriptionEN!);
+            formData.append("products.stock.unitQuantity", data.stock.unitQuantity.toString());
+            formData.append("products.stock.unitType", data.stock.unitType);
+            formData.append("products.stock.quantity", data.stock.quantity.toString());
+            formData.append("products.stock.status", data.stock.status);
+            formData.append("products.stock.reOrder", Boolean(data.stock.reOrder).valueOf().toString());
             data.categories.map((c, i) => {
-                formData.append(`categories[${i}].id`, c.id!);
+                formData.append(`products.categories`, c.id!);
             });
             data.productOptions.map((c, i) => {
-                formData.append(`productOptions[${i}].id`, c.id!);
-            })
+                formData.append(`products.productOptions`, c.id!);
+            });
             await axiosClient.post("/api/product", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
@@ -186,52 +189,9 @@ const FormItemMenu = ({
                     </div>
 
                     <StockFormComponent stock={dataForm?.stock} control={form.control} />
-
                     <OptionFormComponent itemOption={productOptions} control={form.control} />
-                    <div className="content-container px-8 py-8 flex flex-col gap-5 ">
-                        <div className="flex flex-row items-center">
-                            <h2 className='font-bold text-md'>Item Group</h2>
-                            <div className="ml-auto">
-                                <LinkButton className="border-none text-sm text-primary" href={`/businesses/${branchContext.id}/menu-group/create`} label="Create item groups" />
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-3">
-                            <EachElement
-                                of={productGroups}
-                                render={(group) => {
-                                    return (
-                                        <FormField
-                                            control={form.control}
-                                            name={"categories"}
-                                            render={({ field }) => {
-                                                const isChecked = Array.isArray(field.value) && field.value.some((value) => value.name === group.name);
-                                                return (
-                                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                                                        <FormControl>
-                                                            <Checkbox
-                                                                checked={isChecked}
-                                                                onCheckedChange={(c) => {
-                                                                    const currentValue = Array.isArray(field.value) ? field.value : [];
-                                                                    const updatedValue = c
-                                                                        ? [...currentValue, group]
-                                                                        : currentValue.filter((value) => value.name !== group.name);
-                                                                    console.log(updatedValue);
-                                                                    field.onChange(updatedValue);
-                                                                }}
-                                                            />
-                                                        </FormControl>
-                                                        <FormLabel className="text-sm font-normal">
-                                                            {group.name}
-                                                        </FormLabel>
-                                                    </FormItem>
-                                                );
-                                            }}
-                                        />
-                                    );
-                                }}
-                            />
-                        </div>
-                    </div>
+                    <CategoryFormComponent categories={categories} control={form.control} />
+                    
                     <div className='flex justify-end'>
                         <Button
                             className='rounded-lg  w-[250px]'

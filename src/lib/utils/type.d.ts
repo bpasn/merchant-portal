@@ -1,6 +1,6 @@
 interface ApiResponse<Data extends object >{
     payload: Data;
-    status: number
+    status: number | string
 }
 
 interface ErrorResponse {

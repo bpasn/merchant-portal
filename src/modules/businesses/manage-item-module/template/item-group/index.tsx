@@ -5,7 +5,6 @@ import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
 import { EachElement } from '@/lib/utils';
 import LinkButton from '@/modules/common/link-button';
 import ProductGroupAction from './component/product-group-cell-action';
-import { useBranchStore } from '@/lib/hooks/store-branch';
 import { useParams } from 'next/navigation';
 
 
@@ -14,8 +13,7 @@ const ManageItemGroup = ({
 }: {
   productGroups: CategoriesSchema[];
 }) => {
-const params = useParams();
-console.log(productGroups)
+  const params = useParams();
   const handleAction = () => {
 
   };
@@ -44,7 +42,7 @@ console.log(productGroups)
           of={productGroups}
           render={(group) => (
             <div className='flex flex-row px-2 py-4 border-b-2 items-center cursor-pointer hover:bg-primary-foreground/20'>
-              <h2 className="text-md ">{group.groupName}</h2>
+              <h2 className="text-md ">{group.name}</h2>
               <div className="ml-auto">
                 <ProductGroupAction group={group} />
               </div>

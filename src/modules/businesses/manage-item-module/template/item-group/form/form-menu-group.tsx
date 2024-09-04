@@ -3,13 +3,15 @@ import { Button } from '@/components/ui/button';
 import {
     Form
 } from '@/components/ui/form';
+import { toast } from '@/components/ui/use-toast';
 import { useBranchStore } from '@/lib/hooks/store-branch';
 import { CategoriesSchema, categoriesSchema } from '@/lib/schema/categoriesSchema';
 import axiosClient from '@/lib/utils/axios-client';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import HeadingModule from '@/modules/common/heading-module';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
+import { useParams, useRouter } from 'next/navigation';
 import { useForm } from "react-hook-form";
 
 
@@ -22,7 +24,7 @@ const FormMenuGroup = ({
 }: FormMenuGroupProps) => {
     const title = itemGroup !== null ? "Edit Item" : "Create Item";
     const router = useRouter();
-    const { id } = useBranchStore();
+    const params = useParams();
     const form = useForm<CategoriesSchema>({
         resolver: zodResolver(categoriesSchema),
         defaultValues: itemGroup || {
@@ -31,8 +33,15 @@ const FormMenuGroup = ({
     });
 
     const handleSave = async (data: CategoriesSchema) => {
-        await axiosClient.post("/api/group", data);
-        return router.push(`/businesses/${id}/menu-group`);
+        try {
+            await axiosClient.post("/api/categories", data);
+            window.location.assign(`/businesses/${params.bId}/menu-group`);
+        } catch (error) {
+            toast({
+                title: "ERROR",
+                description: (error as AxiosError).message
+            });
+        }
     };
     return (
         <Form {...form}>

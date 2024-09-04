@@ -9,7 +9,7 @@ interface MenuGroupPageProps {
 }
 const MenuGroupPage = async ({
 }: MenuGroupPageProps) => {
-  const { data } = await axiosClient.get<ApiResponse<CategoriesSchema[]>>("/api/group");
+  const { data } = await axiosClient.get<ApiResponse<CategoriesSchema[]>>("/api/categories");
   return (
     <ManageItemGroupTemplate productGroups={data.payload} />
   );

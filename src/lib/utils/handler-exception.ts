@@ -5,7 +5,7 @@ export const handleError = (error: any, defaultMessage: string = "An unexpected 
   if (axios.isAxiosError(error)) {
     return NextResponse.json<ErrorResponse>({
       message: error.response && error.response.data ? error.response.data.message : error.message,
-      status: error.response ? error.response.status : 500,
+      status: error.response && error.response.data ? error.response.data.status : error.response?.status,
     }, {
       status: error.response ? error.response.status : 500,
     })

@@ -5,7 +5,6 @@ export const handleResponse = <T extends object,>(data: ApiResponse<T>, status: 
     const response = NextResponse.json(data,
         {
             status: status,
-
         }
     );
     response.headers.set('Cache-Control', 'no-store');

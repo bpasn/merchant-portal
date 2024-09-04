@@ -6,16 +6,15 @@ import React, { useEffect, useState } from 'react';
 
 
 
-const SwitchBranch = ({
-    stores
-}:{
-    stores: StoreModal[]
-}) => {
-    
+const SwitchBranch = async () => {
+    const { data } = await axiosClient.get<ApiResponse<StoreModal[]>>(`/api/store/get-all`);
+    if (!data.payload.length) {
+        redirect('/businesses/menu');
+    }
     return (
         <>
             <Combobox
-                items={stores.map(e => ({ label: e.storeName, value: e.id }))}
+                items={data.payload.map(e => ({ label: e.storeName, value: e.id }))}
                 size={300}
             />
         </>

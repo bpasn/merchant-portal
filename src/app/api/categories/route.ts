@@ -7,7 +7,7 @@ import axiosServer from "@/lib/utils/axios-server";
 
 export const GET = async (req: NextRequest) => {
     try {
-        const response = await axiosServer.get<ApiResponse<CategoriesSchema[]>>("/product-groups");
+        const response = await axiosServer.get<ApiResponse<CategoriesSchema[]>>("/categories");
         
         return handleResponse(response.data,HttpStatus.OK)
     } catch (error) {
@@ -18,8 +18,7 @@ export const GET = async (req: NextRequest) => {
 export const POST = async (req: NextRequest) => {
     const body = await req.json();
     try {
-        console.log(body);
-        const response = await axiosServer.post("/product-groups", body);
+        const response = await axiosServer.post("/categories", body);
         return NextResponse.json({
             payload: response.data,
             status: 200
