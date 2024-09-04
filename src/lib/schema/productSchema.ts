@@ -12,8 +12,8 @@ export const productSchema = z.object({
     stock: stockProductSchema,
     images: z.array(
         z.custom<File>(file => {
-            if(file instanceof File){
-                if(file.size > 5 * 1024 * 1024){
+            if (file instanceof File) {
+                if (file.size > 5 * 1024 * 1024) {
                     console.log("THIS")
                     return false
                 }
@@ -22,12 +22,10 @@ export const productSchema = z.object({
         }, {
             message: "Image must be less than 2MB"
         })).refine((v) => {
-            if(!v.length) return false;
+            if (!v.length) return false;
             return true;
-        },{message:"Images not must be null"}),
-    productOptions: z.array(productOptionSchema.pick({
-        optionName: true
-    })),
+        }, { message: "Images not must be null" }),
+    productOptions: z.array(productOptionSchema),
     categories: z.array(categoriesSchema)
 });
 

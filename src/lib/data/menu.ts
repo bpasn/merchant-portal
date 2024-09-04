@@ -12,7 +12,7 @@ export const routes: IRoute[] = [
         label: "Manage items",
         slug: "manage-items",
         icon: "List",
-        href: "/businesses",
+        href: "/businesses/menu",
         root: true,
         paths: [
             { path: "[id]/menu/", label: "Create Item" },

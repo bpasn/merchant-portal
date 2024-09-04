@@ -26,13 +26,13 @@ const FormMenuGroup = ({
     const form = useForm<CategoriesSchema>({
         resolver: zodResolver(categoriesSchema),
         defaultValues: itemGroup || {
-            groupName: "",
+            name: "",
         }
     });
 
     const handleSave = async (data: CategoriesSchema) => {
         await axiosClient.post("/api/group", data);
-       return router.push(`/businesses/${id}/menu-group`);
+        return router.push(`/businesses/${id}/menu-group`);
     };
     return (
         <Form {...form}>
@@ -52,7 +52,7 @@ const FormMenuGroup = ({
                                 <div className="flex flex-col gap-8 mb-5">
                                     <FormFieldCommon
                                         control={form.control}
-                                        name={"groupName"}
+                                        name={"name"}
                                         placeholder='Item group name'
                                         description={"e.g., Main Course, Dessert, Beverage"}
                                     />

@@ -1,7 +1,6 @@
-'use client';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EachElement } from '@/lib/utils';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
 interface TabComponentProps {
   label: string;
@@ -10,13 +9,17 @@ interface TabComponentProps {
 const TabComponent = ({ items = [] }: {
   items: TabComponentProps[];
 }) => {
+  const router = useRouter();
+
   return (
     <TabsList className='h-auto p-0 max-w-[568px] flex space-x-2 justify-between  bg-transparent'>
       <EachElement
         of={items}
         render={(item) => {
           return (
-            <TabsTrigger value={item.href} href={item.href}>
+            <TabsTrigger value={item.href} href={item.href} onClick={() => {
+              router.replace(item.href)
+            }}>
               {item.label}
             </TabsTrigger>
           );

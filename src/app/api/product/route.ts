@@ -14,7 +14,6 @@ export const GET = async (req: NextRequest) => {
 export const POST = async (req: NextRequest) => {
     const formData: FormData = await req.formData();
     try {
-       
         const response = await axiosServer.post(`${process.env.API_URL}/products`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data"

@@ -1,5 +1,5 @@
 'use client';
-import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useBranchStore } from '@/lib/hooks/store-branch';
 import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
 import { ProductSchema } from '@/lib/schema/productSchema';
@@ -35,7 +35,7 @@ const GroupFormComponent = ({
                                 control={control}
                                 name={"categories"}
                                 render={({ field }) => {
-                                    const isChecked = Array.isArray(field.value) && field.value.some((value) => value.groupName === group.groupName);
+                                    const isChecked = Array.isArray(field.value) && field.value.some((value) => value.name === group.name);
                                     return (
                                         <FormItem className="flex flex-row items-center space-x-3 space-y-0">
                                             <FormControl>
@@ -45,14 +45,16 @@ const GroupFormComponent = ({
                                                         const currentValue = Array.isArray(field.value) ? field.value : [];
                                                         const updatedValue = c
                                                             ? [...currentValue, group]
-                                                            : currentValue.filter((value) => value.groupName !== group.groupName);
+                                                            : currentValue.filter((value) => value.name !== group.name);
+                                                            console.log({updatedValue})
                                                         field.onChange(updatedValue);
                                                     }}
                                                 />
                                             </FormControl>
                                             <FormLabel className="text-sm font-normal">
-                                                {group.groupName}
+                                                {group.name}
                                             </FormLabel>
+                                            <FormMessage />
                                         </FormItem>
                                     );
                                 }}

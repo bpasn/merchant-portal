@@ -64,13 +64,28 @@ const FormItemMenu = ({
         }
     });
     const handleSave = async (data: ProductSchema) => {
+        console.log(data)
         try {
             const productsObject = omit(data, "images");
             const formData = new FormData();
             data.images.map((file) => {
                 formData.append(`productImages`, file);
             });
-            formData.append("products",JSON.stringify(productsObject))
+            formData.append("nameTH", data.nameTH);
+            formData.append("nameEN", data.nameEN);
+            formData.append("descriptionTH", data.descriptionTH!);
+            formData.append("descriptionEN", data.descriptionEN!);
+            formData.append("stock.unitQuantity", data.stock.unitQuantity.toString());
+            formData.append("stock.unitType", data.stock.unitType);
+            formData.append("stock.quantity", data.stock.quantity.toString());
+            formData.append("stock.status", data.stock.status);
+            formData.append("stock.reOrder", Boolean(data.stock.reOrder).valueOf().toString());
+            data.categories.map((c, i) => {
+                formData.append(`categories[${i}].id`, c.id!);
+            });
+            data.productOptions.map((c, i) => {
+                formData.append(`productOptions[${i}].id`, c.id!);
+            })
             await axiosClient.post("/api/product", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
@@ -81,7 +96,7 @@ const FormItemMenu = ({
         }
 
     };
-
+    console.log(form.formState.errors);
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSave)} className='container'>
@@ -190,7 +205,7 @@ const FormItemMenu = ({
                                             control={form.control}
                                             name={"categories"}
                                             render={({ field }) => {
-                                                const isChecked = Array.isArray(field.value) && field.value.some((value) => value.groupName === group.groupName);
+                                                const isChecked = Array.isArray(field.value) && field.value.some((value) => value.name === group.name);
                                                 return (
                                                     <FormItem className="flex flex-row items-center space-x-3 space-y-0">
                                                         <FormControl>
@@ -200,13 +215,14 @@ const FormItemMenu = ({
                                                                     const currentValue = Array.isArray(field.value) ? field.value : [];
                                                                     const updatedValue = c
                                                                         ? [...currentValue, group]
-                                                                        : currentValue.filter((value) => value.groupName !== group.groupName);
+                                                                        : currentValue.filter((value) => value.name !== group.name);
+                                                                    console.log(updatedValue);
                                                                     field.onChange(updatedValue);
                                                                 }}
                                                             />
                                                         </FormControl>
                                                         <FormLabel className="text-sm font-normal">
-                                                            {group.groupName}
+                                                            {group.name}
                                                         </FormLabel>
                                                     </FormItem>
                                                 );
