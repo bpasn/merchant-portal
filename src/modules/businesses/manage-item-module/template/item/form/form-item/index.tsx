@@ -64,7 +64,6 @@ const FormItemMenu = ({
         }
     });
     const handleSave = async (data: ProductSchema) => {
-        console.log(data)
         try {
             const productsObject = omit(data, "images");
             const formData = new FormData();

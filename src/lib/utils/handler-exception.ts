@@ -1,11 +1,16 @@
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { NextResponse } from 'next/server';
 
 export const handleError = (error: any, defaultMessage: string = "An unexpected error occurred") => {
-  if(error instanceof AxiosError){
-    return NextResponse.json({error:error.response!.data || defaultMessage},{status:error.response!.status})
+  if (axios.isAxiosError(error)) {
+    return NextResponse.json<ErrorResponse>({
+      message: error.response && error.response.data ? error.response.data.message : error.message,
+      status: error.response ? error.response.status : 500,
+    }, {
+      status: error.response ? error.response.status : 500,
+    })
   }
-  return NextResponse.json({ error: error.message || defaultMessage }, { status: 500 });
+  return NextResponse.json<ErrorResponse>({ message: error.message || defaultMessage, status: 500 }, { status: 500 });
 };
 
 export const handleNotFound = (message: string = "Resource not found") => {
@@ -16,6 +21,3 @@ export const handleBadRequest = (message: string = "Bad request") => {
   return NextResponse.json({ error: message }, { status: 400 });
 };
 
-export const handleSuccess = (data: any, status: number = 200) => {
-  return NextResponse.json(data, { status });
-};
