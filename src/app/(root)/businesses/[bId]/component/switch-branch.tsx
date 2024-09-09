@@ -1,10 +1,7 @@
 import { StoreModal } from '@/lib/schema/storeSchema';
 import axiosClient from '@/lib/utils/axios-client';
-import Combobox, { IOptionCombobox } from '@/modules/common/combobox';
-import { redirect, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-
-
+import Combobox from '@/modules/common/combobox';
+import { redirect } from 'next/navigation';
 
 const SwitchBranch = async () => {
     const { data } = await axiosClient.get<ApiResponse<StoreModal[]>>(`/api/store/get-all`);

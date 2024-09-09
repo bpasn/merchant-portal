@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export const stockUnitTypeEnum = z.enum(["PIECE", "KILOGRAM", "GRAM"]);
 export type StockUnitTypeEnum = z.infer<typeof stockUnitTypeEnum>;
-export const stockStatusEnum = z.enum(["IN_STOCK", "OUT_OF_STOCK"])
+export const stockStatusEnum = z.enum(["IN_STOCK", "OUT_OF_STOCK","LOW_STOCK"])
 export type StockStatusEnum = z.infer<typeof stockStatusEnum>;
 
 export const stockProductSchema = z.object({

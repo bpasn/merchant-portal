@@ -13,41 +13,34 @@ import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
 import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
-import { productSchema, ProductSchema } from '@/lib/schema/productSchema';
-import { EachElement } from '@/lib/utils';
+import { ProductModal, productSchema, ProductSchema } from '@/lib/schema/productSchema';
 import FileUpload from '@/modules/businesses/manage-item-module/component/upload-image-form';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import HeadingModule from '@/modules/common/heading-module';
-import LinkButton from '@/modules/common/link-button';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { omit } from 'lodash';
 import { useForm } from "react-hook-form";
 import OptionFormComponent from '../component/option-form-component';
 import StockFormComponent from '../component/stock-form-component';
-import { useBranchStore } from '@/lib/hooks/store-branch';
 import axiosClient from '@/lib/utils/axios-client';
-import { useParams } from 'next/navigation';
 import CategoryFormComponent from '../component/category-form-component';
 
 
 
 interface FormItemMenuProps {
-    dataForm: ProductSchema | undefined;
+    product: ProductModal | null;
     productOptions: Omit<ProductOptionSchema, "choice">[];
     categories: CategoriesSchema[];
 };
 const FormItemMenu = ({
-    dataForm,
+    product,
     productOptions,
     categories
 }: FormItemMenuProps) => {
-    const params = useParams();
-    const title = dataForm !== undefined ? "Edit Item" : "Create Item";
+    const title = product !== null ? "Edit Item" : "Create Item";
     const { toast } = useToast();
-
     const form = useForm<ProductSchema>({
         resolver: zodResolver(productSchema),
-        defaultValues: dataForm || {
+        defaultValues: product || {
             nameEN: "",
             nameTH: "",
             price: 0,
@@ -60,16 +53,15 @@ const FormItemMenu = ({
                 status: "IN_STOCK",
                 reOrder: false
             },
-            images: [],
+            productImages: [],
             productOptions: [],
             categories: []
         }
     });
     const handleSave = async (data: ProductSchema) => {
         try {
-            const productsObject = omit(data, "images");
             const formData = new FormData();
-            data.images.map((file) => {
+            data.productImages.map((file) => {
                 formData.append(`productImages`, file);
             });
             formData.append("products.nameTH", data.nameTH);
@@ -88,17 +80,25 @@ const FormItemMenu = ({
             data.productOptions.map((c, i) => {
                 formData.append(`products.productOptions`, c.id!);
             });
-            await axiosClient.post("/api/product", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                }
-            });
+            if(product){
+                await axiosClient.put(`/api/product/${product.id}`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                });
+            }else {
+                await axiosClient.post("/api/product", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                });
+            }
+            
         } catch (error) {
             toast({ title: (error as Error).name, description: (error as Error).message });
         }
 
     };
-    console.log(form.formState.errors);
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSave)} className='container'>
@@ -157,7 +157,7 @@ const FormItemMenu = ({
                             <p className='text-sm mb-2'>image</p>
                             <FormField
                                 control={form.control}
-                                name="images"
+                                name="productImages"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FileUpload
@@ -188,7 +188,7 @@ const FormItemMenu = ({
                         </div>
                     </div>
 
-                    <StockFormComponent stock={dataForm?.stock} control={form.control} />
+                    <StockFormComponent stock={product?.stock} control={form.control} />
                     <OptionFormComponent itemOption={productOptions} control={form.control} />
                     <CategoryFormComponent categories={categories} control={form.control} />
                     

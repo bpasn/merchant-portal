@@ -1,23 +1,25 @@
 'use client';
 import DataTable from '@/modules/common/data-table';
 import React from 'react';
-import { columnItems } from '../../data-table/data-table-item';
 import LinkButton from '@/modules/common/link-button';
 import { TabsContent } from '@/components/ui/tabs';
 import { useParams } from 'next/navigation';
+import { ProductModal } from '@/lib/schema/productSchema';
+import { columnItems } from './column-data';
 
-const ManageItem = () => {
+interface ManageItemProps {
+    dataTable?: IDataTable<ProductModal> | null;
+}
+const ManageItem:React.FC<ManageItemProps> = ({
+    dataTable
+}) => {
     const params = useParams();
     return (
         <TabsContent value={`/businesses/${params.bId}/menu`}>
             <div className='p-4'>
                 <DataTable
-                    sortInputBy={"name"}
-                    data={[{
-                        name: "สามชั้นทอด",
-                        itemGroup: "Recommended,หมู,กับข้าว,ของทอด",
-                        price: 129.99
-                    }]}
+                    sortInputBy={"nameTH"}
+                    data={dataTable?.content || []}
                     columnsDef={columnItems}
                     customHeader={(
                         <LinkButton label='Create item' href={`/businesses/${params.bId}/menu/create`} />

@@ -17,9 +17,7 @@ const TabComponent = ({ items = [] }: {
         of={items}
         render={(item) => {
           return (
-            <TabsTrigger value={item.href} href={item.href} onClick={() => {
-              router.replace(item.href)
-            }}>
+            <TabsTrigger value={item.href} href={item.href}>
               {item.label}
             </TabsTrigger>
           );

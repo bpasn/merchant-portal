@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useRef } from 'react';
 import Image from 'next/image';
 import UploadSVG from '@/assets/image/upload.svg';
@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { EachElement } from '@/lib/utils';
 
 interface FileUploadProps {
-    value: File[];
+    value: File[] | string[];
     onChange: (file: File) => void;
 }
 const FileUpload: React.FC<FileUploadProps> = ({
@@ -43,9 +43,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
         }
     };
 
+    const deleteImage = (id:string) => {
+        
+    }
     return (
         <div className="flex h-[248px] gap-1 border border-gray-300 rounded-lg border-dashed  overflow-auto">
-            {value.length
+            {value.length && value.every(e => e instanceof File)
                 ? (
                     <div className="flex flex-row gap-5 p-3">
                         <EachElement
@@ -72,6 +75,33 @@ const FileUpload: React.FC<FileUploadProps> = ({
                             )}
                         />
                     </div>
+                ) : value.length && value.every(e => typeof e === "string") ? (
+                    <EachElement
+                        of={value}
+                        render={(v, index) => {
+                            const domain = process.env.NEXT_PUBLIC_DOMAIN_IMAGE;
+                            return (
+                                <div key={index} className="relative w-[224px] h-[224px] flex flex-row justify-start gap-2">
+                                    <Image
+                                        src={domain + "/" + v}
+                                        fill
+                                        className='object-cover'
+                                        alt={''} />
+                                    <div className="absolute top-2 right-2">
+                                        <Button
+                                            className="w-10 h-10"
+                                            type="button"
+                                            onClick={() => deleteImage(v)}
+                                            variant={"destructive"}
+                                            size={"icon"}
+                                        >
+                                            <Trash />
+                                        </Button>
+                                    </div>
+                                </div>
+                            );
+                        }}
+                    />
                 ) : (
                     <div
                         className="flex gap-5 h-full flex-col w-full justify-center items-center"

@@ -10,15 +10,14 @@ export const productSchema = z.object({
     descriptionTH: z.string().nullable().optional(),
     descriptionEN: z.string().nullable().optional(),
     stock: stockProductSchema,
-    images: z.array(
-        z.custom<File>(file => {
+    productImages: z.array(
+        z.custom<File | string>(file => {
             if (file instanceof File) {
                 if (file.size > 5 * 1024 * 1024) {
-                    console.log("THIS")
-                    return false
+                    return false;
                 }
             }
-            return true
+            return true;
         }, {
             message: "Image must be less than 2MB"
         })).refine((v) => {
@@ -31,3 +30,4 @@ export const productSchema = z.object({
 
 export type ProductSchema = z.infer<typeof productSchema>;
 
+export interface ProductModal extends Omit<ProductSchema,"productImages"> { id: string; productImages: string[]; };

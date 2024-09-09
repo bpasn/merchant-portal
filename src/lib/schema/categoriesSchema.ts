@@ -6,3 +6,4 @@ export const categoriesSchema = z.object({
 });
 
 export type CategoriesSchema = z.infer<typeof categoriesSchema>;
+export type CategoriesModal = CategoriesSchema;

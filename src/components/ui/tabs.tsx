@@ -28,7 +28,7 @@ const TabsTrigger = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> & { href: string; }
 >(({ className, href, ...props }, ref) => (
   <TabsPrimitive.Trigger
-    // asChild
+    asChild
     ref={ref}
     className={cn(
       "inline-flex p-0 items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
@@ -49,7 +49,7 @@ const TabsTrigger = React.forwardRef<
     )}
     {...props}
   >
-    {props.children}
+    <Link href={href}>{props.children}</Link>
   </TabsPrimitive.Trigger>
 ));
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;

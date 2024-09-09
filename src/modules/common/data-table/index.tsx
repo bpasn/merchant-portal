@@ -92,47 +92,59 @@ const DataTable = <T,>({
                 customHeader={customHeader} />
             <div className="rounded-md border">
                 <Table>
-                    <TableHeader>
+                    <TableHeader >
                         <EachElement
                             of={table.getHeaderGroups()}
-                            render={(headerGroup) => (
-                                <TableRow key={headerGroup.id}>
-                                    <EachElement
-                                        of={headerGroup.headers}
-                                        render={(header) => (
-                                            <TableHead key={header.id}>
-                                                {header.isPlaceholder ? null : (
-                                                    flexRender(
-                                                        header.column.columnDef.header,
-                                                        header.getContext()
-                                                    )
-                                                )}
-                                            </TableHead>
-                                        )}
-                                    />
-                                </TableRow>
-                            )}
+                            render={(headerGroup) => {
+                                return (
+                                    <TableRow key={headerGroup.id}>
+                                        <EachElement
+                                            of={headerGroup.headers}
+                                            render={(header) => {
+                                                return (
+                                                    <TableHead key={header.id} style={{
+                                                        width: `${header.getSize()}px`,
+                                                        maxWidth: `${header.getSize()}px`,
+                                                        minWidth: `${header.getSize()}px`,
+
+                                                    }} >
+                                                        {header.isPlaceholder ? null : (
+                                                            flexRender(
+                                                                header.column.columnDef.header,
+                                                                header.getContext()
+                                                            )
+                                                        )}
+                                                    </TableHead>
+                                                );
+                                            }}
+                                        />
+                                    </TableRow>
+                                );
+                            }}
                         />
                     </TableHeader>
-                    <TableBody>
+                    <TableBody >
                         {table.getRowModel().rows?.length ? (
                             <EachElement
                                 of={table.getRowModel().rows}
                                 render={(row) => (
                                     <TableRow
+
                                         key={row.id}
                                         data-state={row.getIsSelected() && "selected"}
                                     >
                                         <EachElement
                                             of={row.getVisibleCells()}
-                                            render={(cell) => (
-                                                <TableCell key={cell.id}>
-                                                    {flexRender(
-                                                        cell.column.columnDef.cell,
-                                                        cell.getContext()
-                                                    )}
-                                                </TableCell>
-                                            )}
+                                            render={(cell) => {
+                                                return (
+                                                    <TableCell key={cell.id} >
+                                                        {flexRender(
+                                                            cell.column.columnDef.cell,
+                                                            cell.getContext()
+                                                        )}
+                                                    </TableCell>
+                                                );
+                                            }}
                                         />
                                     </TableRow>
                                 )}

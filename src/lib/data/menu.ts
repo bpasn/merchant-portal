@@ -15,9 +15,12 @@ export const routes: IRoute[] = [
         href: "/businesses/menu",
         root: true,
         paths: [
-            { path: "[id]/menu/", label: "Create Item" },
-            { path: "[id]/menu-option/", label: "Create option Item" },
-            { path: "[id]/menu-group/", label: "Create option Item" },
+            { path: "/menu/create", label: "Create Item" },
+            { path: "/menu-option/create", label: "Create option Item" },
+            { path: "/menu-group/create", label: "Create option Item" },
+            { path: "/menu/[edit]", label: "Edit Item" },
+            { path: "/menu-option/[edit]", label: "Edit option Item" },
+            { path: "/menu-group/[edit]", label: "Edit option Item" },
         ],
     },
     // {

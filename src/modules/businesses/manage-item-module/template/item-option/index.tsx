@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select';
 import { TabsContent } from '@/components/ui/tabs';
 import { useBranchStore } from '@/lib/hooks/store-branch';
-import { ChoiceStatusEnum, choiceStatusEnum } from '@/lib/schema/optionChioceSchema';
+import { ChoiceStatusEnum, choiceStatusEnum, OptionChoiceSchema } from '@/lib/schema/optionChioceSchema';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { cn, EachElement, toUpperCase } from '@/lib/utils';
 import LinkButton from '@/modules/common/link-button';
@@ -71,29 +71,7 @@ const ManageItemOption = ({
                               <div className="w-full">
                                 <h1>{choice.name}</h1>
                               </div>
-                              <Select
-                                value={choice.status}
-                                onValueChange={(v) => handleChange(v, optionIndex, choiceIndex)}
-                              >
-                                <SelectTrigger className={
-                                  cn(
-                                    "w-[157px] h-[30px] rounded-lg flex flex-row gap-4 p-3 justify-center focus:ring-0",
-                                    choice.status === choiceStatusEnum.Enum.available
-                                      ? "text-[rgba(0,168,56)] bg-[rgba(0,168,56)]/30"
-                                      : "text-[rgba(123,132,136)] bg-[rgba(123,132,136)]/30"
-                                  )
-                                }>
-                                  <SelectValue placeholder={choice.status} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <EachElement
-                                    of={choiceStatusEnum.options}
-                                    render={(status) => (
-                                      <SelectItem key={status} value={status}>{toUpperCase(status)}</SelectItem>
-                                    )}
-                                  />
-                                </SelectContent>
-                              </Select>
+                              {renderSelectStatus(choice, handleChange, optionIndex, choiceIndex)}
                               <X size={32} className='cursor-pointer ' onClick={() => { }} />
                             </div>
                           )}
@@ -114,3 +92,31 @@ const ManageItemOption = ({
 };
 
 export default ManageItemOption;
+
+export function renderSelectStatus(
+  choice: OptionChoiceSchema,
+  handleChange: (v: string, optionIndex: number, choiceIndex: number) => void,
+  optionIndex: number,
+  choiceIndex: number) {
+  return (
+    <Select
+      value={choice.status}
+      onValueChange={(v) => handleChange(v, optionIndex, choiceIndex)}
+    >
+      <SelectTrigger className={cn(
+        "w-[157px] h-[30px] rounded-lg flex flex-row gap-4 p-3 justify-center focus:ring-0",
+        choice.status === choiceStatusEnum.Enum.available
+          ? "text-[rgba(0,168,56)] bg-[rgba(0,168,56)]/30"
+          : "text-[rgba(123,132,136)] bg-[rgba(123,132,136)]/30"
+      )}>
+        <SelectValue placeholder={choice.status} />
+      </SelectTrigger>
+      <SelectContent>
+        <EachElement
+          of={choiceStatusEnum.options}
+          render={(status) => (
+            <SelectItem key={status} value={status}>{toUpperCase(status)}</SelectItem>
+          )} />
+      </SelectContent>
+    </Select>);
+}
