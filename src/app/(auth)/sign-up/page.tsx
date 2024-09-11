@@ -1,11 +1,12 @@
-import React from 'react'
+import SignUpForm from '@/modules/auth/signup';
+import React from 'react';
 
-type Props = {}
+type Props = {};
 
 const RegisterPage = (props: Props) => {
   return (
-    <div>RegisterPage</div>
-  )
-}
+    <SignUpForm />
+  );
+};
 
-export default RegisterPage
+export default RegisterPage;

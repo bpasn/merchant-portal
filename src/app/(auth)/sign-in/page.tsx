@@ -1,4 +1,4 @@
-import LoginForm from '@/modules/auth/login'
+import LoginForm from '@/modules/auth/signin'
 import React from 'react'
 
 type Props = {}

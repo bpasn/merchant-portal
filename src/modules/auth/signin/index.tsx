@@ -1,26 +1,55 @@
 'use client';
+import { Button } from '@/components/ui/button';
 import {
     Form,
 } from '@/components/ui/form';
-import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
-import z from 'zod';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useForm } from "react-hook-form";
+import { z } from 'zod';
 const userSchema = z.object({
     email: z.string().min(1, { message: "Email is required" }),
     password: z.string().min(1, { message: "Password is required" })
 });
 type UserSchema = z.infer<typeof userSchema>;
 const LoginForm = () => {
+    const router = useRouter();
+    const { toast } = useToast();
     const form = useForm<UserSchema>({
         resolver: zodResolver(userSchema),
         defaultValues: {
-
+            email: "",
+            password: ""
         }
     });
+    const handleSave = async (data: UserSchema) => {
+        // เรียกใช้งาน signIn ด้วย redirect: false อย่างชัดเจน
+        const response = await signIn("spring-credential", {
+            email: data.email,
+            password: data.password,
+            redirect: false, // ยืนยันว่ามี redirect: false,
+        });
+        console.log(response); // ดีบักดู response เพื่อดูค่าที่กลับมา
+        // ตรวจสอบว่าการยืนยันตัวตนสำเร็จหรือไม่
+        if (response?.ok) {
+            // ตัวอย่าง: redirect ไปหน้าอื่นถ้าจำเป็น
+            router.push('/');
+        }
+
+        // จัดการข้อผิดพลาดและแสดง toast อย่างเหมาะสม
+        if (response?.error) {
+            toast({
+                title: "Authenticate",
+                description: response.error, // แสดงข้อผิดพลาดที่ถูกต้อง
+                variant: "destructive"
+            });
+        }
+    };
+
     return (
         <div className="flex h-screen w-screen items-center justify-center bg-gray-50">
             <div className="w-full max-w-md overflow-hidden rounded-2xl border border-gray-100 shadow-xl">
@@ -29,7 +58,7 @@ const LoginForm = () => {
                     <p className="text-sm text-gray-500">User your email and password to sign in</p>
                 </div>
                 <Form {...form}>
-                    <form className="flex flex-col space-y-4 bg-gray-50 px-4 py-8 sm:px-16">
+                    <form onSubmit={form.handleSubmit(handleSave)} className="flex flex-col space-y-4 bg-gray-50 px-4 py-8 sm:px-16">
                         <FormFieldCommon
                             label='Email address'
                             placeholder='user@ec.com'
@@ -38,12 +67,11 @@ const LoginForm = () => {
                         />
                         <FormFieldCommon
                             label='PASSWORD'
-                            placeholder=' '
                             control={form.control}
                             name="password"
                         />
 
-                        <Button>Sign in</Button>
+                        <Button variant={"outline"}>Sign in</Button>
                         <p className="text-center text-sm text-gray-600">
                             Don't have an account? <Link href="/sign-up" className='font-semibold text-gray-800'>Sign up</Link> forfree
                         </p>
@@ -52,6 +80,6 @@ const LoginForm = () => {
             </div>
         </div>
     );
-}
+};
 
 export default LoginForm;

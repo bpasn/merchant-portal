@@ -1,39 +1,38 @@
-import { NextRequest, NextResponse } from "next/server";
-import axios from 'axios';
-import { StoreModal } from "./lib/schema/storeSchema";
+import { getToken } from 'next-auth/jwt';
+import { withAuth } from 'next-auth/middleware';
+import { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
 
-export async function middleware(request: NextRequest) {
-    const response = NextResponse.next();
+export default async function middleware(req: NextRequest, event: NextFetchEvent) {
+    const token = await getToken({ req });
 
-    // Set Cache-Control headers
-    response.headers.set('Cache-Control', 'no-store');
+    const isAuthentication = !!token;
 
-    const pathname = request.nextUrl.pathname;
+    if ((req.nextUrl.pathname.startsWith("/sign-in") || req.nextUrl.pathname.startsWith("/sign-up") )&& isAuthentication) {
+        return NextResponse.redirect(new URL("/", req.url));
+    }
 
-    // if (pathname.startsWith("/businesses/menu")) {
-    //     try {
-    //         const response = await axios.get<ApiResponse<StoreModal>>(`${process.env.NEXT_PUBLIC_APP_URL}/api/store`,{
-    //             headers:{
-    //                 "Cache-Control":"no-cache"
-    //             }
-    //         });
-    //         const data = response.data;
-    //         console.log('API response:', data);
-
-    //         if (data.payload) {
-    //             return NextResponse.redirect(new URL(`/businesses/${data.payload.id}/menu`, request.url));
-    //         } else {
-    //             return NextResponse.redirect(new URL('/businesses', request.url));
-    //         }
-    //     } catch (error) {
-    //         console.error('API request failed:', error);
-    //         return NextResponse.redirect(new URL('/businesses', request.url));
-    //     }
-    // }
-
-    return response;
+    const authMiddlware = withAuth({
+        pages: {
+            signIn: "/sign-in"
+        },
+        callbacks: {
+            async authorized({ req, token, }) {
+              const { pathname } = req.nextUrl;
+        
+              // อนุญาตให้เข้าถึงหน้า sign-in และ sign-up ได้เสมอ
+              if (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up") && !token) {
+                return true;
+              }
+        
+              // อนุญาตเฉพาะเมื่อมี token (ผู้ใช้ล็อกอินแล้ว)
+              return !!token;
+            },
+          },
+    });
+    // @ts-expect-error
+    return authMiddlware(req, event);
 }
 
 export const config = {
-    matcher: ["/businesses/menu"]
+    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"]
 };
