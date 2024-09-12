@@ -17,7 +17,7 @@ import Combobox from '@/modules/common/combobox';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { CheckIcon, ChevronsUpDown } from 'lucide-react';
-import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 export declare interface UseControllerProps<
     TFieldValues extends FieldValues = FieldValues,
@@ -27,9 +27,10 @@ export declare interface UseControllerProps<
     control?: Control<TFieldValues>,
     placeholder?: string;
     label?: string;
-    type?: 'input' | 'textarea';
+    type?: React.HTMLInputTypeAttribute;
     description?: string | null;
     disabled?: boolean;
+
 };
 
 
@@ -38,10 +39,10 @@ export const FormFieldCommon = <T extends FieldValues,>({
     name,
     placeholder,
     label,
-    type = "input",
     description,
-    disabled
-}: UseControllerProps<T>) => {
+    type = "text",
+    disabled,
+}: UseControllerProps<T> ) => {
     return (
         <FormField
             control={control}
@@ -50,7 +51,31 @@ export const FormFieldCommon = <T extends FieldValues,>({
                 <FormItem >
                     {label ? <FormLabel>{label}</FormLabel> : null}
                     <FormControl>
-                        {renderElement(type, { ...field, placeholder: placeholder || "Enter your " + field.name, disabled })}
+                        <Input {...field}  type={type} placeholder={placeholder ? placeholder : "Enter your " + name} disabled={disabled} className='rounded-lg' />
+                    </FormControl>
+                    {description ? <FormDescription className='text-xs text-gray-500'>{description}</FormDescription> : null}
+                    <FormMessage className='mb-2' />
+                </FormItem>
+            )} />
+    );
+};
+export const FormTextareaCommon = <T extends FieldValues,>({
+    control,
+    name,
+    placeholder,
+    label,
+    description,
+    disabled
+}: Omit<UseControllerProps<T>, "type">) => {
+    return (
+        <FormField
+            control={control}
+            name={name}
+            render={({ field }) => (
+                <FormItem >
+                    {label ? <FormLabel>{label}</FormLabel> : null}
+                    <FormControl>
+                        <Textarea {...field} placeholder={placeholder ? placeholder : "Enter your " + name} disabled={disabled} className='rounded-lg' />
                     </FormControl>
                     {description ? <FormDescription className='text-xs text-gray-500'>{description}</FormDescription> : null}
                     <FormMessage className='mb-2' />

@@ -1,23 +1,41 @@
 import { report } from "@/lib/utils";
 import axiosServer from "@/lib/utils/axios-server";
-import { AuthOptions, getServerSession, Session, User } from "next-auth";
+import { AuthOptions, getServerSession, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from 'next-auth/providers/credentials';
+console.log(process.env.NEXTAUTH_SECRET)
 const authOption: AuthOptions = ({
     pages: {
         signIn: "/sign-in",
         signOut: "/sign-in"
     },
+    secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
-        session: async ({ user, session, token }: { user: User, session: Session, token: JWT; }) => {
-            const isTokenValid = getIsTokenValid(token.token!);
-            if (!isTokenValid) return {} as Session;
+        session: async ({ session, token }) => {
+            // if (token && token.accessToken) {
+            //     const decode = parseJwt(token.accessToken);
+            //     session.user = { ...token, exp: decode.exp };
+            //     session.expires = new Date(decode.exp * 1000).toISOString();
+            // }
             session.user = token;
+            session.error = token.error as string;
             return session;
         },
-        jwt: async ({ token, user }: { token: JWT; user?: User; }) => {
-            return {} as JWT
-            return { ...token, ...user };
+        jwt: async ({ token, user }: { token: JWT, user: User }) => {
+            if (user) {
+                const jwt = {
+                    ...user,
+                    accessToken: user.accessToken,
+                    refreshToken: user.refreshToken,
+                }
+                return jwt
+            }
+
+            if (new Date() < new Date(parseJwt(token.accessToken!).exp * 1000)) {
+                return token;
+            }
+            // accesstoken expired
+            return Promise.resolve(refreshToken(token))
         }
     },
     session: {
@@ -32,15 +50,16 @@ const authOption: AuthOptions = ({
             },
             authorize: async (credential) => {
                 try {
-                    const { data } = await axiosServer.post<ApiResponse<{ token: string; }>>("/auth/login", {
+                    const { data } = await axiosServer.post<{
+                        accessToken: string,
+                        refreshToken: string,
+                    }>("/auth/login", {
                         email: credential?.email,
                         password: credential?.password
                     });
-                    if (data.payload) {
-                        const decode = JSON.parse(atob(data.payload.token.split('.').at(1)!));
-                        const user = { ...data.payload, email: decode.sub, lat: decode.lat, exp: decode.exp } as User;
-                        console.log(user);
-                        return user; // คืนค่าผู้ใช้ที่ได้รับการยืนยัน
+                    if (data) {
+                        const decode = parseJwt(data.accessToken);
+                        return { ...data, ...decode, email: decode.sub }; // คืนค่าผู้ใช้ที่ได้รับการยืนยัน
                     } else {
                         return null; // ผู้ใช้ไม่ถูกต้อง
                     }
@@ -77,6 +96,24 @@ export const getIsTokenValid = (token: string) => {
 
     return true;
 };
-const getSession = () => getServerSession(authOption);
+
+const refreshToken = async (token: any) => {
+    try {
+        const { data } = await axiosServer.post("/auth/refresh-token", {
+            refreshToken: token.refreshToken,
+        });
+        return {
+            ...token,
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken ?? token.refreshToken
+        }
+    } catch (error) {
+        return {
+            ...token,
+            error: "RefreshAccessTokenError"
+        }
+    }
+}
+const getSession = async () => await getServerSession(authOption);
 
 export { authOption, getSession };

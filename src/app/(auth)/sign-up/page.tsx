@@ -1,9 +1,8 @@
+'use client';
 import SignUpForm from '@/modules/auth/signup';
 import React from 'react';
 
-type Props = {};
-
-const RegisterPage = (props: Props) => {
+const RegisterPage = () => {
   return (
     <SignUpForm />
   );

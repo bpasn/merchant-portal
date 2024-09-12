@@ -12,8 +12,8 @@ import { useRouter } from 'next/navigation';
 import { useForm } from "react-hook-form";
 import { z } from 'zod';
 const userSchema = z.object({
-    email: z.string().min(1, { message: "Email is required" }),
-    password: z.string().min(1, { message: "Password is required" })
+    email: z.string().min(1, { message: "Email is required" }).regex(RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g), { message: "Email invalid format" }),
+    password: z.string().min(1, { message: "Password is required" }).regex(RegExp(/^(?=.*[0-9])(?=.*[a-x])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/), { message: "Password invalid format" })
 });
 type UserSchema = z.infer<typeof userSchema>;
 const LoginForm = () => {
@@ -24,7 +24,8 @@ const LoginForm = () => {
         defaultValues: {
             email: "",
             password: ""
-        }
+        },
+        mode: "onChange"
     });
     const handleSave = async (data: UserSchema) => {
         // เรียกใช้งาน signIn ด้วย redirect: false อย่างชัดเจน
@@ -33,22 +34,22 @@ const LoginForm = () => {
             password: data.password,
             redirect: false, // ยืนยันว่ามี redirect: false,
         });
-        console.log(response); // ดีบักดู response เพื่อดูค่าที่กลับมา
         // ตรวจสอบว่าการยืนยันตัวตนสำเร็จหรือไม่
         if (response?.ok) {
             // ตัวอย่าง: redirect ไปหน้าอื่นถ้าจำเป็น
             router.push('/');
         }
-
         // จัดการข้อผิดพลาดและแสดง toast อย่างเหมาะสม
         if (response?.error) {
             toast({
-                title: "Authenticate",
+                title: "Exception",
                 description: response.error, // แสดงข้อผิดพลาดที่ถูกต้อง
                 variant: "destructive"
             });
         }
     };
+
+
 
     return (
         <div className="flex h-screen w-screen items-center justify-center bg-gray-50">
@@ -67,6 +68,7 @@ const LoginForm = () => {
                         />
                         <FormFieldCommon
                             label='PASSWORD'
+                            type="password"
                             control={form.control}
                             name="password"
                         />

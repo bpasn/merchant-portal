@@ -1,38 +1,28 @@
-import { getToken } from 'next-auth/jwt';
-import { withAuth } from 'next-auth/middleware';
-import { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
+import { getToken } from "next-auth/jwt";
+import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 
 export default async function middleware(req: NextRequest, event: NextFetchEvent) {
-    const token = await getToken({ req });
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-    const isAuthentication = !!token;
+  const { pathname } = req.nextUrl;
 
-    if ((req.nextUrl.pathname.startsWith("/sign-in") || req.nextUrl.pathname.startsWith("/sign-up") )&& isAuthentication) {
-        return NextResponse.redirect(new URL("/", req.url));
-    }
+  // ตรวจสอบว่าเป็นหน้าที่ไม่ต้องการล็อกอิน
+  const isAuthPage = pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up");
 
-    const authMiddlware = withAuth({
-        pages: {
-            signIn: "/sign-in"
-        },
-        callbacks: {
-            async authorized({ req, token, }) {
-              const { pathname } = req.nextUrl;
-        
-              // อนุญาตให้เข้าถึงหน้า sign-in และ sign-up ได้เสมอ
-              if (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up") && !token) {
-                return true;
-              }
-        
-              // อนุญาตเฉพาะเมื่อมี token (ผู้ใช้ล็อกอินแล้ว)
-              return !!token;
-            },
-          },
-    });
-    // @ts-expect-error
-    return authMiddlware(req, event);
+  // ถ้าผู้ใช้ล็อกอินแล้ว แต่เข้าหน้าล็อกอินหรือสมัครสมาชิก ให้ redirect กลับไปที่หน้าแรก
+  if (isAuthPage && token) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  // ถ้าเป็นหน้าที่ต้องการการล็อกอิน และไม่มี token ให้ redirect ไปที่หน้า sign-in
+  if (!token && !isAuthPage) {
+    return NextResponse.redirect(new URL("/sign-in", req.url));
+  }
+
+  // อนุญาตให้ผ่านในกรณีอื่นๆ
+  return NextResponse.next();
 }
 
 export const config = {
-    matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"]
+  matcher: ["/sign-in", "/sign-up", "/dashboard", "/protected-route"],
 };

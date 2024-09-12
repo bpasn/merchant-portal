@@ -19,8 +19,9 @@ export const toUpperCase = (str: string) => str.charAt(0).toUpperCase() + str.sl
 
 export const delay = (duration: number) => new Promise((res) => setTimeout(res, duration));
 
-export const report = (error:any):string => {
-  if(error instanceof AxiosError){
+export const report = (error: any): string => {
+  if (error instanceof AxiosError) {
+    console.log(error.response?.data)
     return error.response && error.response.data ? (error.response.data as ErrorResponse).message : error.message;
   }
   return "Internal server error";

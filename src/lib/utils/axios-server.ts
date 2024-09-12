@@ -32,7 +32,7 @@ export const axiosServer = axios.create({
       // จัดการกับข้อผิดพลาดที่เกิดขึ้นใน response
       if (error.response && error.response.status === 401) {
         // เช่น หากเจอ 401 Unauthorized ให้ทำการ logout หรือ redirect
-        window.location.href = '/';
+      
       }
       return Promise.reject(error);
     }
