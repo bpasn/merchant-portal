@@ -6,6 +6,7 @@ import axiosClient from '@/lib/utils/axios-client';
 import { StoreModal } from '@/lib/schema/storeSchema';
 import { redirect } from 'next/navigation';
 import { checkId } from '../action';
+import { getStoreById } from '@/lib/services/store.service';
 
 const layout = async ({
   params,
@@ -16,8 +17,7 @@ const layout = async ({
   };
   children: React.ReactNode;
 }) => {
-  await checkId(params.bId);
-
+  await getStoreById(params.bId);
   return (
     <div className='flex flex-col'>
       <HeadingModule title="Manage items" />

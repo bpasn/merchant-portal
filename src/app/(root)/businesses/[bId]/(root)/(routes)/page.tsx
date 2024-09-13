@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from "react";
 import { useStoreModal } from "@/lib/hooks/store-modal";
-import StoreForm from "@/modules/businesses/store/form";
+import StoreForm from "@/modules/store/form";
 const BusinessesRoot = () => {
     const openModal = useStoreModal((state) => state.openModal);
     const open = useStoreModal((state) => state.open);

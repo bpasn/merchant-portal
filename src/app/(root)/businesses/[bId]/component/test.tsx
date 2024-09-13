@@ -1,6 +1,6 @@
 'use client';
 import { useStoreModal } from '@/lib/hooks/store-modal';
-import StoreForm from '@/modules/businesses/store/form';
+import StoreForm from '@/modules/store/form';
 import React, { useCallback, useEffect } from 'react';
 
 type Props = {};
@@ -16,7 +16,7 @@ const TestComponent = (props: Props) => {
             });
         }
     }, [open, openModal]);
-    
+
     useEffect(() => {
         store();
     }, [store()]);

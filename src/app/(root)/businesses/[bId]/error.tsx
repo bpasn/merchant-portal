@@ -1,5 +1,7 @@
 'use client' // Error boundaries must be Client Components
 
+import { Button } from '@/components/ui/button'
+import { useStoreModal } from '@/lib/hooks/store-modal'
 import { useEffect } from 'react'
 
 export default function Error({
@@ -9,10 +11,22 @@ export default function Error({
     error: Error & { digest?: string }
     reset: () => void
 }) {
+    const { open, openModal, closeModal } = useStoreModal();
     useEffect(() => {
-        console.log(error)
-    }, [error])
+        if (!open) {
+            openModal((
+                <div className='flex flex-col'>
+                    {error.message}
+                    <Button onClick={() => {
+                        reset();
+                        closeModal()
+                    }}>OK</Button>
+                </div>
+            ), error.name)
+        }
+    }, [error, open, openModal])
 
+    return null;
     return (
         <main className="flex h-screen flex-col items-center justify-center">
             <h2 className="text-center text-lg">Something went wrong!</h2>

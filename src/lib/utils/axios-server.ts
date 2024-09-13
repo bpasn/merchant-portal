@@ -1,41 +1,40 @@
+import { getSession } from "@/app/auth";
 import axios from "axios";
 
 export const axiosServer = axios.create({
-    baseURL: process.env.API_URL,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
-  });
-  axiosServer.interceptors.request.use(
-    (config) => {
-      // สามารถแก้ไข config ก่อนส่ง request ได้ที่นี่
-      // const token = localStorage.getItem('token');
-      // if (token) {
-      //   config.headers.Authorization = `Bearer ${token}`;
-      // }
-      return config;
-    },
-    (error) => {
-      // จัดการกับข้อผิดพลาดก่อนส่ง request
-      return Promise.reject(error);
-    }
-  );
-  
-  // เพิ่ม response interceptor
-  axiosServer.interceptors.response.use(
-    (response) => {
-      // สามารถจัดการกับ response ก่อนจะส่งไปให้กับ function ที่เรียกใช้งาน
-      return response;
-    },
-    (error) => {
-      // จัดการกับข้อผิดพลาดที่เกิดขึ้นใน response
-      if (error.response && error.response.status === 401) {
-        // เช่น หากเจอ 401 Unauthorized ให้ทำการ logout หรือ redirect
-      
-      }
-      return Promise.reject(error);
-    }
-  );
+  baseURL: process.env.API_URL,
+  headers: {
+    "Content-Type": "application/json",
+    "Cache-Control": "no-store",
+  },
+});
 
-  export default axiosServer;
+
+axiosServer.interceptors.request.use(
+  async (config) => {
+    if (!config.headers['Authorization']) {
+      const session = await getSession();
+      console.log(session)
+      config.headers['Authorization'] = `Bearer ${session?.accessToken}`
+    }
+    return config;
+  },
+  (error) => {
+    // จัดการกับข้อผิดพลาดก่อนส่ง request
+    return Promise.reject(error);
+  }
+);
+
+// axiosServer.interceptors.response.use(
+//   response => {
+//     return response;
+//   },
+//   async (error) => {
+//     const { response, config } = error;
+//     if (response && response.status === 401) {
+//       return axiosServer(config);
+//     }
+//     return Promise.reject(error);
+//   }
+// );
+export default axiosServer;

@@ -4,15 +4,12 @@ declare module "next-auth" {
     interface User {
         accessToken?: string;
         refreshToken?: string;
-        accessTokenExpires?: string;
-        lat?: number;
-        exp?: number;
     }
 
     interface Session {
         user: Omit<User, "id"> | null;
-        // accessToken?: string;
-        // refreshToken?: string;
+        accessToken?: string;
+        refreshToken?: string;
         // accessTokenExpires?: string;
         error?: string;
     }

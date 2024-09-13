@@ -5,8 +5,6 @@ import axiosServer from "../utils/axios-server";
 
 const useAxiosAuth = () => {
     const {data:session} = useSession();
-
-
     useEffect(() => {
         const requestIntercept = axiosServer.interceptors.request.use(
             (config) => {

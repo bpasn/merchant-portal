@@ -1,9 +1,9 @@
 import { report } from "@/lib/utils";
 import axiosServer from "@/lib/utils/axios-server";
+import axios from "axios";
 import { AuthOptions, getServerSession, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from 'next-auth/providers/credentials';
-console.log(process.env.NEXTAUTH_SECRET)
 const authOption: AuthOptions = ({
     pages: {
         signIn: "/sign-in",
@@ -12,17 +12,23 @@ const authOption: AuthOptions = ({
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
         session: async ({ session, token }) => {
-            // if (token && token.accessToken) {
-            //     const decode = parseJwt(token.accessToken);
-            //     session.user = { ...token, exp: decode.exp };
-            //     session.expires = new Date(decode.exp * 1000).toISOString();
-            // }
-            session.user = token;
-            session.error = token.error as string;
-            return session;
+            const sanitizedToken = Object.keys(token).reduce((p, c) => {
+                if (
+                    c !== "lat" &&
+                    c !== "exp" &&
+                    c !== "jti" &&
+                    c !== "accessToken" &&
+                    c !== "refreshToken"
+                ) {
+                    return { ...p, [c]: token[c] }
+                } else {
+                    return p
+                }
+            }, {});
+            return { ...session, error: token.error, expires: new Date(parseJwt(token.accessToken!).exp * 1000).toISOString(), ...sanitizedToken, accessToken: token.accessToken, refreshToken: token.refreshToken };
         },
         jwt: async ({ token, user }: { token: JWT, user: User }) => {
-            if (user) {
+            if (typeof user !== "undefined") {
                 const jwt = {
                     ...user,
                     accessToken: user.accessToken,
@@ -30,12 +36,11 @@ const authOption: AuthOptions = ({
                 }
                 return jwt
             }
-
-            if (new Date() < new Date(parseJwt(token.accessToken!).exp * 1000)) {
+            if (Date.now() / 1000 < Number(parseJwt(token.accessToken!).exp)) {
                 return token;
             }
             // accesstoken expired
-            return Promise.resolve(refreshToken(token))
+            return await refreshToken(token);
         }
     },
     session: {
@@ -48,7 +53,7 @@ const authOption: AuthOptions = ({
                 email: {},
                 password: {}
             },
-            authorize: async (credential) => {
+            authorize: async (credential, req) => {
                 try {
                     const { data } = await axiosServer.post<{
                         accessToken: string,
@@ -59,7 +64,7 @@ const authOption: AuthOptions = ({
                     });
                     if (data) {
                         const decode = parseJwt(data.accessToken);
-                        return { ...data, ...decode, email: decode.sub }; // คืนค่าผู้ใช้ที่ได้รับการยืนยัน
+                        return { accessToken: data.accessToken, refreshToken: data.refreshToken, user: { email: decode.sub } } as any; // คืนค่าผู้ใช้ที่ได้รับการยืนยัน
                     } else {
                         return null; // ผู้ใช้ไม่ถูกต้อง
                     }
@@ -97,11 +102,14 @@ export const getIsTokenValid = (token: string) => {
     return true;
 };
 
-const refreshToken = async (token: any) => {
+export const refreshToken = async (token: any) => {
+    console.log("REFRESH TOKEN")
     try {
-        const { data } = await axiosServer.post("/auth/refresh-token", {
+        const { data } = await axios.post<{ accessToken: string, refreshToken: string }>(process.env.API_URL + "/auth/refresh-token", {
             refreshToken: token.refreshToken,
         });
+
+        console.log({ NEW_TOKEN: data.accessToken })
         return {
             ...token,
             accessToken: data.accessToken,

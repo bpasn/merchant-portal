@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { CommandSeparator } from 'cmdk';
 import { useStoreModal } from '@/lib/hooks/store-modal';
-import StoreForm from '@/modules/businesses/store/form';
+import StoreForm from '@/modules/store/form';
 import { useParams, useRouter } from 'next/navigation';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>;
@@ -32,7 +32,7 @@ const Combobox = <T extends IOptionCombobox,>({
     const openModal = useStoreModal((state) => state.openModal);
 
 
-    const onSelect = (v:IOptionCombobox) => {
+    const onSelect = (v: IOptionCombobox) => {
         setOpen(false);
         router.push(`/businesses/${v.value}/menu`)
     }
@@ -82,14 +82,14 @@ const Combobox = <T extends IOptionCombobox,>({
                     <CommandList>
                         <CommandGroup>
                             <CommandItem
-                            className='flex flex-row gap-2'
+                                className='flex flex-row gap-2'
                                 onSelect={() => {
                                     openModal(<StoreForm />, "Create item", {
                                         description: "Add a new store to manage item"
                                     });
                                 }}
                             >
-                                <PlusCircle className='ml-2 h-5 w-5'/>
+                                <PlusCircle className='ml-2 h-5 w-5' />
                                 <span>Create store</span>
                             </CommandItem>
                         </CommandGroup>

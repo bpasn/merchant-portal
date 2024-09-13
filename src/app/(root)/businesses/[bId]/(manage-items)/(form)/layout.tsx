@@ -1,5 +1,5 @@
+import { getStoreById } from '@/lib/services/store.service';
 import React from 'react';
-import { checkId } from '../action';
 
 const layout = async ({
   params,
@@ -10,7 +10,7 @@ const layout = async ({
   };
   children: React.ReactNode;
 }) => {
-  await checkId(params.bId);
+  await getStoreById(params.bId);
   return (
     <>{children}</>
   );

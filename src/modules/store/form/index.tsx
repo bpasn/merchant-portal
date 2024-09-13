@@ -10,6 +10,7 @@ import { report } from '@/lib/utils';
 import axiosClient from '@/lib/utils/axios-client';
 import { useParams } from 'next/navigation';
 import { useStoreModal } from '@/lib/hooks/store-modal';
+import axiosServer from '@/lib/utils/axios-server';
 
 const StoreForm = () => {
   const [loading, setLoading] = useState(false);
@@ -24,12 +25,13 @@ const StoreForm = () => {
   const handleSubmit = async (data: StoreSchema) => {
     setLoading(true);
     try {
-      const { data: store } = await axiosClient.post<ApiResponse<StoreModal>>('/api/store', data);
+      const { data: store } = await axiosServer.post<ApiResponse<StoreModal>>('/store', data);
+      console.log(store)
       window.location.assign(`/businesses/${store.payload.id}/menu`);
     } catch (error) {
-      report(error);
+      console.log(error);
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   };
 
