@@ -3,7 +3,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import React, { useState } from 'react';
 import { ChevronsUpDown, CheckIcon, PlusCircle } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { cn } from '@/lib/utils';
+import { cn, EachElement } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { CommandSeparator } from 'cmdk';
 import { useStoreModal } from '@/lib/hooks/store-modal';
@@ -34,8 +34,8 @@ const Combobox = <T extends IOptionCombobox,>({
 
     const onSelect = (v: IOptionCombobox) => {
         setOpen(false);
-        router.push(`/businesses/${v.value}/menu`)
-    }
+        router.push(`/businesses/${v.value}/menu`);
+    };
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -61,21 +61,29 @@ const Combobox = <T extends IOptionCombobox,>({
                     <CommandList>
                         <CommandEmpty>No framework found.</CommandEmpty>
                         <CommandGroup >
-                            {items.map((item: IOptionCombobox) => (
-                                <CommandItem
-                                    key={item.value}
-                                    value={item.label}
-                                    onSelect={() => onSelect(item)}
-                                >
-                                    {item.label}
-                                    <CheckIcon
-                                        className={cn(
-                                            "ml-auto h-4 w-4",
-                                            currentStore?.value === item.value ? "opacity-100" : "opacity-0"
-                                        )}
-                                    />
-                                </CommandItem>
-                            ))}
+                            <EachElement
+                                of={items}
+                                render={(item, index) => {
+                                    console.log(index)
+                                    return (
+                                        <>
+                                            <CommandItem
+                                                key={item.value}
+                                                value={item.label}
+                                                onSelect={() => onSelect(item)}
+                                            >
+                                                {item.label}
+                                                <CheckIcon
+                                                    className={cn(
+                                                        "ml-auto h-4 w-4",
+                                                        currentStore?.value === item.value ? "opacity-100" : "opacity-0"
+                                                    )}
+                                                />
+                                            </CommandItem>
+                                        </>
+                                    );
+                                }}
+                            />
                         </CommandGroup>
                     </CommandList>
                     <CommandSeparator />

@@ -1,12 +1,9 @@
 import { getAllStore } from '@/lib/services/store.service';
 import Combobox from '@/modules/common/combobox';
-import { redirect } from 'next/navigation';
 
 const SwitchBranch = async () => {
     const data = await getAllStore();
-    if (!data.length) {
-        redirect('/businesses/menu');
-    }
+    console.log(data)
     return (
         <>
             <Combobox

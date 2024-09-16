@@ -7,7 +7,6 @@ import { StoreModal, StoreSchema, storeSchema } from '@/lib/schema/storeSchema';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import { Button } from '@/components/ui/button';
 import { report } from '@/lib/utils';
-import { useParams } from 'next/navigation';
 import { useStoreModal } from '@/lib/hooks/store-modal';
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
 
@@ -15,7 +14,6 @@ const StoreForm = () => {
   const [loading, setLoading] = useState(false);
   const axios = useAxiosAuth()
   const { closeModal } = useStoreModal();
-  const params = useParams();
   const form = useForm<StoreSchema>({
     resolver: zodResolver(storeSchema),
     defaultValues: {
@@ -26,7 +24,6 @@ const StoreForm = () => {
     setLoading(true);
     try {
       const { data: store } = await axios.post<ApiResponse<StoreModal>>('/store', data);
-      console.log(store)
       window.location.assign(`/businesses/${store.payload.id}/menu`);
     } catch (error) {
       console.log(report(error));

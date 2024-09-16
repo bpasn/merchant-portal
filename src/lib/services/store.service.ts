@@ -33,11 +33,10 @@ export const getStoreById = async (id: string) => {
 
 export const getAllStore = async (): Promise<StoreModal[]> => {
     const { data } = await axiosServer.get<ApiResponse<StoreModal[]>>(`/store`);
-    console.log({data})
     if (!data.payload.length) {
         redirect('/businesses/menu');
     }
-    return Promise.resolve(data.payload);
+    return data.payload;
 };
 
 export const createStore = async (store: StoreSchema): Promise<string> => {
