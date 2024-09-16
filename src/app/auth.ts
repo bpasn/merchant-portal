@@ -20,21 +20,21 @@ const authOption: AuthOptions = ({
                     c !== "accessToken" &&
                     c !== "refreshToken"
                 ) {
-                    return { ...p, [c]: token[c] }
+                    return { ...p, [c]: token[c] };
                 } else {
-                    return p
+                    return p;
                 }
             }, {});
             return { ...session, error: token.error, expires: new Date(parseJwt(token.accessToken!).exp * 1000).toISOString(), ...sanitizedToken, accessToken: token.accessToken, refreshToken: token.refreshToken };
         },
-        jwt: async ({ token, user }: { token: JWT, user: User }) => {
+        jwt: async ({ token, user }: { token: JWT, user: User; }) => {
             if (typeof user !== "undefined") {
                 const jwt = {
                     ...user,
                     accessToken: user.accessToken,
                     refreshToken: user.refreshToken,
-                }
-                return jwt
+                };
+                return jwt;
             }
             if (Date.now() / 1000 < Number(parseJwt(token.accessToken!).exp)) {
                 return token;
@@ -73,7 +73,8 @@ const authOption: AuthOptions = ({
                 }
             }
         })
-    ]
+    ],
+
 });
 export const parseJwt = (token: string) => {
     try {
@@ -103,25 +104,24 @@ export const getIsTokenValid = (token: string) => {
 };
 
 export const refreshToken = async (token: any) => {
-    console.log("REFRESH TOKEN")
+    console.log("REFRESH TOKEN");
     try {
-        const { data } = await axios.post<{ accessToken: string, refreshToken: string }>(process.env.API_URL + "/auth/refresh-token", {
+        const { data } = await axios.post<{ accessToken: string, refreshToken: string; }>(process.env.API_URL + "/auth/refresh-token", {
             refreshToken: token.refreshToken,
         });
-
-        console.log({ NEW_TOKEN: data.accessToken })
+        console.log({ data });
         return {
             ...token,
             accessToken: data.accessToken,
             refreshToken: data.refreshToken ?? token.refreshToken
-        }
+        };
     } catch (error) {
         return {
             ...token,
             error: "RefreshAccessTokenError"
-        }
+        };
     }
-}
+};
 const getSession = async () => await getServerSession(authOption);
 
 export { authOption, getSession };

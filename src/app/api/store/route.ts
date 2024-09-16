@@ -12,12 +12,10 @@ export const dynamic = 'force-static';
 export const revalidate = 0;
 export const GET = async (req: NextRequest) => {
     const session = await getSession();
-    console.log({ session })
     try {
         // const { data } = await axiosServer.get<ApiResponse<StoreModal>>("/store/find-one", headers);
         return handleResponse({} as any, HttpStatus.OK);
     } catch (error) {
-        console.log("ERROR ", report(error))
         return handleError(error);
     }
 };

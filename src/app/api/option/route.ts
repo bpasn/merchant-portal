@@ -34,10 +34,7 @@ export const POST = async (req: NextRequest) => {
         const response = await axiosServer.post<ApiResponse<ProductOptionSchema[]>>("/product-option", body,);
         return handleResponse(response.data, HttpStatus.OK);
     } catch (error) {
-        if (error instanceof AxiosError) {
-            console.log(error.response!.data);
-        }
-        handleError(error);
-        return;
+        
+        return handleError(error);;
     }
 };

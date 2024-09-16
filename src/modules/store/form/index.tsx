@@ -7,13 +7,13 @@ import { StoreModal, StoreSchema, storeSchema } from '@/lib/schema/storeSchema';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import { Button } from '@/components/ui/button';
 import { report } from '@/lib/utils';
-import axiosClient from '@/lib/utils/axios-client';
 import { useParams } from 'next/navigation';
 import { useStoreModal } from '@/lib/hooks/store-modal';
-import axiosServer from '@/lib/utils/axios-server';
+import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
 
 const StoreForm = () => {
   const [loading, setLoading] = useState(false);
+  const axios = useAxiosAuth()
   const { closeModal } = useStoreModal();
   const params = useParams();
   const form = useForm<StoreSchema>({
@@ -25,11 +25,11 @@ const StoreForm = () => {
   const handleSubmit = async (data: StoreSchema) => {
     setLoading(true);
     try {
-      const { data: store } = await axiosServer.post<ApiResponse<StoreModal>>('/store', data);
+      const { data: store } = await axios.post<ApiResponse<StoreModal>>('/store', data);
       console.log(store)
       window.location.assign(`/businesses/${store.payload.id}/menu`);
     } catch (error) {
-      console.log(error);
+      console.log(report(error));
     } finally {
       setLoading(false)
     }

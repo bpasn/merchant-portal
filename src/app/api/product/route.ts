@@ -21,7 +21,6 @@ export const GET = async (req: NextRequest) => {
         const { data } = await axiosServer.get<ApiResponse<IDataTable<ProductModal>>>(`/products/?page=${page}&size=${size}`);
         return handleResponse(data, HttpStatus.OK);
     } catch (error) {
-        console.log(error)
         return handleError(error);
 
     }
