@@ -3,14 +3,11 @@ import Combobox from '@/modules/common/combobox';
 
 const SwitchBranch = async () => {
     const data = await getAllStore();
-    console.log(data)
     return (
-        <>
-            <Combobox
-                items={data.map(e => ({ label: e.storeName, value: e.id }))}
-                size={300}
-            />
-        </>
+        <Combobox
+            items={data.map(e => ({ label: e.storeName, value: e.id }))}
+            size={300}
+        />
     );
 };
 

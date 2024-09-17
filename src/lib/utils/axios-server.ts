@@ -1,4 +1,4 @@
-import { getSession } from "@/app/auth";
+import { getSession } from "@/lib/auth";
 import axios from "axios";
 
 export const axiosServer = axios.create({

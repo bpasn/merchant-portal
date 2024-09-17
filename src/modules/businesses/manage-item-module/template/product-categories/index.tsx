@@ -4,7 +4,7 @@ import { TabsContent } from '@/components/ui/tabs';
 import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
 import { EachElement } from '@/lib/utils';
 import LinkButton from '@/modules/common/link-button';
-import ProductGroupAction from './component/product-group-cell-action';
+import ProductGroupAction from './component/product-category-cell-action';
 import { useParams } from 'next/navigation';
 
 
@@ -38,17 +38,24 @@ const ManageItemGroup = ({
             </div>
           </div>
         </div>
-        <EachElement
-          of={productGroups}
-          render={(group) => (
-            <div className='flex flex-row px-2 py-4 border-b-2 items-center cursor-pointer hover:bg-primary-foreground/20'>
-              <h2 className="text-md ">{group.name}</h2>
-              <div className="ml-auto">
-                <ProductGroupAction group={group} />
+
+        {productGroups.length ? (
+          <EachElement
+            of={productGroups}
+            render={(group) => (
+              <div className='flex flex-row px-2 py-4 border-b-2 items-center cursor-pointer hover:bg-primary-foreground/20'>
+                <h2 className="text-md ">{group.name}</h2>
+                <div className="ml-auto">
+                  <ProductGroupAction group={group} />
+                </div>
               </div>
-            </div>
-          )}
-        />
+            )}
+          />
+        ) : (
+          <div className='flex items-center justify-center p-5'>
+            No Results.
+          </div>
+        )}
       </div>
     </TabsContent>
   );

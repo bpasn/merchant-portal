@@ -1,9 +1,14 @@
-import ManageItem from "@/modules/businesses/manage-item-module/template/item";
+import { productGetAction } from "@/lib/services/manageItem.service";
+import ManageItem from "@/modules/businesses/manage-item-module/template/product";
 
-const MenuItemPage = async () => {
-  // const { payload: products } = await productGetAction(0, 10);
+const MenuItemPage = async ({ params }: {
+  params: {
+    bId: string;
+  }
+}) => {
+  const products = await productGetAction(params.bId, 0, 10);
   return (
-    <ManageItem dataTable={null} />
+    <ManageItem dataTable={products.payload} />
   );
 };
 

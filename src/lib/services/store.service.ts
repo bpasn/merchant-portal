@@ -2,16 +2,10 @@
 
 import { StoreModal, StoreSchema } from "../schema/storeSchema";
 import axiosServer from "../utils/axios-server";
-import { report } from "../utils";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export const getStore = async () => {
-    // try {
-
-    // } catch (error) {
-    //     throw new Error(report(error));
-    // }
     const { data } = await axiosServer.get<ApiResponse<StoreModal>>(`/store/find-one`);
     console.log({ data });
     if (data.payload) {

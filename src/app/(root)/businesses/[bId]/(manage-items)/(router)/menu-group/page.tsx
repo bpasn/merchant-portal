@@ -1,6 +1,5 @@
-import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
-import axiosClient from '@/lib/utils/axios-client';
-import ManageItemGroupTemplate from '@/modules/businesses/manage-item-module/template/item-group';
+import { categoryGetAction } from '@/lib/services/manageItem.service';
+import ManageItemGroupTemplate from '@/modules/businesses/manage-item-module/template/product-categories';
 
 interface MenuGroupPageProps {
   params: {
@@ -8,10 +7,13 @@ interface MenuGroupPageProps {
   };
 }
 const MenuGroupPage = async ({
+  params: {
+    bId
+  }
 }: MenuGroupPageProps) => {
-  const { data } = await axiosClient.get<ApiResponse<CategoriesSchema[]>>("/api/categories");
+  const data = await categoryGetAction(bId)
   return (
-    <ManageItemGroupTemplate productGroups={data.payload} />
+    <ManageItemGroupTemplate productGroups={data} />
   );
 };
 

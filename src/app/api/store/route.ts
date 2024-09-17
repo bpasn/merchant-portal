@@ -1,5 +1,5 @@
 
-import { getSession } from "@/app/auth";
+import { getSession } from "@/lib/auth";
 import { StoreSchema } from "@/lib/schema/storeSchema";
 import { report } from "@/lib/utils";
 import axiosServer from "@/lib/utils/axios-server";

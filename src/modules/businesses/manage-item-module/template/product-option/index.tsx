@@ -54,14 +54,14 @@ const ManageItemOption = ({
             </div>
           </div>
         </div>
-        <Accordion type="single" collapsible className="w-full px-3">
+        <Accordion type="single" collapsible className="w-full">
           {productOption.length ? (
             <EachElement
               of={productOption || []}
               render={(option, optionIndex) => {
                 return (
                   <AccordionItem key={option.optionName} value={option.optionName}>
-                    <AccordionTrigger>{option.optionName}</AccordionTrigger>
+                    <AccordionTrigger className='hover:bg-black/10 ease-in-out transition-all duration-300 px-5 rounded-sm'>{option.optionName}</AccordionTrigger>
                     <AccordionContent>
                       <div className="ml-5">
                         <EachElement
@@ -82,7 +82,11 @@ const ManageItemOption = ({
                 );
               }}
             />
-          ) : null}
+          ) : (
+            <div className='flex items-center justify-center p-5'>
+              No Results.
+            </div>
+          )}
         </Accordion>
 
       </div>

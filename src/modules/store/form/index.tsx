@@ -9,9 +9,13 @@ import { Button } from '@/components/ui/button';
 import { report } from '@/lib/utils';
 import { useStoreModal } from '@/lib/hooks/store-modal';
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
+import { postWithAuth } from '@/lib/utils/fetchWithAuth';
+import { useSession } from 'next-auth/react';
+import { createStore } from '@/lib/services/store.service';
 
 const StoreForm = () => {
   const [loading, setLoading] = useState(false);
+  const {data:session} = useSession();
   const axios = useAxiosAuth()
   const { closeModal } = useStoreModal();
   const form = useForm<StoreSchema>({
@@ -23,10 +27,10 @@ const StoreForm = () => {
   const handleSubmit = async (data: StoreSchema) => {
     setLoading(true);
     try {
-      const { data: store } = await axios.post<ApiResponse<StoreModal>>('/store', data);
-      window.location.assign(`/businesses/${store.payload.id}/menu`);
+      const id = await createStore(data);
+      window.location.assign(`/businesses/${id}/menu`);
     } catch (error) {
-      console.log(report(error));
+      report(error);
     } finally {
       setLoading(false)
     }
@@ -45,9 +49,6 @@ const StoreForm = () => {
           />
           <div className='flex flex-row ml-auto gap-5'>
             <Button className='ml-auto ' disabled={loading} type="button" variant={"outline"} onClick={() => {
-              // if (params.bId == "menu") {
-              //   return window.location.assign("/");
-              // }
               closeModal();
             }}>Cancle</Button>
             <Button className='ml-auto' disabled={loading}>Save</Button>

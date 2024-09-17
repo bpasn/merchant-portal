@@ -4,9 +4,8 @@ import {
     Form
 } from '@/components/ui/form';
 import { toast } from '@/components/ui/use-toast';
-import { useBranchStore } from '@/lib/hooks/store-branch';
 import { CategoriesSchema, categoriesSchema } from '@/lib/schema/categoriesSchema';
-import axiosClient from '@/lib/utils/axios-client';
+import { createCategory } from '@/lib/services/manageItem.service';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import HeadingModule from '@/modules/common/heading-module';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,14 +15,13 @@ import { useForm } from "react-hook-form";
 
 
 
-interface FormMenuGroupProps {
+interface FormProductCategoryProps {
     itemGroup: CategoriesSchema | null;
 };
-const FormMenuGroup = ({
+const FormProductCategory = ({
     itemGroup
-}: FormMenuGroupProps) => {
+}: FormProductCategoryProps) => {
     const title = itemGroup !== null ? "Edit Item" : "Create Item";
-    const router = useRouter();
     const params = useParams();
     const form = useForm<CategoriesSchema>({
         resolver: zodResolver(categoriesSchema),
@@ -34,7 +32,7 @@ const FormMenuGroup = ({
 
     const handleSave = async (data: CategoriesSchema) => {
         try {
-            await axiosClient.post("/api/categories", data);
+            await createCategory({ ...data, storeId: params.bId.toString() });
             window.location.assign(`/businesses/${params.bId}/menu-group`);
         } catch (error) {
             toast({
@@ -78,4 +76,4 @@ const FormMenuGroup = ({
     );
 };
 
-export default FormMenuGroup;
+export default FormProductCategory;

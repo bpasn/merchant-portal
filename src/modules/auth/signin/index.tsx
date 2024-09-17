@@ -4,11 +4,13 @@ import {
     Form,
 } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
+import { report } from '@/lib/utils';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 import { useForm } from "react-hook-form";
 import { z } from 'zod';
 const userSchema = z.object({
@@ -18,6 +20,7 @@ const userSchema = z.object({
 type UserSchema = z.infer<typeof userSchema>;
 const LoginForm = () => {
     const router = useRouter();
+    const [loading, setLoading] = React.useState(false);
     const { toast } = useToast();
     const form = useForm<UserSchema>({
         resolver: zodResolver(userSchema),
@@ -28,25 +31,37 @@ const LoginForm = () => {
         mode: "onChange"
     });
     const handleSave = async (data: UserSchema) => {
+        setLoading(true);
         // เรียกใช้งาน signIn ด้วย redirect: false อย่างชัดเจน
-        const response = await signIn("spring-credential", {
-            email: data.email,
-            password: data.password,
-            redirect: false, // ยืนยันว่ามี redirect: false,
-        });
-        // ตรวจสอบว่าการยืนยันตัวตนสำเร็จหรือไม่
-        if (response?.ok) {
-            // ตัวอย่าง: redirect ไปหน้าอื่นถ้าจำเป็น
-            router.push('/');
-        }
-        // จัดการข้อผิดพลาดและแสดง toast อย่างเหมาะสม
-        if (response?.error) {
+        try {
+            const response = await signIn("spring-credential", {
+                email: data.email,
+                password: data.password,
+                redirect: false, // ยืนยันว่ามี redirect: false,
+            });
+            // ตรวจสอบว่าการยืนยันตัวตนสำเร็จหรือไม่
+            if (response?.ok) {
+                // ตัวอย่าง: redirect ไปหน้าอื่นถ้าจำเป็น
+                router.push('/');
+            }
+            // จัดการข้อผิดพลาดและแสดง toast อย่างเหมาะสม
+            if (response?.error) {
+                toast({
+                    title: "Exception",
+                    description: response.error, // แสดงข้อผิดพลาดที่ถูกต้อง
+                    variant: "destructive"
+                });
+            }
+        } catch (error) {
             toast({
                 title: "Exception",
-                description: response.error, // แสดงข้อผิดพลาดที่ถูกต้อง
-                variant: "destructive"
-            });
+                variant: "destructive",
+                description: report(error)
+            })
+        } finally {
+            setLoading(false)
         }
+
     };
 
 
@@ -61,19 +76,23 @@ const LoginForm = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleSave)} className="flex flex-col space-y-4 bg-gray-50 px-4 py-8 sm:px-16">
                         <FormFieldCommon
+                            disabled={loading}
                             label='Email address'
                             placeholder='user@ec.com'
                             control={form.control}
                             name="email"
                         />
                         <FormFieldCommon
+                            disabled={loading}
                             label='PASSWORD'
                             type="password"
                             control={form.control}
                             name="password"
                         />
 
-                        <Button variant={"outline"}>Sign in</Button>
+                        <Button
+                            disabled={loading}
+                            variant={"outline"}>Sign in</Button>
                         <p className="text-center text-sm text-gray-600">
                             Don't have an account? <Link href="/sign-up" className='font-semibold text-gray-800'>Sign up</Link> forfree
                         </p>

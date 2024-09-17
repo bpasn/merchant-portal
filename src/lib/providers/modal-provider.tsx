@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import StoreModal from '@/modules/common/modal';
-import { ModelStoreProvider } from '../context/modal-context';
 
 const ModalProvider = () => {
     const [mounted, setMounted] = React.useState(false);
@@ -10,9 +9,7 @@ const ModalProvider = () => {
     }, []);
     if (!mounted) return null;
     return (
-        <>
-            <StoreModal/>
-        </>
+        <StoreModal />
     );
 };
 

@@ -4,6 +4,7 @@ import axios from "axios";
 import { AuthOptions, getServerSession, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from 'next-auth/providers/credentials';
+
 const authOption: AuthOptions = ({
     pages: {
         signIn: "/sign-in",
@@ -44,7 +45,9 @@ const authOption: AuthOptions = ({
         }
     },
     session: {
-        strategy: "jwt"
+        strategy: "jwt",
+        maxAge: Number(process.env.SESSION_TIMEOUT) ?? 900,
+        updateAge: Number(process.env.SESSION_TIMEOUT) ?? 900
     },
     providers: [
         CredentialsProvider({
@@ -104,12 +107,11 @@ export const getIsTokenValid = (token: string) => {
 };
 
 export const refreshToken = async (token: any) => {
-    console.log("REFRESH TOKEN");
+    console.log("REFRESH TOKEN")
     try {
         const { data } = await axios.post<{ accessToken: string, refreshToken: string; }>(process.env.API_URL + "/auth/refresh-token", {
             refreshToken: token.refreshToken,
         });
-        console.log({ data });
         return {
             ...token,
             accessToken: data.accessToken,

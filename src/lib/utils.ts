@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { Children } from "react";
 import { twMerge } from "tailwind-merge";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -19,11 +19,11 @@ export const toUpperCase = (str: string) => str.charAt(0).toUpperCase() + str.sl
 
 export const delay = (duration: number) => new Promise((res) => setTimeout(res, duration));
 
-export const report = (error: any): string => {
-  console.log(error)
+export const report = (error: unknown): string => {
   if (error instanceof AxiosError) {
     console.log(error.response?.data)
     return error.response && error.response.data ? (error.response.data as ErrorResponse).message : error.message;
   }
+  console.log((error as Error).message);
   return "Internal server error";
 };

@@ -12,14 +12,15 @@ import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { ProductModal, productSchema, ProductSchema } from '@/lib/schema/productSchema';
 import FileUpload from '@/modules/businesses/manage-item-module/component/upload-image-form';
-import { FormFieldCommon } from '@/modules/common/form-field';
+import { FormFieldCommon, FormTextareaCommon } from '@/modules/common/form-field';
 import HeadingModule from '@/modules/common/heading-module';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import OptionFormComponent from '../component/option-form-component';
 import StockFormComponent from '../component/stock-form-component';
-import axiosClient from '@/lib/utils/axios-client';
 import CategoryFormComponent from '../component/category-form-component';
+import { useParams } from 'next/navigation';
+import { createProduct, updateProduct } from '@/lib/services/manageItem.service';
 
 
 
@@ -34,6 +35,7 @@ const FormItemMenu = ({
     categories
 }: FormItemMenuProps) => {
     const title = product !== null ? "Edit Item" : "Create Item";
+    const params = useParams();
     const { toast } = useToast();
     const form = useForm<ProductSchema>({
         resolver: zodResolver(productSchema),
@@ -61,6 +63,7 @@ const FormItemMenu = ({
             data.productImages.map((file) => {
                 formData.append(`productImages`, file);
             });
+            formData.append("products.storeId", params.bId.toString())
             formData.append("products.nameTH", data.nameTH);
             formData.append("products.nameEN", data.nameEN);
             formData.append("products.price", data.price.toFixed(2).toString());
@@ -77,22 +80,15 @@ const FormItemMenu = ({
             data.productOptions.map((c, i) => {
                 formData.append(`products.productOptions`, c.id!);
             });
-            if(product){
-                await axiosClient.put(`/api/product/${product.id}`, formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data"
-                    }
-                });
-            }else {
-                await axiosClient.post("/api/product", formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data"
-                    }
-                });
+            if (product) {
+                await updateProduct(formData, product.id);
+            } else {
+                await createProduct(formData)
             }
-            
+            window.location.assign(`/businesses/${params.bId}/menu`);
+
         } catch (error) {
-            toast({ title: (error as Error).name, description: (error as Error).message });
+            toast({ title: (error as Error).name, description: (error as Error).message, variant: "destructive", duration: 3 * 1000 });
         }
 
     };
@@ -135,14 +131,12 @@ const FormItemMenu = ({
                         <div className='flex flex-col gap-3'>
                             <p className='text-sm mb-2'>Description</p>
                             <div className="flex flex-col gap-1">
-                                <FormFieldCommon
-                                    type='textarea'
+                                <FormTextareaCommon
                                     control={form.control}
                                     name={"descriptionTH"}
                                     placeholder='Thai description'
                                 />
-                                <FormFieldCommon
-                                    type='textarea'
+                                <FormTextareaCommon
                                     control={form.control}
                                     name={"descriptionEN"}
                                     placeholder='English description'
@@ -188,7 +182,7 @@ const FormItemMenu = ({
                     <StockFormComponent stock={product?.stock} control={form.control} />
                     <OptionFormComponent itemOption={productOptions} control={form.control} />
                     <CategoryFormComponent categories={categories} control={form.control} />
-                    
+
                     <div className='flex justify-end'>
                         <Button
                             className='rounded-lg  w-[250px]'

@@ -1,3 +1,4 @@
+import AuthSessionProvider from '@/lib/providers/auth-session';
 import LayoutModule from '@/modules/layouts';
 import React from 'react';
 const RootLayout = async ({
@@ -8,6 +9,7 @@ const RootLayout = async ({
   return (
     <LayoutModule>
       {children}
+      <AuthSessionProvider />
     </LayoutModule>
   );
 };

@@ -36,8 +36,8 @@ import FormChoice from '../form-choice';
 import { productOptionSchema, ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { toast } from '@/components/ui/use-toast';
 import { useStoreModal } from '@/lib/hooks/store-modal';
-import axiosClient from '@/lib/utils/axios-client';
 import { useParams, useRouter } from 'next/navigation';
+import { createProductOption } from '@/lib/services/manageItem.service';
 
 
 
@@ -45,12 +45,12 @@ interface FormMenuOptionProps {
     itemOption: ProductOptionSchema | null;
 };
 const FormMenuOption = ({
+
     itemOption,
 }: FormMenuOptionProps) => {
     const title = itemOption !== null ? "Edit Item" : "Create Item";
     const params = useParams();
     const modalContext = useStoreModal();
-    const router = useRouter();
     const form = useForm<ProductOptionSchema & { lengthSelect?: number; }>({
         resolver: zodResolver(productOptionSchema),
         defaultValues: itemOption || {
@@ -61,7 +61,7 @@ const FormMenuOption = ({
             choices: []
         }
     });
-    const { fields: fieldChoices, append, prepend, remove, swap, move, insert } = useFieldArray({ control: form.control, name: "choices" });
+    const { fields: fieldChoices, append, remove, } = useFieldArray({ control: form.control, name: "choices" });
 
     const handleSubmitChoice = (data: OptionChoiceSchema) => {
         append(data);
@@ -70,12 +70,14 @@ const FormMenuOption = ({
 
     const handleSaveOption = async (data: ProductOptionSchema) => {
         try {
-            await axiosClient.post("/api/option", data);
+            await createProductOption({ ...data, storeId: params.bId.toString() })
             window.location.assign(`/businesses/${params.bId}/menu-option`);
         } catch (error) {
             toast({
                 title: "ERROR",
-                description: report(error)
+                description: report(error),
+                variant: "destructive",
+                duration: 3 * 1000
             });
         }
     };
