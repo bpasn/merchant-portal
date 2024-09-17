@@ -7,7 +7,6 @@ import { redirect } from "next/navigation";
 
 export const getStore = async () => {
     const { data } = await axiosServer.get<ApiResponse<StoreModal>>(`/store/find-one`);
-    console.log({ data });
     if (data.payload) {
         revalidatePath('/businesses');
         redirect(`/businesses/${data.payload.id}/menu`);
