@@ -25,5 +25,5 @@ export const report = (error: unknown): string => {
     return error.response && error.response.data ? (error.response.data as ErrorResponse).message : error.message;
   }
   console.log((error as Error).message);
-  return "Internal server error";
+  return (error as Error).message;
 };

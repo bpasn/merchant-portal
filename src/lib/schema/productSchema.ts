@@ -2,7 +2,7 @@ import { z } from "zod";
 import { productOptionSchema } from "./ProductOptionSchema";
 import { categoriesSchema } from "./categoriesSchema";
 import { stockProductSchema } from "./productStockSchema";
-import { ObjectFile } from "@/modules/businesses/manage-item-module/component/upload-image-form";
+import ObjectFile from "@/modules/businesses/manage-item-module/component/object-file";
 
 export const productSchema = z.object({
     nameTH: z.string().min(1, "Name is required"),

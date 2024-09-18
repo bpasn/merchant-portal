@@ -5,23 +5,22 @@ import UploadSVG from '@/assets/image/upload.svg';
 import { Plus, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { EachElement } from '@/lib/utils';
+import { EachElement, report } from '@/lib/utils';
+import { useStoreModal } from '@/lib/hooks/store-modal';
+import ObjectFile from './object-file';
 
-export interface ObjectFile {
-    file: string,
-    id: string
-}
+
 interface FileUploadProps {
-    value: File[] | {
-        file: string,
-        id: string
-    }[];
+    value: File[] | ObjectFile[];
     onChange: (file: File) => void;
+    onDelete?: (id: string) => void;
 }
 const FileUpload: React.FC<FileUploadProps> = ({
     value,
-    onChange
+    onChange,
+    onDelete
 }) => {
+    const { openModal, closeModal } = useStoreModal();
     const fileRef = useRef<HTMLInputElement | null>(null);
     const handleMouseEvent = (e: React.MouseEvent<HTMLDivElement>) => {
         fileRef.current?.click();
@@ -51,8 +50,21 @@ const FileUpload: React.FC<FileUploadProps> = ({
     };
 
     const deleteImage = (id: string) => {
+        openModal(
+            (
+                <div className='flex flex-col gap-3'>
+                    <p>Are your sure</p>
+                    <Button className='ml-auto' onClick={() => {
+                        onDelete?.(id);
+                        closeModal();
+                    }}>OK</Button>
+                </div>
+            ),
+            "Warning",
 
-    }
+        );
+    };
+    console.log(value instanceof ObjectFile)
     return (
         <div className="flex h-[248px] gap-1 border border-gray-300 rounded-lg border-dashed  overflow-auto">
             {value.length && value.every(e => e instanceof File)
@@ -82,7 +94,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                             )}
                         />
                     </div>
-                ) : value.length && value.every(e => (e as ObjectFile).file !== undefined) ? (
+                ) : value.length && value.every(e => (e as ObjectFile).uri !== undefined) ? (
                     <EachElement
                         of={value as ObjectFile[]}
                         render={(v, index) => {
@@ -90,7 +102,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                             return (
                                 <div key={index} className="relative w-[224px] h-[224px] flex flex-row justify-start gap-2">
                                     <Image
-                                        src={domain + "/" + v.file}
+                                        src={domain + "/" + v.uri}
                                         fill
                                         className='object-cover'
                                         alt={''} />

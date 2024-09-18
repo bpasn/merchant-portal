@@ -7,7 +7,10 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { toast } from '@/components/ui/use-toast';
 import { ProductModal } from '@/lib/schema/productSchema';
+import { deleteProduct } from '@/lib/services/manageItem.service';
+import { report } from '@/lib/utils';
 import { Edit2, MoreHorizontal, Trash } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 
@@ -22,7 +25,18 @@ const ProductCellAction = ({
     const onEdit = () => {
         router.push(`/businesses/${params.bId}/menu/${product.id}`);
     };
-    const onDelete = () => { };
+    const onDelete = async () => {
+        try {
+            await deleteProduct(product.id);
+            router.refresh();
+        } catch (error) {
+            toast({
+                title: "ERROR",
+                description: report(error),
+                duration: 3 * 1000
+            });
+        }
+    };
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>

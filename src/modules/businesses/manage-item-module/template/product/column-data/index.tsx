@@ -36,7 +36,7 @@ export const columnItems: ColumnDef<ProductModal>[] = [
         size: 300,
 
         cell: ({ row }) => {
-            const [image,setImage] = React.useState<string | StaticImageData>(process.env.NEXT_PUBLIC_DOMAIN_IMAGE + "/" + row.original.productImages[0]);
+            const [image,setImage] = React.useState<string | StaticImageData>(process.env.NEXT_PUBLIC_DOMAIN_IMAGE + "/" + row.original.productImages[0].uri);
             return (
                 <div className="capitalize flex flex-row gap-2 items-center">
                     <div className="relative w-20 h-20 rounded-lg">

@@ -11,7 +11,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { ProductModal, productSchema, ProductSchema } from '@/lib/schema/productSchema';
-import FileUpload, { ObjectFile } from '@/modules/businesses/manage-item-module/component/upload-image-form';
+import FileUpload from '@/modules/businesses/manage-item-module/component/upload-image-form';
 import { FormFieldCommon, FormTextareaCommon } from '@/modules/common/form-field';
 import HeadingModule from '@/modules/common/heading-module';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,8 +20,9 @@ import OptionFormComponent from '../component/option-form-component';
 import StockFormComponent from '../component/stock-form-component';
 import CategoryFormComponent from '../component/category-form-component';
 import { useParams } from 'next/navigation';
-import { createProduct, updateProduct } from '@/lib/services/manageItem.service';
+import { createProduct, productImageDelete, updateProduct } from '@/lib/services/manageItem.service';
 import { report } from '@/lib/utils';
+import ObjectFile from '@/modules/businesses/manage-item-module/component/object-file';
 
 
 
@@ -66,7 +67,7 @@ const FormItemMenu = ({
                     formData.append(`productImages`, file);
                 }
             });
-            formData.append("products.storeId", params.bId.toString())
+            formData.append("products.storeId", params.bId.toString());
             formData.append("products.nameTH", data.nameTH);
             formData.append("products.nameEN", data.nameEN);
             formData.append("products.price", data.price.toFixed(2).toString());
@@ -86,7 +87,7 @@ const FormItemMenu = ({
             if (product) {
                 await updateProduct(formData, product.id);
             } else {
-                await createProduct(formData)
+                await createProduct(formData);
             }
             window.location.assign(`/businesses/${params.bId}/menu`);
 
@@ -156,15 +157,29 @@ const FormItemMenu = ({
                                     <FormItem>
                                         <FileUpload
                                             value={field.value?.map(file => (file as File))!}
+                                            onDelete={async (id: string) => {
+                                                try {
+                                                    await productImageDelete(id);
+                                                    if ((field.value.every(e => (e as ObjectFile).uri !== undefined))) {
+                                                        field.onChange(field.value.filter(e => {
+                                                           return (e as ObjectFile).id !== id;
+                                                        }));
+                                                    }
+                                                } catch (error) {
+                                                    toast({
+                                                        title: "ERROR",
+                                                        description: report(error),
+                                                        duration: 3 * 1000
+                                                    });
+                                                }
+                                            }}
                                             onChange={(e: File) => {
                                                 let newFile: File = e;
                                                 if (newFile.size >= 2 * 1024 * 1024) {
                                                     toast({
-                                                        title: "Scheduled: Catch up ",
-                                                        description: "Friday, February 10, 2023 at 5:57 PM",
-                                                        action: (
-                                                            <ToastAction altText="Goto schedule to undo">Undo</ToastAction>
-                                                        ),
+                                                        title: "File",
+                                                        description: "File size must be a maximum of 2MB.",
+                                                        variant: "destructive"
                                                     });
                                                     return;
                                                 }

@@ -3,20 +3,17 @@ import React, { useState } from 'react';
 import { Form } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { StoreModal, StoreSchema, storeSchema } from '@/lib/schema/storeSchema';
+import { StoreSchema, storeSchema } from '@/lib/schema/storeSchema';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import { Button } from '@/components/ui/button';
 import { report } from '@/lib/utils';
 import { useStoreModal } from '@/lib/hooks/store-modal';
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
-import { postWithAuth } from '@/lib/utils/fetchWithAuth';
 import { useSession } from 'next-auth/react';
 import { createStore } from '@/lib/services/store.service';
 
 const StoreForm = () => {
   const [loading, setLoading] = useState(false);
-  const {data:session} = useSession();
-  const axios = useAxiosAuth()
   const { closeModal } = useStoreModal();
   const form = useForm<StoreSchema>({
     resolver: zodResolver(storeSchema),
