@@ -11,7 +11,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { ProductModal, productSchema, ProductSchema } from '@/lib/schema/productSchema';
-import FileUpload from '@/modules/businesses/manage-item-module/component/upload-image-form';
+import FileUpload, { ObjectFile } from '@/modules/businesses/manage-item-module/component/upload-image-form';
 import { FormFieldCommon, FormTextareaCommon } from '@/modules/common/form-field';
 import HeadingModule from '@/modules/common/heading-module';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +21,7 @@ import StockFormComponent from '../component/stock-form-component';
 import CategoryFormComponent from '../component/category-form-component';
 import { useParams } from 'next/navigation';
 import { createProduct, updateProduct } from '@/lib/services/manageItem.service';
+import { report } from '@/lib/utils';
 
 
 
@@ -61,7 +62,9 @@ const FormItemMenu = ({
         try {
             const formData = new FormData();
             data.productImages.map((file) => {
-                formData.append(`productImages`, file);
+                if (file instanceof File) {
+                    formData.append(`productImages`, file);
+                }
             });
             formData.append("products.storeId", params.bId.toString())
             formData.append("products.nameTH", data.nameTH);
@@ -88,7 +91,7 @@ const FormItemMenu = ({
             window.location.assign(`/businesses/${params.bId}/menu`);
 
         } catch (error) {
-            toast({ title: (error as Error).name, description: (error as Error).message, variant: "destructive", duration: 3 * 1000 });
+            toast({ title: "ERROR", description: report(error), variant: "destructive", duration: 3 * 1000 });
         }
 
     };

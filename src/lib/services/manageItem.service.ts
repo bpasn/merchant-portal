@@ -6,7 +6,7 @@ import { ProductModal } from "../schema/productSchema";
 import { report } from "../utils";
 import axiosServer from "../utils/axios-server";
 
-export const productGetAction = async (storeId:string,page: number, size: number) => {
+export const productGetAction = async (storeId: string, page: number, size: number) => {
     try {
         const { data } = await axiosServer.get<ApiResponse<IDataTable<ProductModal>>>(`/products?storeId=${storeId}&page=${page}&size=${size}`);
         return data;
@@ -83,7 +83,7 @@ export const createProduct = async (formData: FormData) => {
         }
     });
 }
-export const updateProduct = async (formData: FormData,productId:string) => {
+export const updateProduct = async (formData: FormData, productId: string) => {
     await axiosServer.put(`/products/${productId}`, formData, {
         headers: {
             "Content-Type": "multipart/form-data"

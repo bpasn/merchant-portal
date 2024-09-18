@@ -2,6 +2,7 @@ import { z } from "zod";
 import { productOptionSchema } from "./ProductOptionSchema";
 import { categoriesSchema } from "./categoriesSchema";
 import { stockProductSchema } from "./productStockSchema";
+import { ObjectFile } from "@/modules/businesses/manage-item-module/component/upload-image-form";
 
 export const productSchema = z.object({
     nameTH: z.string().min(1, "Name is required"),
@@ -11,7 +12,7 @@ export const productSchema = z.object({
     descriptionEN: z.string().nullable().optional(),
     stock: stockProductSchema,
     productImages: z.array(
-        z.custom<File | string>(file => {
+        z.custom<File | ObjectFile>(file => {
             if (file instanceof File) {
                 if (file.size > 5 * 1024 * 1024) {
                     return false;
@@ -30,4 +31,4 @@ export const productSchema = z.object({
 
 export type ProductSchema = z.infer<typeof productSchema>;
 
-export interface ProductModal extends Omit<ProductSchema,"productImages"> { id: string; productImages: string[]; };
+export interface ProductModal extends Omit<ProductSchema, "productImages"> { id: string; productImages: ObjectFile[]; };

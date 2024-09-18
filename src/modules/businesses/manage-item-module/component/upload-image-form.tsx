@@ -7,8 +7,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { EachElement } from '@/lib/utils';
 
+export interface ObjectFile {
+    file: string,
+    id: string
+}
 interface FileUploadProps {
-    value: File[] | string[];
+    value: File[] | {
+        file: string,
+        id: string
+    }[];
     onChange: (file: File) => void;
 }
 const FileUpload: React.FC<FileUploadProps> = ({
@@ -43,8 +50,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
         }
     };
 
-    const deleteImage = (id:string) => {
-        
+    const deleteImage = (id: string) => {
+
     }
     return (
         <div className="flex h-[248px] gap-1 border border-gray-300 rounded-lg border-dashed  overflow-auto">
@@ -75,15 +82,15 @@ const FileUpload: React.FC<FileUploadProps> = ({
                             )}
                         />
                     </div>
-                ) : value.length && value.every(e => typeof e === "string") ? (
+                ) : value.length && value.every(e => (e as ObjectFile).file !== undefined) ? (
                     <EachElement
-                        of={value}
+                        of={value as ObjectFile[]}
                         render={(v, index) => {
                             const domain = process.env.NEXT_PUBLIC_DOMAIN_IMAGE;
                             return (
                                 <div key={index} className="relative w-[224px] h-[224px] flex flex-row justify-start gap-2">
                                     <Image
-                                        src={domain + "/" + v}
+                                        src={domain + "/" + v.file}
                                         fill
                                         className='object-cover'
                                         alt={''} />
@@ -91,7 +98,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                                         <Button
                                             className="w-10 h-10"
                                             type="button"
-                                            onClick={() => deleteImage(v)}
+                                            onClick={() => deleteImage(v.id)}
                                             variant={"destructive"}
                                             size={"icon"}
                                         >
