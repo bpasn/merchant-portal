@@ -1,11 +1,7 @@
 import HeadingModule from '@/modules/common/heading-module';
-import React from 'react';
+import React, { Suspense } from 'react';
 import SwitchBranch from '../../component/switch-branch';
 import TabsClient from '../../component/tabs-client';
-import axiosClient from '@/lib/utils/axios-client';
-import { StoreModal } from '@/lib/schema/storeSchema';
-import { redirect } from 'next/navigation';
-import { checkId } from '../action';
 import { getStoreById } from '@/lib/services/store.service';
 
 const layout = async ({
@@ -24,7 +20,9 @@ const layout = async ({
       <div className='mb-5'>
         <SwitchBranch />
       </div>
-      <TabsClient>{children}</TabsClient>
+      <Suspense fallback={<>Losfing</>}>
+        <TabsClient> {children}</TabsClient>
+      </Suspense>
       <div className="mb-10"></div>
     </div>
   );

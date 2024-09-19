@@ -1,7 +1,7 @@
 'use client';
 import React from "react";
 import Modal from "@/components/ui/modal";
-import { useStoreModal } from "@/lib/hooks/store-modal";
+import { useStoreModal } from "@/lib/hooks/stores/store-modal";
 
 const StoreModal = () => {
     const storeModel = useStoreModal();

@@ -1,7 +1,7 @@
 'use client';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
-import { useBranchStore } from '@/lib/hooks/store-branch';
+import { useBranchStore } from '@/lib/hooks/stores/store-branch';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { ProductSchema } from '@/lib/schema/productSchema';
 import { EachElement } from '@/lib/utils';
@@ -46,7 +46,7 @@ const OptionFormComponent = ({
                                                     checked={isChecked}
                                                     onCheckedChange={(c) => {
                                                         const currentValue = Array.isArray(field.value) ? field.value : [];
-                                                        console.log({currentValue})
+                                                        console.log({ currentValue })
                                                         const updatedValue = c
                                                             ? [...currentValue, option]
                                                             : currentValue.filter((value) => value.optionName !== option.optionName);

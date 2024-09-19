@@ -23,6 +23,7 @@ import { useParams } from 'next/navigation';
 import { createProduct, productImageDelete, updateProduct } from '@/lib/services/manageItem.service';
 import { report } from '@/lib/utils';
 import ObjectFile from '@/modules/businesses/manage-item-module/component/object-file';
+import { useStoreProgress } from '@/lib/hooks/stores/store-progress';
 
 
 
@@ -38,6 +39,7 @@ const FormItemMenu = ({
 }: FormItemMenuProps) => {
     const title = product !== null ? "Edit Item" : "Create Item";
     const params = useParams();
+    const storeProgress = useStoreProgress();
     const { toast } = useToast();
     const form = useForm<ProductSchema>({
         resolver: zodResolver(productSchema),
@@ -60,6 +62,7 @@ const FormItemMenu = ({
         }
     });
     const handleSave = async (data: ProductSchema) => {
+        storeProgress.inProgress();
         try {
             const formData = new FormData();
             data.productImages.map((file) => {
@@ -90,12 +93,27 @@ const FormItemMenu = ({
                 await createProduct(formData);
             }
             window.location.assign(`/businesses/${params.bId}/menu`);
-
         } catch (error) {
             toast({ title: "ERROR", description: report(error), variant: "destructive", duration: 3 * 1000 });
+        } finally {
+            storeProgress.done();
         }
 
     };
+
+    // React.useEffect(() => {
+    //     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    //         e.preventDefault();
+    //         e.returnValue = "NOT NOW";
+    //     }
+
+    //     window.addEventListener("beforeunload", handleBeforeUnload);
+
+    //     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    // }, [])
+
+
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSave)} className='container'>
@@ -162,7 +180,7 @@ const FormItemMenu = ({
                                                     await productImageDelete(id);
                                                     if ((field.value.every(e => (e as ObjectFile).uri !== undefined))) {
                                                         field.onChange(field.value.filter(e => {
-                                                           return (e as ObjectFile).id !== id;
+                                                            return (e as ObjectFile).id !== id;
                                                         }));
                                                     }
                                                 } catch (error) {

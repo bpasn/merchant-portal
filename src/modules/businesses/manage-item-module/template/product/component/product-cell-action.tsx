@@ -13,17 +13,21 @@ import { deleteProduct } from '@/lib/services/manageItem.service';
 import { report } from '@/lib/utils';
 import { Edit2, MoreHorizontal, Trash } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-
+import { useTransition } from 'react';
 
 const ProductCellAction = ({
     product
 }: {
     product: ProductModal;
 }) => {
+    const [isPending, startTransition] = useTransition();
     const router = useRouter();
     const params = useParams();
     const onEdit = () => {
-        router.push(`/businesses/${params.bId}/menu/${product.id}`);
+        
+        startTransition(() => {
+            router.push(`/businesses/${params.bId}/menu/${product.id}`);
+        })
     };
     const onDelete = async () => {
         try {

@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { productOptionSchema } from "./ProductOptionSchema";
-import { categoriesSchema } from "./categoriesSchema";
-import { stockProductSchema } from "./productStockSchema";
+import { ProductOptionModal, productOptionSchema } from "./ProductOptionSchema";
+import { CategoriesModal, categoriesSchema } from "./categoriesSchema";
+import { StockProductModal, stockProductSchema } from "./productStockSchema";
 import ObjectFile from "@/modules/businesses/manage-item-module/component/object-file";
 
 export const productSchema = z.object({
@@ -31,4 +31,9 @@ export const productSchema = z.object({
 
 export type ProductSchema = z.infer<typeof productSchema>;
 
-export interface ProductModal extends Omit<ProductSchema, "productImages"> { id: string; productImages: ObjectFile[]; };
+export interface ProductModal extends Omit<ProductSchema, "productImages" | "stock" | "productOptions"> {
+    id: string;
+    productImages: ObjectFile[];
+    stock: StockProductModal;
+    productOptions: ProductOptionModal[]
+};

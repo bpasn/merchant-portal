@@ -12,3 +12,4 @@ export const optionChioceSchema = z.object({
 });
 
 export type OptionChoiceSchema = z.infer<typeof optionChioceSchema>;
+export type OptionChoiceModal = { id: string } & OptionChoiceSchema;

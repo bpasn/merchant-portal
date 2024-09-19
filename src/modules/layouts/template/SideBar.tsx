@@ -3,7 +3,7 @@ import { routes } from '@/lib/data/menu';
 import { cn, EachElement } from '@/lib/utils';
 import React from 'react';
 import MenuItem from './component/MenuItem';
-import { useSidebarStore } from '@/lib/hooks/store-sidebar';
+import { useSidebarStore } from '@/lib/hooks/stores/store-sidebar';
 const SideBar = () => {
     const sideBar = useSidebarStore();
 

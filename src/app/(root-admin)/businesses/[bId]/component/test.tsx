@@ -1,5 +1,5 @@
 'use client';
-import { useStoreModal } from '@/lib/hooks/store-modal';
+import { useStoreModal } from '@/lib/hooks/stores/store-modal';
 import StoreForm from '@/modules/store/form';
 import React, { useCallback, useEffect } from 'react';
 

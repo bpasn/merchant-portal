@@ -1,5 +1,5 @@
 import IconLucide from '@/lib/hooks/icon-lucide';
-import { useSidebarStore } from '@/lib/hooks/store-sidebar';
+import { useSidebarStore } from '@/lib/hooks/stores/store-sidebar';
 import { EachElement } from '@/lib/utils';
 import { IRoute } from '@/types/router-menu';
 import { ChevronDown } from 'lucide-react';

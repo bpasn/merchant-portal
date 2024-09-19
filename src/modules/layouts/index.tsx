@@ -1,10 +1,7 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import Header from './template/Header';
 import SideBar from './template/SideBar';
-import { SideBarProvider } from '@/lib/context/side-bar-context';
-import { BranchProvider } from '@/lib/context/branch-context';
-import { ModelStoreProvider } from '@/lib/context/modal-context';
 import ModalProvider from '@/lib/providers/modal-provider';
 
 

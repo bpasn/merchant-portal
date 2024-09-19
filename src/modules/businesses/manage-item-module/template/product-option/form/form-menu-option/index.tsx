@@ -35,7 +35,7 @@ import {
 import FormChoice from '../form-choice';
 import { productOptionSchema, ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { toast } from '@/components/ui/use-toast';
-import { useStoreModal } from '@/lib/hooks/store-modal';
+import { useStoreModal } from '@/lib/hooks/stores/store-modal';
 import { useParams, useRouter } from 'next/navigation';
 import { createProductOption } from '@/lib/services/manageItem.service';
 

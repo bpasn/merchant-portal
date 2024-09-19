@@ -11,3 +11,4 @@ export const useSidebarStore = create<SideBarContextProps>()(
         setOpen: (o) => set({ open: o })
     })
 );
+

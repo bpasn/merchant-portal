@@ -7,7 +7,7 @@ import { StoreSchema, storeSchema } from '@/lib/schema/storeSchema';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import { Button } from '@/components/ui/button';
 import { report } from '@/lib/utils';
-import { useStoreModal } from '@/lib/hooks/store-modal';
+import { useStoreModal } from '@/lib/hooks/stores/store-modal';
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
 import { useSession } from 'next-auth/react';
 import { createStore } from '@/lib/services/store.service';

@@ -2,12 +2,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CategoriesModal } from "@/lib/schema/categoriesSchema";
 import { ProductModal } from "@/lib/schema/productSchema";
 import { StockStatusEnum, stockStatusEnum } from "@/lib/schema/productStockSchema";
-import { cn, EachElement } from "@/lib/utils";
+import { cn, EachElement, report } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import Image, { StaticImageData } from 'next/image';
 import React from "react";
 import ProductCellAction from "../component/product-cell-action";
 import NoImage from '@/assets/image/no-image.jpg';
+import { updateProductStock } from "@/lib/services/manageItem.service";
+import { toast, useToast } from "@/components/ui/use-toast";
+import { useStoreProgress } from "@/lib/hooks/stores/store-progress";
+
 export const columnItems: ColumnDef<ProductModal>[] = [
     // {
     //     id: "select",
@@ -36,7 +40,7 @@ export const columnItems: ColumnDef<ProductModal>[] = [
         size: 300,
 
         cell: ({ row }) => {
-            const [image,setImage] = React.useState<string | StaticImageData>(process.env.NEXT_PUBLIC_DOMAIN_IMAGE + "/" + row.original.productImages[0].uri);
+            const [image, setImage] = React.useState<string | StaticImageData>(process.env.NEXT_PUBLIC_DOMAIN_IMAGE + "/" + row.original.productImages[0].uri);
             return (
                 <div className="capitalize flex flex-row gap-2 items-center">
                     <div className="relative w-20 h-20 rounded-lg">
@@ -44,9 +48,9 @@ export const columnItems: ColumnDef<ProductModal>[] = [
                             fill
                             className="object-fill rounded-xl"
                             src={image}
-                            
+
                             alt={""}
-                            onError={()=> setImage(NoImage)}
+                            onError={() => setImage(NoImage)}
                         />
                     </div>
                     <p>{row.getValue("nameTH")}</p>
@@ -74,10 +78,24 @@ export const columnItems: ColumnDef<ProductModal>[] = [
         maxSize: 100, // ขนาดสูงสุดƒ
         cell({ row }) {
             const [status, setStatus] = React.useState<StockStatusEnum>(row.original.stock.status);
-
-            const handleStatusChange = (newStatus: string) => {
-                setStatus(newStatus as StockStatusEnum);
-                row.original.stock.status = newStatus as StockStatusEnum;
+            const storeProgress = useStoreProgress();
+            const handleStatusChange = async (newStatus: StockStatusEnum) => {
+                storeProgress.inProgress();
+                try {
+                    await updateProductStock({
+                        ...row.original.stock,
+                        status: newStatus
+                    })
+                    setStatus(newStatus);
+                    row.original.stock.status = newStatus;
+                } catch (error) {
+                    toast({
+                        title: "ERROR",
+                        description: report(error)
+                    })
+                } finally {
+                    storeProgress.done();
+                }
             };
             return (
                 <Select
@@ -86,14 +104,10 @@ export const columnItems: ColumnDef<ProductModal>[] = [
                     <SelectTrigger className={
                         cn(
                             "w-[157px] h-[35px] rounded-lg flex flex-row gap-4 p-3 justify-start focus:ring-0 ring-offset-0",
-                            status === stockStatusEnum.Enum.IN_STOCK
-                                ? "text-[rgba(0,168,56)] bg-[rgba(0,168,56)]/30"
-                                : status === stockStatusEnum.Enum.LOW_STOCK 
-                                ? "text-orange-700 bg-orange-100"
-                                : "text-[rgba(123,132,136)] bg-[rgba(123,132,136)]/30"
+                            generateClass(status),
                         )
                     }>
-                        <SelectValue placeholder={"choice.status"} className="text-start"/>
+                        <SelectValue placeholder={"choice.status"} className="text-start" />
                     </SelectTrigger>
                     <SelectContent>
                         <EachElement
@@ -103,7 +117,7 @@ export const columnItems: ColumnDef<ProductModal>[] = [
                             )}
                         />
                     </SelectContent>
-                </Select>
+                </Select >
             );
         }
     },
@@ -117,3 +131,16 @@ export const columnItems: ColumnDef<ProductModal>[] = [
         }
     }
 ];
+
+const generateClass = (status: StockStatusEnum): string => {
+    switch (status) {
+        case stockStatusEnum.enum.IN_STOCK:
+            return "text-[rgba(0,168,56)] bg-[rgba(0,168,56)]/30";
+        case stockStatusEnum.enum.OUT_OF_STOCK:
+            return "text-[rgba(123,132,136)] bg-[rgba(123,132,136)]/30";
+        case stockStatusEnum.enum.LOW_STOCK:
+            return "text-orange-700 bg-orange-100";
+        default:
+            return "";
+    }
+}

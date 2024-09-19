@@ -6,7 +6,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { cn, EachElement } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { CommandSeparator } from 'cmdk';
-import { useStoreModal } from '@/lib/hooks/store-modal';
+import { useStoreModal } from '@/lib/hooks/stores/store-modal';
 import StoreForm from '@/modules/store/form';
 import { useParams, useRouter } from 'next/navigation';
 

@@ -11,6 +11,4 @@ export const productOptionSchema = z.object({
     choices: z.array(optionChioceSchema),
 });
 export type ProductOptionSchema = z.infer<typeof productOptionSchema>;
-export type ProductOptionModal = {
-    id: string,
-} & ProductOptionSchema;
+export type ProductOptionModal = {} & ProductOptionSchema;

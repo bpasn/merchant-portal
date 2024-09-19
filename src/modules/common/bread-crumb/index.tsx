@@ -3,7 +3,7 @@ import { routes } from '@/lib/data/menu';
 import { IRoute } from '@/types/router-menu';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 
 function generateBreadcrumbs(currentPath: string, id?: string, editId?: string): IRoute[] {
@@ -70,7 +70,6 @@ const Breadcrumb = () => {
     return (
         <nav className='flex flex-row space-x-2'>
             {breadcrumbTrail.map((crumb, index) => {
-
                 return (
                     <div key={index} className='flex flex-row items-center space-x-2 text-xs'>
                         {
@@ -78,7 +77,7 @@ const Breadcrumb = () => {
                                 <span>{crumb.label}</span>
                             ) :
                                 (
-                                    <Link href={`${crumb.href}`}> {crumb.label}</Link>
+                                    <a href={`${crumb.href}`}> {crumb.label}</a>
                                 )
                         }
                         {(index + 1) <= (breadcrumbTrail.length - 1) && <ChevronRight size={14} />}

@@ -5,8 +5,8 @@ import UploadSVG from '@/assets/image/upload.svg';
 import { Plus, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { EachElement, report } from '@/lib/utils';
-import { useStoreModal } from '@/lib/hooks/store-modal';
+import { EachElement } from '@/lib/utils';
+import { useStoreModal } from '@/lib/hooks/stores/store-modal';
 import ObjectFile from './object-file';
 
 
@@ -64,10 +64,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
         );
     };
-    console.log(value instanceof ObjectFile)
     return (
         <div className="flex h-[248px] gap-1 border border-gray-300 rounded-lg border-dashed  overflow-auto">
-            {value.length && value.every(e => e instanceof File)
+            {value.length && typeof window !== "undefined" && value.every(e => e instanceof File)
                 ? (
                     <div className="flex flex-row gap-5 p-3">
                         <EachElement
