@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth";
+import { getSession } from "@/lib/utils/auth";
 import axios from "axios";
 
 export const axiosServer = axios.create({
@@ -6,6 +6,7 @@ export const axiosServer = axios.create({
   headers: {
     "Content-Type": "application/json",
     "Cache-Control": "no-store",
+    "x-api-key": process.env.X_API_KEY
   },
 });
 
