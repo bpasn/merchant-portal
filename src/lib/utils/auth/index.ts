@@ -1,9 +1,10 @@
 import { report } from "@/lib/utils";
 import axiosServer from "@/lib/utils/axios-server";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { AuthOptions, getServerSession, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { signOut } from "next-auth/react";
 
 const authOption: AuthOptions = ({
     pages: {
@@ -107,10 +108,14 @@ export const getIsTokenValid = (token: string) => {
 };
 
 export const refreshToken = async (token: any) => {
-    console.log("REFRESH TOKEN")
+    console.log("REFRESH TOKEN");
     try {
         const { data } = await axios.post<{ accessToken: string, refreshToken: string; }>(process.env.API_URL + "/auth/refresh-token", {
             refreshToken: token.refreshToken,
+        }, {
+            headers: {
+                "x-api-key": process.env.X_API_KEY
+            }
         });
         return {
             ...token,
@@ -118,6 +123,9 @@ export const refreshToken = async (token: any) => {
             refreshToken: data.refreshToken ?? token.refreshToken
         };
     } catch (error) {
+        if(error instanceof AxiosError){
+            window.location.assign("/sign-in");
+        }
         return {
             ...token,
             error: "RefreshAccessTokenError"

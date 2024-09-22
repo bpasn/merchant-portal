@@ -26,12 +26,15 @@ const TabsClient = ({
         },
     ];
     const pathName = usePathname();
+    
     return (
         <Tabs defaultValue={pathName} className="w-full">
             <TabComponent
                 items={itemTabs}
             />
-            {children}
+            <div className='bg-white'>
+                {children}
+            </div>
         </Tabs>
     );
 };

@@ -49,7 +49,8 @@ const LoginForm = () => {
                 toast({
                     title: "Exception",
                     description: response.error, // แสดงข้อผิดพลาดที่ถูกต้อง
-                    variant: "destructive"
+                    variant: "destructive",
+                    duration: 3 * 1000
                 });
             }
         } catch (error) {
@@ -57,9 +58,9 @@ const LoginForm = () => {
                 title: "Exception",
                 variant: "destructive",
                 description: report(error)
-            })
+            });
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
 
     };

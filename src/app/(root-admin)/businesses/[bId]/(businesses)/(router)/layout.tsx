@@ -16,12 +16,14 @@ const layout = async ({
   await getStoreById(params.bId);
   return (
     <div className='flex flex-col'>
-      <HeadingModule title="Manage items" />
+      <HeadingModule />
       <div className='mb-5'>
         <SwitchBranch />
       </div>
-      <Suspense fallback={<>Losfing</>}>
-        <TabsClient> {children}</TabsClient>
+      <Suspense fallback={(
+        <>Loading.....</>
+      )}>
+        {children}
       </Suspense>
       <div className="mb-10"></div>
     </div>

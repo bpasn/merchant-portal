@@ -23,6 +23,14 @@ export const routes: IRoute[] = [
             { path: "/menu-group/[edit]", label: "Edit option Item" },
         ],
     },
+    {
+        label: "Stock",
+        slug: "stock",
+        icon: "ClipboardCheck",
+        href: "/businesses/stock",
+        root: true,
+        
+    },
     // {
     //     label: "Merchant Report",
     //     slug: "merchant-report",

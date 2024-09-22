@@ -15,7 +15,7 @@ function generateBreadcrumbs(currentPath: string, id?: string, editId?: string):
             if (fullPath.includes("[id]") && id) {
                 fullPath = fullPath.replace("[id]", id);
             }
-            if (fullPath.startsWith("/businesses/menu")) {
+            if (fullPath.startsWith("/businesses")) {
                 fullPath = fullPath.split('/').map((segment, index) => index === 1 ? `${segment}/${id}` : segment).join('/');
             }
             // ตรวจสอบว่าปัจจุบันอยู่ในเส้นทางนี้หรือไม่
@@ -66,7 +66,8 @@ const Breadcrumb = () => {
     }
 
     const pathArray = router.split("/").filter(p => p);
-    const breadcrumbTrail = generateBreadcrumbs(router, params.bId.toString() ?? undefined, params.editId as string);
+    const bId = params.bId?.toString();
+    const breadcrumbTrail = generateBreadcrumbs(router, bId, params.editId as string);
     return (
         <nav className='flex flex-row space-x-2'>
             {breadcrumbTrail.map((crumb, index) => {

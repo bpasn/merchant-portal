@@ -1,9 +1,11 @@
+'use client';
 import IconLucide from '@/lib/hooks/icon-lucide';
 import { useSidebarStore } from '@/lib/hooks/stores/store-sidebar';
 import { EachElement } from '@/lib/utils';
 import { IRoute } from '@/types/router-menu';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname,useParams } from 'next/navigation';
 import React, { useState } from 'react';
 interface MenuItemProps {
     route: IRoute;
@@ -22,16 +24,20 @@ const MenuItem = ({
 
     const hasChildren = route.children && route.children.length;
     const sideBarContext = useSidebarStore();
+
+    const pathname = usePathname();
+    const params = useParams();
+    const [fullPath,setFullPath] = useState(route.href.split('/').map((segment, index) => index === 1 ? `${segment}/${params.bId?.toString()}` : segment).join('/'))
     return (
-        <li className={`menu ${expanded ? 'expanded' : ''}`}>
+        <li className={`menu ${expanded ? 'expanded' : ''} ${pathname === fullPath ? "bg-gray-100" : ""}`}>
             {!hasChildren ? (
-                <Link href={route.href!} onClick={() => sideBarContext.setOpen(false)} className='flex flex-row items-center py-3 px-3 space-x-4 hover:bg-gray-100 cursor-pointer'>
+                <Link href={route.href} onClick={() => sideBarContext.setOpen(false)} className={`flex flex-row items-center py-3 px-3 space-x-4 hover:bg-gray-100 cursor-pointer `}>
                     {route.icon ? <IconLucide name={route.icon} /> : null}
                     <span className='text-[14px] '>{route.label}</span>
                 </Link>
             ) : (
                 <div className='flex flex-col'>
-                    <button onClick={handleToggle} className='flex flex-row gap-5 px-4 py-4 hover:bg-gray-100 cursor-pointer w-full'>
+                    <button onClick={handleToggle} className={`flex flex-row gap-5 px-4 py-4 hover:bg-gray-100 cursor-pointer w-full `}>
                         {route.icon ? <IconLucide name={route.icon} /> : null}
                         <span className='text-[14px]'>{route.label}</span>
                         <ChevronDown size={16} className={`text-gray ml-auto transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`} />

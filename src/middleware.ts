@@ -18,9 +18,19 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
   if (!token && !isAuthPage) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
-
+  const url = new URL(req.url);
+  const origin = url.origin;
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set('x-url', req.url);
+  requestHeaders.set('x-origin', origin);
+  requestHeaders.set('x-pathname', pathname);
+  
   // อนุญาตให้ผ่านในกรณีอื่นๆ
-  return NextResponse.next();
+  return NextResponse.next({
+      request: {
+          headers: requestHeaders,
+      }
+  });
 }
 
 export const config = {

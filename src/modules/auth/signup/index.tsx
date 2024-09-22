@@ -9,18 +9,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from 'zod';
 import Link from 'next/link';
 import { useForm } from "react-hook-form";
-import axiosClient from '@/lib/utils/axios-client';
 import { toast } from '@/components/ui/use-toast';
 import { report } from '@/lib/utils';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import { signUp } from '@/lib/services/auth.service';
 const signUpSchema = z.object({
     email: z.string().min(1, { message: "Email is required" }).regex(RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g), { message: "Email invalid format" }),
     password: z.string().min(1, { message: "Password is required" }).regex(RegExp(/^(?=.*[0-9])(?=.*[a-x])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/), { message: "Password invalid format" }),
     name: z.string().min(1, { message: "Name is require" }),
 });
 
-type SignUpSchema = z.infer<typeof signUpSchema>;
+export type SignUpSchema = z.infer<typeof signUpSchema>;
 const SignUpForm = () => {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -33,18 +34,20 @@ const SignUpForm = () => {
         }
     });
     const handleSave = async (data: SignUpSchema) => {
-        setLoading(true)
+        setLoading(true);
         try {
-            const { data: auth } = await axiosClient.post<{ status: string }>("/api/auth/sign-up", data);
+            const auth = await signUp(data);
             if (auth.status === "OK") {
-                router.push("/sign-in")
+                router.push("/sign-in");
             }
         } catch (error) {
             toast({
                 title: "Exception",
                 description: report(error),
                 variant: "destructive"
-            })
+            });
+        } finally {
+            setLoading(false);
         }
     };
     return (
