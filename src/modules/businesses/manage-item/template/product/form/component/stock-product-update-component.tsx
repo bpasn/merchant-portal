@@ -1,33 +1,48 @@
 import { Form } from "@/components/ui/form";
-import { EachElement } from "@/lib/utils";
-import { MinusIcon, PlusIcon, Tag } from "lucide-react";
+import { EachElement, ElementRenderWhen } from "@/lib/utils";
+import { MinusIcon, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import OptionComponent from "./option-component";
 import { ProductModal } from "@/lib/schema/productSchema";
 import { Button } from "@/components/ui/button";
-import { OptionChoiceModal } from "@/lib/schema/optionChioceSchema";
+import { optionChioceSchema, OptionChoiceModal, OptionChoiceSchema } from "@/lib/schema/optionChioceSchema";
+import ImageProvider from "@/modules/common/image-provider";
+import { zodResolver } from "@hookform/resolvers/zod";
 interface IStockProductUpdateProps {
     product: ProductModal;
 }
 const StockProductUpdateComponent = ({ product }: IStockProductUpdateProps) => {
-    const form = useForm();
+    const form = useForm<OptionChoiceSchema[]>({
+        resolver:zodResolver(optionChioceSchema),
+        defaultValues: []
+    });
     const [qty, setQty] = useState(1);
 
     const onClick = (adjustment: number) => {
         setQty(Math.max(1, Math.min(product?.stock.quantity!, qty + adjustment)));
     };
     const onRadioChange = (value: OptionChoiceModal) => {
-        
+
     };
     return (
         <React.Fragment>
+            <div className="w-full flex justify-center">
+                <ImageProvider
+                    src={product.productImages[0].uri}
+                    height={200}
+                    width={200}
+                    className="object-fill"
+                />
+            </div>
             <Form {...form}>
                 <form className='flex flex-col gap-2 mt-2'>
-                    <EachElement
-                        of={product.productOptions}
-                        render={(option) => <OptionComponent checked={false} option={option} onRadioChange={onRadioChange} />}
-                    />
+                    <ElementRenderWhen _if={product.productOptions.length > 0} _el={null}>
+                        <EachElement
+                            of={product.productOptions}
+                            render={(option) => <OptionComponent checked={false} option={option} onRadioChange={onRadioChange} />}
+                        />
+                    </ElementRenderWhen>
                     <div className="p-4 border shadow-md">
                         <div className="flex items-center justify-center space-x-2">
                             <Button

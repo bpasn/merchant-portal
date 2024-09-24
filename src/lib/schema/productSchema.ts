@@ -26,7 +26,7 @@ export const productSchema = z.object({
             return true;
         }, { message: "Images not must be null" }),
     productOptions: z.array(productOptionSchema.nullable()).default([]),
-    categories: z.array(categoriesSchema).default([])
+    categories: z.array(categoriesSchema).refine(e => e.length,{message:"Categories must not be null"}).default([])
 });
 
 export type ProductSchema = z.infer<typeof productSchema>;

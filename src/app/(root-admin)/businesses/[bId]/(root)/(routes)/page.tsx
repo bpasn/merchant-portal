@@ -8,6 +8,7 @@ const BusinessesRoot = () => {
     useEffect(() => {
         if (!open) {
             openModal((<StoreForm />), "Create Store", {
+                dismisOutSide:false,
                 description: "Add a new store to manage item"
             });
         }

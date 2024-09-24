@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -14,14 +15,15 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { TabsContent } from '@/components/ui/tabs';
-import { useBranchStore } from '@/lib/hooks/stores/store-branch';
-import { ChoiceStatusEnum, choiceStatusEnum, OptionChoiceSchema } from '@/lib/schema/optionChioceSchema';
-import { productOptionSchema, ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
+import { ChoiceStatusEnum, choiceStatusEnum } from '@/lib/schema/optionChioceSchema';
+import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { cn, EachElement, toUpperCase } from '@/lib/utils';
+import DropdownAction from '@/modules/common/dropdown-action';
 import LinkButton from '@/modules/common/link-button';
-import { X } from 'lucide-react';
+import { Edit2, EllipsisVertical, Trash, X } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import React, { useState } from 'react';
+import React from 'react';
+import { useState } from 'react';
 
 
 const ManageItemOption = ({
@@ -30,10 +32,18 @@ const ManageItemOption = ({
   productOption: ProductOptionSchema[];
 }) => {
   const params = useParams();
-  const [status,setStatus] = useState<ChoiceStatusEnum>(productOption[0].choices?.[0].status!);
+  const [status, setStatus] = useState<ChoiceStatusEnum>(productOption[0].choices?.[0].status!);
   const handleChange = (v: string, optionIndex: number, choiceIndex: number) => {
     setStatus(v as ChoiceStatusEnum);
     // productOption[optionIndex].choices?.[choiceIndex].status = v as ChoiceStatusEnum;
+  };
+
+  const onEdit = () => {
+
+  };
+
+  const onDelete = () => {
+
   };
   return (
     <TabsContent value={`/businesses/${params.bId}/menu-option`}>
@@ -62,25 +72,36 @@ const ManageItemOption = ({
               of={productOption || []}
               render={(option, optionIndex) => {
                 return (
-                  <AccordionItem key={option.optionName} value={option.optionName!}>
-                    <AccordionTrigger className='hover:bg-black/10 ease-in-out transition-all duration-300 px-5 rounded-sm'>{option.optionName}</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="ml-5">
-                        <EachElement
-                          of={option.choices || []}
-                          render={(choice, choiceIndex) => (
-                            <div key={choiceIndex} className='flex flex-row gap-5 items-center border-b-2 border-b-gray-100 py-3 px-3'>
-                              <div className="w-full">
-                                <h1>{choice.name}</h1>
+                  <div className='flex flex-row gap-2 items-center'>
+                    <AccordionItem className='flex-1 shrink-0 border-none' key={option.optionName} value={option.optionName!}>
+                      <AccordionTrigger className='ml-auto  ease-in-out transition-all duration-300 px-5 rounded-sm'>
+                        {option.optionName}
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="ml-5">
+                          <EachElement
+                            of={option.choices || []}
+                            render={(choice, choiceIndex) => (
+                              <div key={choiceIndex} className='flex flex-row gap-5 items-center  py-3 px-3'>
+                                <div className="w-full">
+                                  <h1>{choice.name}</h1>
+                                </div>
+                                {renderSelectStatus(status, handleChange, optionIndex, choiceIndex)}
+                                <X size={32} className='cursor-pointer ' onClick={() => { }} />
                               </div>
-                              {renderSelectStatus(status, handleChange, optionIndex, choiceIndex)}
-                              <X size={32} className='cursor-pointer ' onClick={() => { }} />
-                            </div>
-                          )}
-                        />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
+                            )}
+                          />
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                    <div className="pr-5">
+                      <DropdownAction
+                        icon='EllipsisVertical'
+                        buttonVariant="none"
+                        onEdit={onEdit}
+                        onDelete={onDelete} />
+                    </div>
+                  </div>
                 );
               }}
             />

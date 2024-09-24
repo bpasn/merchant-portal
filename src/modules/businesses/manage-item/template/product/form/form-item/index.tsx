@@ -23,6 +23,8 @@ import { useForm } from "react-hook-form";
 import CategoryFormComponent from '../component/category-form-component';
 import OptionFormComponent from '../component/option-form-component';
 import StockFormComponent from '../component/stock-form-component';
+import { useStoreHead } from '@/lib/hooks/stores/store-head';
+import React from 'react';
 
 
 
@@ -39,6 +41,8 @@ const FormItemMenu = ({
     const title = product !== null ? "Edit Item" : "Create Item";
     const params = useParams();
     const storeProgress = useStoreProgress();
+    const storeHead = useStoreHead();
+    
     const { toast } = useToast();
     const form = useForm<ProductSchema>({
         resolver: zodResolver(productSchema),
@@ -80,12 +84,21 @@ const FormItemMenu = ({
             formData.append("products.stock.quantity", data.stock.quantity.toString());
             formData.append("products.stock.status", data.stock.status);
             formData.append("products.stock.reOrder", Boolean(data.stock.reOrder).valueOf().toString());
-            data.categories.map((c, i) => {
-                formData.append(`products.categories`, c.id!);
-            });
-            data.productOptions.map((c, i) => {
-                formData.append(`products.productOptions`, c?.id!);
-            });
+            if(data.categories.length){
+                data.categories.map((c, i) => {
+                    formData.append(`products.categories`, c.id!);
+                });
+            }else{
+                formData.append(`products.categories`, JSON.stringify([]));
+
+            }
+            if(data.productOptions.length){
+                data.productOptions.map((c, i) => {
+                    formData.append(`products.productOptions`, c?.id!);
+                });
+            }else {
+                formData.append(`product.productOptions`,JSON.stringify([]));
+            }
             if (product) {
                 await updateProduct(formData, product.id);
             } else {
@@ -111,7 +124,9 @@ const FormItemMenu = ({
     //     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
     // }, [])
 
-    console.log(form.formState.errors)
+    React.useEffect(() => {
+        storeHead.setTitle(title);
+    },[storeHead.title]);
 
     return (
         <Form {...form}>

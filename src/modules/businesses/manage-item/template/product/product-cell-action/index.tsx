@@ -21,7 +21,6 @@ const ProductCellAction = ({
     const router = useRouter();
     const params = useParams();
     const onEdit = () => {
-
         startTransition(() => {
             router.push(`/businesses/${params.bId}/menu/${product.id}`);
         });
@@ -44,7 +43,12 @@ const ProductCellAction = ({
             <StockProductUpdateComponent product={product} />,
             product.nameTH,
             {
-                dismisOutSide: false
+                dismisOutSide: false,
+                dialog:{
+                    style:{
+                        width:"500px"
+                    }
+                }
             }
         );
     };

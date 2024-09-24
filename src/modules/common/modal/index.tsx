@@ -13,6 +13,7 @@ const StoreModal = () => {
             description={storeModel.description!}
             dismisOutSide={storeModel.dismisOutSide}
             className={storeModel.className}
+            style={storeModel.style}
         >
             {storeModel.content}
         </Modal>

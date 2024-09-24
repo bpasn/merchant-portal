@@ -47,7 +47,7 @@ const Modal: React.FC<ModalProps> = ({
                 }
             }} className={cn(
                 className,
-                "overflow-auto max-h-[calc(100%_-_64px)] max-w-md"
+                "overflow-auto max-h-[calc(100vh_-_10rem)] max-w-md"
             )} style={style}>
 
                 <DialogHeader>

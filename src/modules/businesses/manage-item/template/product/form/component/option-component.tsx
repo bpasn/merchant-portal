@@ -14,6 +14,8 @@ const OptionComponent = ({
     option: {
         optionName,
         oneMustBeChosen,
+        manyCanBeChosen,
+        lengthSelect,
         choices,
     },
     checked,
