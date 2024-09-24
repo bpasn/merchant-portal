@@ -6,90 +6,50 @@ import {
     TableHeader,
     TableRow
 } from '@/components/ui/table';
-import React from 'react';
+import { EachElement, ElementRenderWhen } from '@/lib/utils';
 import {
-    ColumnDef,
-    ColumnFiltersState,
     flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    SortingState,
-    useReactTable,
-    VisibilityState
+    RowData,
+    Table as TableType
 } from '@tanstack/react-table';
-import { EachElement } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { ChevronDownIcon, Plus } from 'lucide-react';
-import Link from 'next/link';
+import React from 'react';
 import FilterHeader from '../filter-header';
 
-interface IDataTable<T> {
-    data: T[];
-    columnsDef: ColumnDef<T>[];
-    sortInputBy: keyof T;
-    customHeader?: React.ReactNode;
+interface IOptionFilter<T> {
+    filterHeader: boolean;
+    customFilter?: React.ReactNode | null;
+    sort?: {
+        by: keyof T;
+        placeHolderSort?: string;
+    };
+}
+
+interface IDataTable<T extends RowData> {
+    options?: IOptionFilter<T>;
+    table: TableType<T>;
 }
 
 const DataTable = <T,>({
-    data,
-    sortInputBy,
-    columnsDef: columns,
-    customHeader
+    // data,
+    // columnsDef: columns,
+    options,
+    table
 }: IDataTable<T>) => {
-    const [sorting, setSorting] = React.useState<SortingState>([]);
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-    const [rowSelection, setRowSelection] = React.useState({});
-    const table = useReactTable({
-        data,
-        columns,
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
-        state: {
-            sorting,
-            columnFilters,
-            columnVisibility,
-            rowSelection,
-        },
-
-    });
     return (
         <div className="w-full">
-            <FilterHeader
-                value={table.getColumn(sortInputBy.toString())?.getFilterValue() as string}
-                sortBy={sortInputBy}
-                onInputChange={(e) => table.getColumn(sortInputBy.toString())?.setFilterValue(e.target.value)}
-                renderDropdownContent={() => (
-                    <EachElement
-                        of={table.getAllColumns().filter(c => c.getCanHide())}
-                        render={(column) => (
-                            <DropdownMenuCheckboxItem
-                                key={column.id}
-                                className="capitalize"
-                                checked={column.getIsVisible()}
-                                onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                            >
-                                {column.id}
-                            </DropdownMenuCheckboxItem>
-                        )} />
-                )}
-                customHeader={customHeader} />
+            <ElementRenderWhen _if={options?.filterHeader!} _el={null}>
+                <ElementRenderWhen _if={options?.customFilter != null} _el={(
+                    <FilterHeaderRender
+                        table={table}
+                        sortBy={options?.sort?.by}
+                        placeHolderSort={options?.sort?.placeHolderSort}
+                        onChange={(e) => table.getColumn(options?.sort?.by as string)?.setFilterValue(e.target.value)}                     
+                     />
+                )}>
+                    {options?.customFilter}
+                </ElementRenderWhen>
+            </ElementRenderWhen>
             <div className="rounded-md border">
                 <Table>
                     <TableHeader >
@@ -102,12 +62,8 @@ const DataTable = <T,>({
                                             of={headerGroup.headers}
                                             render={(header) => {
                                                 return (
-                                                    <TableHead key={header.id} style={{
-                                                        width: `${header.getSize()}px`,
-                                                        maxWidth: `${header.getSize()}px`,
-                                                        minWidth: `${header.getSize()}px`,
-
-                                                    }} >
+                                                    <TableHead key={header.id} style={(header.column.columnDef.meta as any)?.style}
+>
                                                         {header.isPlaceholder ? null : (
                                                             flexRender(
                                                                 header.column.columnDef.header,
@@ -152,7 +108,7 @@ const DataTable = <T,>({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={columns.length}
+                                    colSpan={table.getAllColumns().length}
                                     className='h-24 text-center'
                                 >
                                     No Results.
@@ -165,5 +121,35 @@ const DataTable = <T,>({
         </div>
     );
 };
-
+const FilterHeaderRender = <T extends RowData,>({
+    table, sortBy, placeHolderSort,onChange
+}: {
+    sortBy?: keyof T | null;
+    placeHolderSort?: string;
+    table: TableType<T>;
+    onChange:(e:React.ChangeEvent<HTMLInputElement>) => void;
+}) => {
+    return (
+        <FilterHeader
+            sortBy={sortBy!}
+            value={table.getColumn(sortBy!.toString())?.getFilterValue() as string}
+            placeHolderSort={placeHolderSort}
+            onChange={onChange}
+            // renderDropdownContent={() => (
+            //     <EachElement
+            //         of={table.getAllColumns().filter(c => c.getCanHide())}
+            //         render={(column) => (
+            //             <DropdownMenuCheckboxItem
+            //                 key={column.id}
+            //                 className="capitalize"
+            //                 checked={column.getIsVisible()}
+            //                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
+            //             >
+            //                 {column.id}
+            //             </DropdownMenuCheckboxItem>
+            //         )} />
+            // )} 
+            />
+    );
+};
 export default DataTable;

@@ -1,7 +1,16 @@
-const StockPage = async () => {
-    return ( 
-        <div>Stock</div>
-     );
-}
- 
+import { getProductStock } from "@/lib/services/manageItem.service";
+import StockModule from "@/modules/businesses/stock";
+
+
+const StockPage = async ({ params }: {
+    params: {
+        bId: string;
+    };
+}) => {
+    const productStock = await getProductStock(params.bId);
+    return (
+        <StockModule data={productStock} />
+    );
+};
+
 export default StockPage;

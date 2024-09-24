@@ -21,9 +21,21 @@ export const delay = (duration: number) => new Promise((res) => setTimeout(res, 
 
 export const report = (error: unknown): string => {
   if (error instanceof AxiosError) {
-    console.log(error.response?.data)
+    console.log(error.response?.data);
     return error.response && error.response.data ? (error.response.data as ErrorResponse).message : error.message;
   }
   console.log((error as Error).message);
   return (error as Error).message;
+};
+
+export const ElementRenderWhen = ({
+  children,
+  _if,
+  _el
+}: {
+  children: React.ReactNode;
+  _el: React.ReactNode;
+  _if: boolean;
+}) => {
+return _if ? children : _el
 };

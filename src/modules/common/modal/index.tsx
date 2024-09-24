@@ -11,6 +11,8 @@ const StoreModal = () => {
             isOpen={storeModel.open}
             onClose={storeModel.closeModal}
             description={storeModel.description!}
+            dismisOutSide={storeModel.dismisOutSide}
+            className={storeModel.className}
         >
             {storeModel.content}
         </Modal>

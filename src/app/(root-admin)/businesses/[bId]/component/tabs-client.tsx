@@ -1,6 +1,6 @@
 'use client';
 import { Tabs } from '@/components/ui/tabs';
-import TabComponent from '@/modules/businesses/manage-item-module/component/tab-component';
+import TabComponent from '@/modules/businesses/manage-item/component/tab-component';
 import { useParams, usePathname } from 'next/navigation';
 import React from 'react';
 

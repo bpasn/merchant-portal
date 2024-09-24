@@ -44,7 +44,7 @@ const FormProductCategory = ({
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSave)} className='container '>
-                <HeadingModule title={title} >
+                <HeadingModule >
                     <Button
                         className='rounded-lg'
                         type='submit'

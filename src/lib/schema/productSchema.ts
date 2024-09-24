@@ -1,8 +1,8 @@
+import ObjectFile from "@/modules/businesses/manage-item/component/object-file";
 import { z } from "zod";
 import { ProductOptionModal, productOptionSchema } from "./ProductOptionSchema";
-import { CategoriesModal, categoriesSchema } from "./categoriesSchema";
+import { categoriesSchema } from "./categoriesSchema";
 import { StockProductModal, stockProductSchema } from "./productStockSchema";
-import ObjectFile from "@/modules/businesses/manage-item-module/component/object-file";
 
 export const productSchema = z.object({
     nameTH: z.string().min(1, "Name is required"),
@@ -25,8 +25,8 @@ export const productSchema = z.object({
             if (!v.length) return false;
             return true;
         }, { message: "Images not must be null" }),
-    productOptions: z.array(productOptionSchema),
-    categories: z.array(categoriesSchema)
+    productOptions: z.array(productOptionSchema.nullable()).default([]),
+    categories: z.array(categoriesSchema).default([])
 });
 
 export type ProductSchema = z.infer<typeof productSchema>;

@@ -1,5 +1,5 @@
 import { optionGetAction } from '@/lib/services/manageItem.service';
-import ManageItemOptionTemplate from '@/modules/businesses/manage-item-module/template/product-option';
+import ManageItemOptionTemplate from '@/modules/businesses/manage-item/template/product-option';
 
 
 const MenuOptionPage = async ({

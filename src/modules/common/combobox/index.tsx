@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { CommandSeparator } from 'cmdk';
 import { useStoreModal } from '@/lib/hooks/stores/store-modal';
 import StoreForm from '@/modules/store/form';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>;
 export interface IOptionCombobox {
@@ -27,6 +27,7 @@ const Combobox = <T extends IOptionCombobox,>({
 }: ComboboxProps<T>) => {
     const params = useParams();
     const router = useRouter();
+    const pathName = usePathname();
     const currentStore = items.find((item) => item.value === params.bId);
     const [open, setOpen] = useState(false);
     const openModal = useStoreModal((state) => state.openModal);
@@ -34,7 +35,7 @@ const Combobox = <T extends IOptionCombobox,>({
 
     const onSelect = (v: IOptionCombobox) => {
         setOpen(false);
-        router.push(`/businesses/${v.value}/menu`);
+        router.push(pathName.replace(params.bId.toString(),v.value));
     };
     return (
         <Popover open={open} onOpenChange={setOpen}>

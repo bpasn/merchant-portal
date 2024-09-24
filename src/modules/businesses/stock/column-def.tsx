@@ -1,46 +1,26 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CategoriesModal } from "@/lib/schema/categoriesSchema";
-import { ProductModal } from "@/lib/schema/productSchema";
+import { toast } from "@/components/ui/use-toast";
+import { useStoreProgress } from "@/lib/hooks/stores/store-progress";
 import { StockStatusEnum, stockStatusEnum } from "@/lib/schema/productStockSchema";
 import { cn, EachElement, report } from "@/lib/utils";
+import { IProductStockModel } from "@/types/product-stock";
 import { ColumnDef } from "@tanstack/react-table";
-import Image, { StaticImageData } from 'next/image';
 import React from "react";
-import ProductCellAction from "../component/product-cell-action";
+import StockProductAction from "./stock-cell-action";
+import Image, { StaticImageData } from 'next/image';
 import NoImage from '@/assets/image/no-image.jpg';
-import { updateProductStock } from "@/lib/services/manageItem.service";
-import { toast, useToast } from "@/components/ui/use-toast";
-import { useStoreProgress } from "@/lib/hooks/stores/store-progress";
-
-export const columnItems: ColumnDef<ProductModal>[] = [
-    // {
-    //     id: "select",
-    //     header: ({ table }) => (
-    //         <Checkbox
-    //             checked={
-    //                 table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
-    //             }
-    //             onCheckedChange={(v) => table.toggleAllPageRowsSelected(!v)}
-    //             aria-label="Select all"
-    //         />
-    //     ),
-    //     cell: ({ row }) => (
-    //         <Checkbox
-    //             checked={row.getIsSelected()}
-    //             onCheckedChange={(v) => row.toggleSelected(!!v)}
-    //             aria-label="Select row"
-    //         />
-    //     ),
-    //     enableSorting: false,
-    //     enableHiding: false
-    // },
+export const columnDefStock: ColumnDef<IProductStockModel>[] = [
     {
-        accessorKey: "nameTH",
-        header: "Item",
-        size: 300,
-
-        cell: ({ row }) => {
-            const [image, setImage] = React.useState<string | StaticImageData>(process.env.NEXT_PUBLIC_DOMAIN_IMAGE + "/" + row.original.productImages[0].uri);
+        header: "Product Name",
+        accessorKey: "productName",
+        meta: {
+            style: {
+                textAlign: "left",
+                width:300
+            }
+        },
+        cell: ({ row, getValue }) => {
+            const [image, setImage] = React.useState<string | StaticImageData>(process.env.NEXT_PUBLIC_DOMAIN_IMAGE + "/" + row.original.productImage);
             return (
                 <div className="capitalize flex flex-row gap-2 items-center">
                     <div className="relative w-20 h-20 rounded-lg">
@@ -53,61 +33,91 @@ export const columnItems: ColumnDef<ProductModal>[] = [
                             onError={() => setImage(NoImage)}
                         />
                     </div>
-                    <p>{row.getValue("nameTH")}</p>
+                    <p>{getValue() as string}</p>
                 </div>
             );
         }
     },
     {
-        accessorKey: "categories",
-        header: "Item group",
-        cell({ row }) {
-            return (
-                <div className="capitalize">{(row.getValue("categories") as CategoriesModal[]).map(e => e.name).join(",")}</div>
-            );
+        header: "Product Price",
+        accessorKey: "productPrice",
+        meta: {
+            style: {
+                textAlign: "center",
+            }
         },
+        cell: ({ getValue }) => (
+            <div className="text-center">{getValue() as string}</div>
+        )
+    },
+
+    {
+        header: "Unit Type",
+        meta: {
+            style: {
+                textAlign: "center",
+            }
+        },
+        accessorKey: "unitType",
+        cell: ({ getValue }) => (
+            <div className="text-center">{getValue() as string}</div>
+        )
     },
     {
-        accessorKey: "price",
-        header: "Price"
+        header: "Unit Qty",
+        meta: {
+            style: {
+                textAlign: "center",
+            }
+        },
+        accessorKey: "unitQuantity",
+        cell: ({ getValue }) => (
+            <div className="text-center">{getValue() as string}</div>
+        )
     },
     {
-        header: "Item status",
-        size: 100, // ความกว้างเริ่มต้น
-        minSize: 100, // ขนาดขั้นต่ำ
-        maxSize: 100, // ขนาดสูงสุดƒ
-        cell({ row }) {
-            const [status, setStatus] = React.useState<StockStatusEnum>(row.original.stock.status);
+        header: "Quantity",
+        meta: {
+            style: {
+                textAlign: "center",
+            }
+        },
+        accessorKey: "quantity",
+        cell: ({ getValue }) => (
+            <div className="text-center">{getValue() as string}</div>
+        )
+    },
+    {
+        header: "Stock Status",
+        accessorKey: "stockStatus",
+        cell: ({ row, ...cell }) => {
+            const [status, setStatus] = React.useState<StockStatusEnum>(cell.getValue() as StockStatusEnum);
             const storeProgress = useStoreProgress();
             const handleStatusChange = async (newStatus: StockStatusEnum) => {
                 storeProgress.inProgress();
                 try {
-                    await updateProductStock({
-                        ...row.original.stock,
-                        status: newStatus
-                    })
                     setStatus(newStatus);
-                    row.original.stock.status = newStatus;
+                    row.original.stockStatus = newStatus;
                 } catch (error) {
                     toast({
                         title: "ERROR",
                         description: report(error)
-                    })
+                    });
                 } finally {
                     storeProgress.done();
                 }
             };
             return (
                 <Select
-                    value={row.original.stock.status}
+                    value={status as string}
                     onValueChange={handleStatusChange}>
                     <SelectTrigger className={
                         cn(
                             "w-[157px] h-[35px] rounded-lg flex flex-row gap-4 p-3 justify-start focus:ring-0 ring-offset-0",
-                            generateClass(status),
+                            generateClass(status as StockStatusEnum),
                         )
                     }>
-                        <SelectValue placeholder={"choice.status"} className="text-start" />
+                        <SelectValue placeholder={status} className="text-start" />
                     </SelectTrigger>
                     <SelectContent>
                         <EachElement
@@ -122,14 +132,15 @@ export const columnItems: ColumnDef<ProductModal>[] = [
         }
     },
     {
-        header: " ",
+        header: "Action",
         size: 100, // ความกว้างเริ่มต้น 150px
         cell({ row }) {
             return (
-                <ProductCellAction product={row.original} />
+                <StockProductAction stock={row.original} />
             );
         }
     }
+
 ];
 
 const generateClass = (status: StockStatusEnum): string => {
@@ -143,4 +154,4 @@ const generateClass = (status: StockStatusEnum): string => {
         default:
             return "";
     }
-}
+};

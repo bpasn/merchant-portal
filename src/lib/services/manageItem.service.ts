@@ -8,6 +8,7 @@ import { ProductModal } from "../schema/productSchema";
 import { StockProductModal } from "../schema/productStockSchema";
 import { report } from "../utils";
 import axiosServer from "../utils/axios-server";
+import { IProductStockModel } from "@/types/product-stock";
 
 export const productGetAction = async (storeId: string, page: number, size: number) => {
     try {
@@ -133,3 +134,12 @@ export const updateProductStock = async (stock: StockProductModal) => {
         throw new Error(report(error));
     }
 }
+
+export const getProductStock = async (storeId: string):Promise<IProductStockModel[]> => {
+    try {
+        const { data } = await axiosServer.get<ApiResponse<IProductStockModel[]>>(`${ApiRoute.PRODUCT}/stock/${storeId}`);
+        return data.payload;
+    } catch (error) {
+        throw new Error(report(error));
+    }
+};

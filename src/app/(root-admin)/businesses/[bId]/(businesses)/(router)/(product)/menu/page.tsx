@@ -1,5 +1,5 @@
 import { productGetAction } from "@/lib/services/manageItem.service";
-import ManageItem from "@/modules/businesses/manage-item-module/template/product";
+import ManageItem from "@/modules/businesses/manage-item/template/product";
 
 const MenuItemPage = async ({ params }: {
   params: {

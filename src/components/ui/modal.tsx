@@ -16,9 +16,11 @@ interface ModalProps {
     description?: string;
     isOpen: boolean;
     onClose: () => void;
-    size?: "sm" | "md" | "lg";
     className?: string;
     children?: React.ReactNode;
+    style?: React.CSSProperties | undefined;
+    dismisOutSide: boolean;
+
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -26,9 +28,10 @@ const Modal: React.FC<ModalProps> = ({
     description = " ",
     isOpen,
     onClose,
-    size = "md",
     children,
-    className
+    className,
+    style,
+    dismisOutSide
 }) => {
     const onChange = (open: boolean) => {
         if (!open) {
@@ -36,19 +39,23 @@ const Modal: React.FC<ModalProps> = ({
         }
     };
     return (
-        <Dialog open={isOpen} onOpenChange={onChange}>
-            <div className="">
-                <DialogContent className={cn(
-                    className,
-                    "overflow-auto max-h-[calc(100%_-_64px)] max-w-md"
-                )}>
-                    <DialogHeader>
-                        <DialogTitle className="text-md">{title}</DialogTitle>
-                        <DialogDescription className="text-sm">{description}</DialogDescription>
-                    </DialogHeader>
-                    <div className="overflow-auto">{children}</div>
-                </DialogContent>
-            </div>
+        <Dialog open={isOpen} onOpenChange={onChange} >
+            <DialogContent onInteractOutside={(e) => {
+                e.preventDefault();
+                if(dismisOutSide){
+                    onClose()
+                }
+            }} className={cn(
+                className,
+                "overflow-auto max-h-[calc(100%_-_64px)] max-w-md"
+            )} style={style}>
+
+                <DialogHeader>
+                    <DialogTitle className="text-md">{title}</DialogTitle>
+                    <DialogDescription className="text-sm">{description}</DialogDescription>
+                </DialogHeader>
+                <div className="overflow-auto">{children}</div>
+            </DialogContent>
         </Dialog>
     );
 };

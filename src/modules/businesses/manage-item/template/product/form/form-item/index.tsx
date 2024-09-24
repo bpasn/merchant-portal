@@ -6,24 +6,23 @@ import {
     FormItem,
     FormMessage,
 } from '@/components/ui/form';
-import { ToastAction } from '@/components/ui/toast';
 import { useToast } from '@/components/ui/use-toast';
+import { useStoreProgress } from '@/lib/hooks/stores/store-progress';
 import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { ProductModal, productSchema, ProductSchema } from '@/lib/schema/productSchema';
-import FileUpload from '@/modules/businesses/manage-item-module/component/upload-image-form';
+import { createProduct, productImageDelete, updateProduct } from '@/lib/services/manageItem.service';
+import { report } from '@/lib/utils';
+import ObjectFile from '@/modules/businesses/manage-item/component/object-file';
+import FileUpload from '@/modules/businesses/manage-item/component/upload-image-form';
 import { FormFieldCommon, FormTextareaCommon } from '@/modules/common/form-field';
 import HeadingModule from '@/modules/common/heading-module';
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useParams } from 'next/navigation';
 import { useForm } from "react-hook-form";
+import CategoryFormComponent from '../component/category-form-component';
 import OptionFormComponent from '../component/option-form-component';
 import StockFormComponent from '../component/stock-form-component';
-import CategoryFormComponent from '../component/category-form-component';
-import { useParams } from 'next/navigation';
-import { createProduct, productImageDelete, updateProduct } from '@/lib/services/manageItem.service';
-import { report } from '@/lib/utils';
-import ObjectFile from '@/modules/businesses/manage-item-module/component/object-file';
-import { useStoreProgress } from '@/lib/hooks/stores/store-progress';
 
 
 
@@ -85,7 +84,7 @@ const FormItemMenu = ({
                 formData.append(`products.categories`, c.id!);
             });
             data.productOptions.map((c, i) => {
-                formData.append(`products.productOptions`, c.id!);
+                formData.append(`products.productOptions`, c?.id!);
             });
             if (product) {
                 await updateProduct(formData, product.id);
@@ -112,12 +111,12 @@ const FormItemMenu = ({
     //     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
     // }, [])
 
-
+    console.log(form.formState.errors)
 
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSave)} className='container'>
-                <HeadingModule title={title} >
+                <HeadingModule>
                     <Button
                         className='rounded-lg'
                         type='submit'
@@ -216,7 +215,7 @@ const FormItemMenu = ({
                     </div>
 
                     <StockFormComponent stock={product?.stock} control={form.control} />
-                    <OptionFormComponent itemOption={productOptions} control={form.control} />
+                    <OptionFormComponent productOptions={productOptions} control={form.control} />
                     <CategoryFormComponent categories={categories} control={form.control} />
 
                     <div className='flex justify-end'>

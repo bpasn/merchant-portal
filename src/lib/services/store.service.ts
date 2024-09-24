@@ -5,22 +5,13 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { StoreModal, StoreSchema } from "../schema/storeSchema";
 import axiosServer from "../utils/axios-server";
-import { report } from "../utils";
-import { AxiosError } from "axios";
 
 export const getStore = async () => {
-    try {
-        const { data } = await axiosServer.get<ApiResponse<StoreModal>>(`/store/find-one`);
-        if (data.payload) {
-            const fullPath = await setFullPath(data.payload.id);
-            revalidatePath('/businesses');
-            redirect(fullPath);
-        }
-    } catch (error) {
-        if(error instanceof AxiosError){
-            console.log(error.response)
-        }
-        throw new Error(report(error));
+    const { data } = await axiosServer.get<ApiResponse<StoreModal>>(`/store/find-one`);
+    if (data.payload) {
+        const fullPath = await setFullPath(data.payload.id);
+        revalidatePath('/businesses');
+        redirect(fullPath);
     }
 };
 

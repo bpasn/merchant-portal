@@ -16,12 +16,12 @@ import {
 import { TabsContent } from '@/components/ui/tabs';
 import { useBranchStore } from '@/lib/hooks/stores/store-branch';
 import { ChoiceStatusEnum, choiceStatusEnum, OptionChoiceSchema } from '@/lib/schema/optionChioceSchema';
-import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
+import { productOptionSchema, ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { cn, EachElement, toUpperCase } from '@/lib/utils';
 import LinkButton from '@/modules/common/link-button';
 import { X } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
 
 
 const ManageItemOption = ({
@@ -30,8 +30,10 @@ const ManageItemOption = ({
   productOption: ProductOptionSchema[];
 }) => {
   const params = useParams();
+  const [status,setStatus] = useState<ChoiceStatusEnum>(productOption[0].choices?.[0].status!);
   const handleChange = (v: string, optionIndex: number, choiceIndex: number) => {
-    productOption[optionIndex].choices[choiceIndex].status = v as ChoiceStatusEnum;
+    setStatus(v as ChoiceStatusEnum);
+    // productOption[optionIndex].choices?.[choiceIndex].status = v as ChoiceStatusEnum;
   };
   return (
     <TabsContent value={`/businesses/${params.bId}/menu-option`}>
@@ -60,18 +62,18 @@ const ManageItemOption = ({
               of={productOption || []}
               render={(option, optionIndex) => {
                 return (
-                  <AccordionItem key={option.optionName} value={option.optionName}>
+                  <AccordionItem key={option.optionName} value={option.optionName!}>
                     <AccordionTrigger className='hover:bg-black/10 ease-in-out transition-all duration-300 px-5 rounded-sm'>{option.optionName}</AccordionTrigger>
                     <AccordionContent>
                       <div className="ml-5">
                         <EachElement
-                          of={option.choices}
+                          of={option.choices || []}
                           render={(choice, choiceIndex) => (
                             <div key={choiceIndex} className='flex flex-row gap-5 items-center border-b-2 border-b-gray-100 py-3 px-3'>
                               <div className="w-full">
                                 <h1>{choice.name}</h1>
                               </div>
-                              {renderSelectStatus(choice, handleChange, optionIndex, choiceIndex)}
+                              {renderSelectStatus(status, handleChange, optionIndex, choiceIndex)}
                               <X size={32} className='cursor-pointer ' onClick={() => { }} />
                             </div>
                           )}
@@ -98,22 +100,22 @@ const ManageItemOption = ({
 export default ManageItemOption;
 
 export function renderSelectStatus(
-  choice: OptionChoiceSchema,
+  choice: ChoiceStatusEnum,
   handleChange: (v: string, optionIndex: number, choiceIndex: number) => void,
   optionIndex: number,
   choiceIndex: number) {
   return (
     <Select
-      value={choice.status}
+      value={choice}
       onValueChange={(v) => handleChange(v, optionIndex, choiceIndex)}
     >
       <SelectTrigger className={cn(
         "w-[157px] h-[30px] rounded-lg flex flex-row gap-4 p-3 justify-center focus:ring-0",
-        choice.status === choiceStatusEnum.Enum.available
+        choice === choiceStatusEnum.Enum.available
           ? "text-[rgba(0,168,56)] bg-[rgba(0,168,56)]/30"
           : "text-[rgba(123,132,136)] bg-[rgba(123,132,136)]/30"
       )}>
-        <SelectValue placeholder={choice.status} />
+        <SelectValue placeholder={choice} />
       </SelectTrigger>
       <SelectContent>
         <EachElement
