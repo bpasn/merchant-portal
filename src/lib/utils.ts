@@ -31,11 +31,11 @@ export const report = (error: unknown): string => {
 export const ElementRenderWhen = ({
   children,
   _if,
-  _el
+  _el = null
 }: {
   children: React.ReactNode;
-  _el: React.ReactNode;
+  _el?: React.ReactNode | null;
   _if: boolean;
 }) => {
-return _if ? children : _el
+  return _if ? children : _el
 };

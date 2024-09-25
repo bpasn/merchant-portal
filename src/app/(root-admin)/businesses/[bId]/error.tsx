@@ -15,14 +15,19 @@ export default function Error({
     useEffect(() => {
         if (!open) {
             openModal((
-                <div className='flex flex-col'>
+                <div className='flex flex-col gap-3'>
                     {error.message}
                     <Button onClick={() => {
-                        reset();
-                        closeModal()
-                    }}>OK</Button>
+                        window.location.assign("/")
+                        
+                    }}>RESET</Button>
                 </div>
             ), error.name)
+        }
+        return () => {
+            if(open){
+                closeModal()
+            }
         }
     }, [error, open, openModal])
 

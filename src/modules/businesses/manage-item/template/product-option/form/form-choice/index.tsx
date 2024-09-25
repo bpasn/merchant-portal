@@ -23,7 +23,7 @@ const FormChoice = ({
         resolver: zodResolver(optionChioceSchema),
         defaultValues: {
             name: "",
-            choiceEffect: null,
+            choiceEffect: "unchanged",
             price: 0,
             status: "available"
         }

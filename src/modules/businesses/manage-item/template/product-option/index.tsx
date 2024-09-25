@@ -15,12 +15,11 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { TabsContent } from '@/components/ui/tabs';
-import { ChoiceStatusEnum, choiceStatusEnum } from '@/lib/schema/optionChioceSchema';
+import { ChoiceStatusEnum, choiceStatusEnum} from '@/lib/schema/optionChioceSchema';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { cn, EachElement, toUpperCase } from '@/lib/utils';
 import DropdownAction from '@/modules/common/dropdown-action';
 import LinkButton from '@/modules/common/link-button';
-import { Edit2, EllipsisVertical, Trash, X } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import React from 'react';
 import { useState } from 'react';
@@ -32,10 +31,8 @@ const ManageItemOption = ({
   productOption: ProductOptionSchema[];
 }) => {
   const params = useParams();
-  const [status, setStatus] = useState<ChoiceStatusEnum>(productOption[0].choices?.[0].status!);
   const handleChange = (v: string, optionIndex: number, choiceIndex: number) => {
-    setStatus(v as ChoiceStatusEnum);
-    // productOption[optionIndex].choices?.[choiceIndex].status = v as ChoiceStatusEnum;
+
   };
 
   const onEdit = () => {
@@ -72,34 +69,42 @@ const ManageItemOption = ({
               of={productOption || []}
               render={(option, optionIndex) => {
                 return (
-                  <div className='flex flex-row gap-2 items-center'>
-                    <AccordionItem className='flex-1 shrink-0 border-none' key={option.optionName} value={option.optionName!}>
-                      <AccordionTrigger className='ml-auto  ease-in-out transition-all duration-300 px-5 rounded-sm'>
-                        {option.optionName}
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="ml-5">
-                          <EachElement
-                            of={option.choices || []}
-                            render={(choice, choiceIndex) => (
-                              <div key={choiceIndex} className='flex flex-row gap-5 items-center  py-3 px-3'>
-                                <div className="w-full">
-                                  <h1>{choice.name}</h1>
-                                </div>
-                                {renderSelectStatus(status, handleChange, optionIndex, choiceIndex)}
-                                <X size={32} className='cursor-pointer ' onClick={() => { }} />
-                              </div>
-                            )}
-                          />
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                    <div className="pr-5">
+                  <div className='flex flex-row gap-2 relative items-center'>
+                    <div className="flex-1">
+                      <AccordionItem key={option.optionName} value={option.optionName!} className='border-none'>
+                        <AccordionTrigger className='ease-in-out transition-all duration-300 px-5 rounded-sm'>{option.optionName}</AccordionTrigger>
+                        <AccordionContent>
+                          <div className="ml-5">
+                            <EachElement
+                              of={option.choices || []}
+                              render={(choice, choiceIndex) => {
+                                const [status, setStatus] = useState(choice.status);
+                                return (
+                                  <div key={choiceIndex} className='flex flex-row gap-5 items-center border-b-2 border-b-gray-100 py-3 px-3'>
+                                    <div className="w-full">
+                                      <h1>{choice.name}</h1>
+                                    </div>
+                                    {renderSelectStatus(status, setStatus)}
+                                  </div>
+                                )
+                              }}
+                            />
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </div>
+                    <div className="pr-5"/>
+                    <div className="pr-5 absolute top-[10px] -right-[7px] ">
                       <DropdownAction
-                        icon='EllipsisVertical'
-                        buttonVariant="none"
-                        onEdit={onEdit}
-                        onDelete={onDelete} />
+                        icon="EllipsisVertical"
+                        iconClass="border-none"
+                        onEdit={function (): void {
+                          throw new Error('Function not implemented.');
+                        }}
+                        onDelete={function (): void {
+                          throw new Error('Function not implemented.');
+                        }}
+                      />
                     </div>
                   </div>
                 );
@@ -122,13 +127,11 @@ export default ManageItemOption;
 
 export function renderSelectStatus(
   choice: ChoiceStatusEnum,
-  handleChange: (v: string, optionIndex: number, choiceIndex: number) => void,
-  optionIndex: number,
-  choiceIndex: number) {
+  setStatus: React.Dispatch<React.SetStateAction<ChoiceStatusEnum>>) {
   return (
     <Select
       value={choice}
-      onValueChange={(v) => handleChange(v, optionIndex, choiceIndex)}
+      onValueChange={(v) => setStatus(v as ChoiceStatusEnum)}
     >
       <SelectTrigger className={cn(
         "w-[157px] h-[30px] rounded-lg flex flex-row gap-4 p-3 justify-center focus:ring-0",

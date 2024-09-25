@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import IconLucide from "@/lib/hooks/icon-lucide";
-import { EachElement } from "@/lib/utils";
+import { cn, EachElement } from "@/lib/utils";
 import { IconName } from "@/types/icon";
-import { Edit2, MoreHorizontal, Trash } from "lucide-react";
+import { Edit2, Trash } from "lucide-react";
 import React from "react";
 
 interface DropdownActionProps {
@@ -11,24 +11,26 @@ interface DropdownActionProps {
     onDelete: () => void;
     dropdownMenuItem?: React.ReactElement<typeof DropdownMenuItem>[];
     icon?: IconName;
-    buttonVariant?: React.ComponentPropsWithoutRef<typeof Button>['variant']
+    iconClass?: string;
+    iconVariant?: React.ComponentPropsWithoutRef<typeof Button>['variant']
 }
 const DropdownAction = ({
     onDelete,
     onEdit,
     dropdownMenuItem,
     icon = "Ellipsis",
-    buttonVariant = "ghost"
+    iconClass,
+    iconVariant = "ghost"
 }: DropdownActionProps) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 {/* Open menu */}
                 <Button
-                    variant={buttonVariant}
-                    className="h-8 w-8 p-0 border"
+                    variant={iconVariant}
+                    className={cn("h-8 w-8 p-0 border", iconClass)}
                 >
-                    <IconLucide name={icon} className="h-4 w-4 " />
+                    <IconLucide name={icon} className="" size={18} cursor={"pointer"}/>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -45,10 +47,10 @@ const DropdownAction = ({
                         <React.Fragment key={index}>
                             {element}
                         </React.Fragment>
-                    );
+                    )
                 })}
             </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu >
     );
 };
 
