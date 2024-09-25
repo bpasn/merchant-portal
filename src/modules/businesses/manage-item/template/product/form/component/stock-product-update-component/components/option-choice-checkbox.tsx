@@ -1,12 +1,11 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
+import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { toast, } from "@/components/ui/use-toast";
 import { OptionChoiceModal } from "@/lib/schema/optionChioceSchema";
 import { cn, EachElement, ElementRenderWhen } from "@/lib/utils";
 import { Check } from "lucide-react";
 import { FieldValues } from "react-hook-form";
 import { OptionChoiceStockProps } from "..";
-import { toast,  } from "@/components/ui/use-toast";
 
 const OptionChoiceCheckGroup = <T extends FieldValues>({
     option: {
@@ -47,7 +46,7 @@ const OptionChoiceCheckGroup = <T extends FieldValues>({
                                             currentCheck = value.choice;
                                         }
                                         return (
-                                            <FormItem className="flex items-center space-x-2">
+                                            <FormItem className="flex inset-0 items-center space-x-2">
                                                 <FormControl>
                                                     <Checkbox
                                                         checked={currentCheck.map(e => e.id).includes(choice.id)}
@@ -70,7 +69,7 @@ const OptionChoiceCheckGroup = <T extends FieldValues>({
                                                         }}
                                                     />
                                                 </FormControl>
-                                                <Label htmlFor={choice.name} className='font-normal cursor-pointer' >{choice.name}</Label>
+                                                <FormLabel htmlFor={choice.name} className='!mx-3 !my-0 font-normal cursor-pointer' >{choice.name}</FormLabel>
                                             </FormItem>
                                         )
                                     }}

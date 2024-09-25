@@ -1,5 +1,7 @@
 import { ProductModal } from '@/lib/schema/productSchema';
-import { categoryGetAction, getProductById, optionGetAction } from '@/lib/services/manageItem.service';
+import { categoryGetAction } from '@/lib/services/category.service';
+import { getProductById } from '@/lib/services/product.service';
+import { optionGetAction } from '@/lib/services/productOption.service';
 import FormItemMenu from '@/modules/businesses/manage-item/template/product/form/form-item';
 
 const MenuItemPage = async ({ params }: {

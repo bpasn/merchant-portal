@@ -1,4 +1,4 @@
-import { getOptionById } from '@/lib/services/manageItem.service';
+import { getOptionById } from '@/lib/services/productOption.service';
 import FormMenuOption from '@/modules/businesses/manage-item/template/product-option/form/form-menu-option';
 
 const CreateOrUpdatePage = async ({

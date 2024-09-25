@@ -1,4 +1,4 @@
-import { getProductStock } from "@/lib/services/manageItem.service";
+import { getProductStock } from "@/lib/services/product.service";
 import StockModule from "@/modules/businesses/stock";
 
 

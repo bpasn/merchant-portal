@@ -1,4 +1,4 @@
-import { categoryGetAction } from '@/lib/services/manageItem.service';
+import { categoryGetAction } from '@/lib/services/category.service';
 import ManageItemGroupTemplate from '@/modules/businesses/manage-item/template/product-categories';
 
 interface MenuGroupPageProps {

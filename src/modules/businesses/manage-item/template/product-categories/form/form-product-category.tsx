@@ -5,12 +5,12 @@ import {
 } from '@/components/ui/form';
 import { toast } from '@/components/ui/use-toast';
 import { CategoriesSchema, categoriesSchema } from '@/lib/schema/categoriesSchema';
-import { createCategory } from '@/lib/services/manageItem.service';
+import { createCategory } from '@/lib/services/category.service';
 import { FormFieldCommon } from '@/modules/common/form-field';
 import HeadingModule from '@/modules/common/heading-module';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from 'axios';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useForm } from "react-hook-form";
 
 
@@ -41,6 +41,8 @@ const FormProductCategory = ({
             });
         }
     };
+
+    
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSave)} className='container '>

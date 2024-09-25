@@ -35,7 +35,7 @@ const Combobox = <T extends IOptionCombobox,>({
 
     const onSelect = (v: IOptionCombobox) => {
         setOpen(false);
-        router.push(pathName.replace(params.bId.toString(),v.value));
+        router.push(pathName.replace(params.bId.toString(), v.value));
     };
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -65,7 +65,7 @@ const Combobox = <T extends IOptionCombobox,>({
                             <EachElement
                                 of={items}
                                 render={(item, index) => {
-                                    console.log(index)
+                                    console.log(index);
                                     return (
                                         <>
                                             <CommandItem
@@ -94,7 +94,8 @@ const Combobox = <T extends IOptionCombobox,>({
                                 className='flex flex-row gap-2'
                                 onSelect={() => {
                                     openModal(<StoreForm />, "Create item", {
-                                        description: "Add a new store to manage item"
+                                        description: "Add a new store to manage item",
+                                        dismisOutSide: false
                                     });
                                 }}
                             >

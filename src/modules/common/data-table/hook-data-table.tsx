@@ -35,7 +35,7 @@ const useDataTable = <T extends RowData,>({
             rowSelection,
         },
         ...options
-    }), []);
+    }), [data,columns]);
     const table = useReactTable(memo);
     return {
         table,

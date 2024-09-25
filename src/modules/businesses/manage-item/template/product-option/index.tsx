@@ -1,11 +1,7 @@
 'use client';
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
+  Accordion
 } from '@/components/ui/accordion';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -15,14 +11,13 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { TabsContent } from '@/components/ui/tabs';
-import { ChoiceStatusEnum, choiceStatusEnum} from '@/lib/schema/optionChioceSchema';
+import { ChoiceStatusEnum, choiceStatusEnum } from '@/lib/schema/optionChioceSchema';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { cn, EachElement, toUpperCase } from '@/lib/utils';
-import DropdownAction from '@/modules/common/dropdown-action';
 import LinkButton from '@/modules/common/link-button';
 import { useParams } from 'next/navigation';
 import React from 'react';
-import { useState } from 'react';
+import OptionItem from './components/option-item';
 
 
 const ManageItemOption = ({
@@ -31,17 +26,6 @@ const ManageItemOption = ({
   productOption: ProductOptionSchema[];
 }) => {
   const params = useParams();
-  const handleChange = (v: string, optionIndex: number, choiceIndex: number) => {
-
-  };
-
-  const onEdit = () => {
-
-  };
-
-  const onDelete = () => {
-
-  };
   return (
     <TabsContent value={`/businesses/${params.bId}/menu-option`}>
       <div className='p-4'>
@@ -67,47 +51,8 @@ const ManageItemOption = ({
           {productOption.length ? (
             <EachElement
               of={productOption || []}
-              render={(option, optionIndex) => {
-                return (
-                  <div className='flex flex-row gap-2 relative items-center'>
-                    <div className="flex-1">
-                      <AccordionItem key={option.optionName} value={option.optionName!} className='border-none'>
-                        <AccordionTrigger className='ease-in-out transition-all duration-300 px-5 rounded-sm'>{option.optionName}</AccordionTrigger>
-                        <AccordionContent>
-                          <div className="ml-5">
-                            <EachElement
-                              of={option.choices || []}
-                              render={(choice, choiceIndex) => {
-                                const [status, setStatus] = useState(choice.status);
-                                return (
-                                  <div key={choiceIndex} className='flex flex-row gap-5 items-center border-b-2 border-b-gray-100 py-3 px-3'>
-                                    <div className="w-full">
-                                      <h1>{choice.name}</h1>
-                                    </div>
-                                    {renderSelectStatus(status, setStatus)}
-                                  </div>
-                                )
-                              }}
-                            />
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    </div>
-                    <div className="pr-5"/>
-                    <div className="pr-5 absolute top-[10px] -right-[7px] ">
-                      <DropdownAction
-                        icon="EllipsisVertical"
-                        iconClass="border-none"
-                        onEdit={function (): void {
-                          throw new Error('Function not implemented.');
-                        }}
-                        onDelete={function (): void {
-                          throw new Error('Function not implemented.');
-                        }}
-                      />
-                    </div>
-                  </div>
-                );
+              render={(option) => {
+                return <OptionItem {...option}/>;
               }}
             />
           ) : (

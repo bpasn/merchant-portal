@@ -1,4 +1,4 @@
-import { optionGetAction } from '@/lib/services/manageItem.service';
+import { optionGetAction } from '@/lib/services/productOption.service';
 import ManageItemOptionTemplate from '@/modules/businesses/manage-item/template/product-option';
 
 

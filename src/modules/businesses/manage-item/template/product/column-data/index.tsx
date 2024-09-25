@@ -1,16 +1,17 @@
+import NoImage from '@/assets/image/no-image.jpg';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
+import { useStoreProgress } from "@/lib/hooks/stores/store-progress";
 import { CategoriesModal } from "@/lib/schema/categoriesSchema";
 import { ProductModal } from "@/lib/schema/productSchema";
 import { StockStatusEnum, stockStatusEnum } from "@/lib/schema/productStockSchema";
+import { updateProductStock } from "@/lib/services/product.service";
 import { cn, EachElement, report } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import Image, { StaticImageData } from 'next/image';
 import React from "react";
 import ProductCellAction from "../product-cell-action";
-import NoImage from '@/assets/image/no-image.jpg';
-import { updateProductStock } from "@/lib/services/manageItem.service";
-import { toast, useToast } from "@/components/ui/use-toast";
-import { useStoreProgress } from "@/lib/hooks/stores/store-progress";
+import ImageProvider from '@/modules/common/image-provider';
 
 export const columnItems: ColumnDef<ProductModal>[] = [
     // {
@@ -40,17 +41,13 @@ export const columnItems: ColumnDef<ProductModal>[] = [
         size: 300,
 
         cell: ({ row }) => {
-            const [image, setImage] = React.useState<string | StaticImageData>(process.env.NEXT_PUBLIC_DOMAIN_IMAGE + "/" + row.original.productImages[0].uri);
             return (
                 <div className="capitalize flex flex-row gap-2 items-center">
                     <div className="relative w-20 h-20 rounded-lg">
-                        <Image
+                        <ImageProvider
                             fill
                             className="object-fill rounded-xl"
-                            src={image}
-
-                            alt={""}
-                            onError={() => setImage(NoImage)}
+                            src={row.original.productImages[0].uri}
                         />
                     </div>
                     <p>{row.getValue("nameTH")}</p>
@@ -78,7 +75,6 @@ export const columnItems: ColumnDef<ProductModal>[] = [
         maxSize: 100, // ขนาดสูงสุด
         accessorKey:"stock.status",
         cell(cell) {
-            console.log(cell.getValue())
             const [status, setStatus] = React.useState<StockStatusEnum>(cell.getValue() as StockStatusEnum);
             const storeProgress = useStoreProgress();
             const handleStatusChange = async (newStatus: StockStatusEnum) => {

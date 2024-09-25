@@ -1,7 +1,7 @@
 'use client';
 import { toast } from '@/components/ui/use-toast';
 import { useStoreModal } from '@/lib/hooks/stores/store-modal';
-import { deleteProduct } from '@/lib/services/manageItem.service';
+import { deleteProduct } from '@/lib/services/product.service';
 import { report } from '@/lib/utils';
 import DropdownAction from '@/modules/common/dropdown-action';
 import { IProductStockModel } from '@/types/product-stock';

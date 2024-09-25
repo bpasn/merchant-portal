@@ -1,43 +1,42 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import HeadingModule from '@/modules/common/heading-module';
-import React from 'react';
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Form,
     FormControl,
     FormField,
     FormItem,
     FormLabel,
-
 } from '@/components/ui/form';
 import {
-    FormFieldCommon,
-} from '@/modules/common/form-field';
-import _ from 'lodash';
-import { cn, EachElement, report, toUpperCase } from '@/lib/utils';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Minus, Plus, X } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
-import {
     Select,
-    SelectItem,
     SelectContent,
+    SelectItem,
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { toast } from '@/components/ui/use-toast';
+import { useStoreModal } from '@/lib/hooks/stores/store-modal';
 import {
     ChoiceStatusEnum,
     choiceStatusEnum,
     OptionChoiceSchema
 } from '@/lib/schema/optionChioceSchema';
-import FormChoice from '../form-choice';
 import { productOptionSchema, ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
-import { toast } from '@/components/ui/use-toast';
-import { useStoreModal } from '@/lib/hooks/stores/store-modal';
-import { useParams, useRouter } from 'next/navigation';
-import { createProductOption } from '@/lib/services/manageItem.service';
+import { cn, EachElement, report, toUpperCase } from '@/lib/utils';
+import {
+    FormFieldCommon,
+} from '@/modules/common/form-field';
+import HeadingModule from '@/modules/common/heading-module';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Minus, Plus, X } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useFieldArray, useForm } from "react-hook-form";
+import FormChoice from '../form-choice';
+import { createProductOption } from '@/lib/services/productOption.service';
+import { useEffect } from 'react';
+import { useStoreHead } from '@/lib/hooks/stores/store-head';
 
 
 
@@ -51,6 +50,7 @@ const FormMenuOption = ({
     const title = itemOption !== null ? "Edit Item" : "Create Item";
     const params = useParams();
     const modalContext = useStoreModal();
+    const { setTitle } = useStoreHead();
     const form = useForm<ProductOptionSchema & { lengthSelect?: number; }>({
         resolver: zodResolver(productOptionSchema),
         defaultValues: itemOption || {
@@ -70,7 +70,7 @@ const FormMenuOption = ({
 
     const handleSaveOption = async (data: ProductOptionSchema) => {
         try {
-            await createProductOption({ ...data, storeId: params.bId.toString() })
+            await createProductOption({ ...data, storeId: params.bId.toString() });
             window.location.assign(`/businesses/${params.bId}/menu-option`);
         } catch (error) {
             toast({
@@ -81,10 +81,15 @@ const FormMenuOption = ({
             });
         }
     };
+
+    useEffect(() => {
+        setTitle(title);
+    }, [setTitle]);
+    
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSaveOption)} className='container '>
-                <HeadingModule title={title} >
+                <HeadingModule >
                     <Button
                         className='rounded-lg'
                         type='submit'

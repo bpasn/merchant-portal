@@ -7,11 +7,12 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { useToast } from '@/components/ui/use-toast';
+import { useStoreHead } from '@/lib/hooks/stores/store-head';
 import { useStoreProgress } from '@/lib/hooks/stores/store-progress';
 import { CategoriesSchema } from '@/lib/schema/categoriesSchema';
 import { ProductOptionSchema } from '@/lib/schema/ProductOptionSchema';
 import { ProductModal, productSchema, ProductSchema } from '@/lib/schema/productSchema';
-import { createProduct, productImageDelete, updateProduct } from '@/lib/services/manageItem.service';
+import { createProduct, productImageDelete, updateProduct } from '@/lib/services/product.service';
 import { report } from '@/lib/utils';
 import ObjectFile from '@/modules/businesses/manage-item/component/object-file';
 import FileUpload from '@/modules/businesses/manage-item/component/upload-image-form';
@@ -19,12 +20,11 @@ import { FormFieldCommon, FormTextareaCommon } from '@/modules/common/form-field
 import HeadingModule from '@/modules/common/heading-module';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from 'next/navigation';
+import React from 'react';
 import { useForm } from "react-hook-form";
 import CategoryFormComponent from '../component/category-form-component';
 import OptionFormComponent from '../component/option-form-component';
 import StockFormComponent from '../component/stock-form-component';
-import { useStoreHead } from '@/lib/hooks/stores/store-head';
-import React from 'react';
 
 
 

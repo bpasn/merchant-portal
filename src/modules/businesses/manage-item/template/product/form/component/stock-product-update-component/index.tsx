@@ -1,16 +1,17 @@
 import { Form } from "@/components/ui/form";
-import { EachElement, ElementRenderWhen } from "@/lib/utils";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { ProductModal } from "@/lib/schema/productSchema";
 import { Button } from "@/components/ui/button";
-import OptionChoiceCheckGroup from "./components/option-choice-checkbox";
-import OptionChoiceRadioGroup from "./components/option-choice-radio";
 import { ProductOptionModal } from "@/lib/schema/ProductOptionSchema";
 import { UseControllerProps } from "@/modules/common/form-field";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { EachElement, ElementRenderWhen } from "@/lib/utils";
+import OptionChoiceRadioGroup from "./components/option-choice-radio";
+import OptionChoiceCheckGroup from "./components/option-choice-checkbox";
+import ImageProvider from "@/modules/common/image-provider";
 interface IStockProductUpdateProps {
     product: ProductModal;
 }
@@ -50,10 +51,12 @@ const StockProductUpdateComponent = ({ product }: IStockProductUpdateProps) => {
     return (
         <Form {...form}>
             <form className='flex flex-col gap-2 mt-2'>
+                <div className="w-full flex justify-center">
+                    <ImageProvider width={300} height={200} className="object-cover" src={product.productImages[0].uri} />
+                </div>
                 <EachElement
                     of={product.productOptions}
                     render={(option, index) => {
-                        console.log({manyCanBeChosen:option})
                         return (
                             <ElementRenderWhen _if={option.manyCanBeChosen} _el={(
                                 <OptionChoiceRadioGroup
@@ -63,7 +66,8 @@ const StockProductUpdateComponent = ({ product }: IStockProductUpdateProps) => {
                             )}>
                                 <OptionChoiceCheckGroup option={option} control={form.control} name={`selected.${index}`} />
                             </ElementRenderWhen>
-                        )
+
+                        );
                     }}
                 />
                 <div className="p-4 border shadow-md">

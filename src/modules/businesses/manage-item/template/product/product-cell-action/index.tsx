@@ -3,7 +3,7 @@ import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { toast } from '@/components/ui/use-toast';
 import { useStoreModal } from '@/lib/hooks/stores/store-modal';
 import { ProductModal } from '@/lib/schema/productSchema';
-import { deleteProduct } from '@/lib/services/manageItem.service';
+import { deleteProduct } from '@/lib/services/product.service';
 import { report } from '@/lib/utils';
 import DropdownAction from '@/modules/common/dropdown-action';
 import { ChartSpline } from 'lucide-react';
@@ -39,6 +39,7 @@ const ProductCellAction = ({
     };
 
     const updateStock = () => {
+        console.log("update")
         openModal(
             <StockProductUpdateComponent product={product} />,
             product.nameTH,
