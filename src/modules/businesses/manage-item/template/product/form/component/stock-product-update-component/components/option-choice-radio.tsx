@@ -4,8 +4,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { OptionChoiceModal } from "@/lib/schema/optionChioceSchema";
 import { cn, EachElement } from "@/lib/utils";
 import { Check } from "lucide-react";
-import {  FieldValues } from "react-hook-form";
-import { OptionChoiceStockProps } from "..";
+import { FieldValues } from "react-hook-form";
+import { OptionChoiceStockProps, SchemeChoiceObj } from "..";
 
 
 const OptionChoiceRadioGroup = <T extends FieldValues>({
@@ -35,11 +35,12 @@ const OptionChoiceRadioGroup = <T extends FieldValues>({
                 control={control}
                 name={name}
                 render={({ field }) => {
+                    const value = field.value as SchemeChoiceObj
                     return (
                         <FormItem>
                             <FormControl>
-                                <RadioGroup defaultValue={field.value} onValueChange={(value:string) => {
-                                    console.log(value)
+                                <RadioGroup defaultValue={(value && value.choice.length) ? value.choice[0].id : ""} onValueChange={(value: string) => {
+                                    field.onChange({ optionName, choice: [{ id: value }] });
                                 }} className=' font-normal text-gray-600'>
                                     <EachElement
                                         of={(choices || []) as OptionChoiceModal[]}

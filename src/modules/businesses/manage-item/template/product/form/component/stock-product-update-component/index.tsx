@@ -5,7 +5,6 @@ import React, { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { ProductModal } from "@/lib/schema/productSchema";
 import { Button } from "@/components/ui/button";
-import { OptionChoiceModal } from "@/lib/schema/optionChioceSchema";
 import OptionChoiceCheckGroup from "./components/option-choice-checkbox";
 import OptionChoiceRadioGroup from "./components/option-choice-radio";
 import { ProductOptionModal } from "@/lib/schema/ProductOptionSchema";
@@ -17,16 +16,17 @@ interface IStockProductUpdateProps {
 }
 
 
-
+export const schemeChoiceObj = z.object({
+    optionName: z.string(),
+    choice: z.array(
+        z.object({
+            id: z.string()
+        })
+    )
+});
+export type SchemeChoiceObj = z.infer<typeof schemeChoiceObj>;
 const schemeSelect = z.object({
-    selected: z.object({
-        optionName: z.string(),
-        choice: z.array(
-            z.object({
-                id: z.string()
-            })
-        )
-    }).array()
+    selected: schemeChoiceObj.array()
 });
 
 export type InferSchemeSelected = z.infer<typeof schemeSelect>;
@@ -53,10 +53,11 @@ const StockProductUpdateComponent = ({ product }: IStockProductUpdateProps) => {
                 <EachElement
                     of={product.productOptions}
                     render={(option, index) => {
+                        console.log({manyCanBeChosen:option})
                         return (
-                            <ElementRenderWhen _if={!option.manyCanBeChosen} _el={(
+                            <ElementRenderWhen _if={option.manyCanBeChosen} _el={(
                                 <OptionChoiceRadioGroup
-                                    name={`selected.${index}.choice`}
+                                    name={`selected.${index}`}
                                     control={form.control}
                                     option={option} />
                             )}>
