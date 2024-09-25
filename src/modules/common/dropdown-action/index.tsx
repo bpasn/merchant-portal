@@ -1,29 +1,36 @@
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { EachElement } from "@/lib/utils";
-import { Edit2, MoreHorizontal, Trash } from "lucide-react";
+import IconLucide from "@/lib/hooks/icon-lucide";
+import { cn, EachElement } from "@/lib/utils";
+import { IconName } from "@/types/icon";
+import { Edit2, Trash } from "lucide-react";
 import React from "react";
 
 interface DropdownActionProps {
     onEdit: () => void;
     onDelete: () => void;
     dropdownMenuItem?: React.ReactElement<typeof DropdownMenuItem>[];
+    icon?: IconName;
+    iconClass?: string;
+    iconVariant?: React.ComponentPropsWithoutRef<typeof Button>['variant']
 }
 const DropdownAction = ({
     onDelete,
     onEdit,
-    dropdownMenuItem
+    dropdownMenuItem,
+    icon = "Ellipsis",
+    iconClass,
+    iconVariant = "ghost"
 }: DropdownActionProps) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 {/* Open menu */}
                 <Button
-                    variant={"ghost"}
-                    className="h-8 w-8 p-0 border"
+                    variant={iconVariant}
+                    className={cn("h-8 w-8 p-0 border", iconClass)}
                 >
-                    <span className="sr-only">Open Menu</span>
-                    <MoreHorizontal className="h-4 w-4 " />
+                    <IconLucide name={icon} className="" size={18} cursor={"pointer"}/>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -36,15 +43,15 @@ const DropdownAction = ({
                     <Trash className="mr-2 h4 w-4" />
                     Delete
                 </DropdownMenuItem>
-                {dropdownMenuItem?.map((element,index) => {
+                {dropdownMenuItem?.map((element, index) => {
                     return (
-                    <React.Fragment key={index}>
-                        {element}
-                    </React.Fragment>
+                        <React.Fragment key={index}>
+                            {element}
+                        </React.Fragment>
                     )
                 })}
             </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu >
     );
 };
 

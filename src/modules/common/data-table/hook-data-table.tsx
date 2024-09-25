@@ -1,5 +1,5 @@
 import { ColumnDef, ColumnFiltersState, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, SortingState, TableOptions, useReactTable, VisibilityState } from '@tanstack/react-table';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 type UseTableProps<T extends RowData> = {
     data: T[];
@@ -17,8 +17,7 @@ const useDataTable = <T extends RowData,>({
 
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
-
-    const table = useReactTable({
+    const memo = useMemo(() => ({
         data,
         columns,
         onSortingChange: setSorting,
@@ -36,7 +35,8 @@ const useDataTable = <T extends RowData,>({
             rowSelection,
         },
         ...options
-    });
+    }), []);
+    const table = useReactTable(memo);
     return {
         table,
         sorting,

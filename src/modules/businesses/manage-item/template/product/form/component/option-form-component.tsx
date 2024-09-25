@@ -45,7 +45,6 @@ const OptionFormComponent = ({
                                                     checked={isChecked}
                                                     onCheckedChange={(c) => {
                                                         const currentValue = Array.isArray(field.value) ? field.value : [];
-                                                        console.log({ currentValue });
                                                         const updatedValue = c
                                                             ? [...currentValue, option]
                                                             : currentValue.filter((value) => value?.optionName !== option.optionName);
