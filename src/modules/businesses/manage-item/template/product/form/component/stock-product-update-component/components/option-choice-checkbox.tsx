@@ -22,7 +22,7 @@ const OptionChoiceCheckGroup = <T extends FieldValues>({
             control={control}
             name={name}
             render={({ field }) => {
-                const value = field.value as { optionName: string, choice: { id: string }[] };
+                const value = field.value as { optionName: string, choice: { id: string; }[]; };
                 return (
                     <div className="border p-4 shadow-md flex flex-col gap-3">
                         <div className="flex flex-row items-center gap-2">
@@ -41,12 +41,12 @@ const OptionChoiceCheckGroup = <T extends FieldValues>({
                                 <EachElement
                                     of={(choices || []) as OptionChoiceModal[]}
                                     render={(choice) => {
-                                        let currentCheck: { id: string }[] = [];
+                                        let currentCheck: { id: string; }[] = [];
                                         if (!isValueNull(value)) {
                                             currentCheck = value.choice;
                                         }
                                         return (
-                                            <FormItem className="flex inset-0 items-center space-x-2">
+                                            <FormItem className="flex inset-0 items-center space-x-2 ">
                                                 <FormControl>
                                                     <Checkbox
                                                         checked={currentCheck.map(e => e.id).includes(choice.id)}
@@ -58,11 +58,11 @@ const OptionChoiceCheckGroup = <T extends FieldValues>({
                                                                         title: "WARNING",
                                                                         description: "Choice limit " + lengthSelect,
                                                                         variant: "warning"
-                                                                    })
+                                                                    });
                                                                     return;
                                                                 }
                                                             }
-                                                            const currentChoice: { id: string }[] = (!isValueNull(value) && Array.isArray(value.choice)) ? value.choice : [];
+                                                            const currentChoice: { id: string; }[] = (!isValueNull(value) && Array.isArray(value.choice)) ? value.choice : [];
                                                             const updatedValue = checked
                                                                 ? [...currentChoice, { id: choice.id }]
                                                                 : currentChoice.filter(value => value.id !== choice.id);
@@ -71,8 +71,9 @@ const OptionChoiceCheckGroup = <T extends FieldValues>({
                                                     />
                                                 </FormControl>
                                                 <FormLabel htmlFor={choice.id} className='!mx-3 !my-0 font-normal cursor-pointer' >{choice.name}</FormLabel>
+                                                <p className="!mt-0 !mb-0 !ml-auto !mr-2 text-sm text-gray-400">{choice.price}฿</p>
                                             </FormItem>
-                                        )
+                                        );
                                     }}
                                 />
                             </FormControl>
