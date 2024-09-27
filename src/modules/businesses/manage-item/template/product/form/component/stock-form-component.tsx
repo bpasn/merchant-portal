@@ -23,6 +23,7 @@ const StockFormComponent = ({
                     control={control}
                     options={stockUnitTypeEnum.options.map(option => ({ value: option, label: option }))}
                     name={"stock.unitType"}
+                    defaultValue={stock?.unitType ? stock.unitType : stockUnitTypeEnum.Values.PIECE}
                     label={"Unit type"}
                 />
                 <FormFieldCommon
@@ -38,6 +39,7 @@ const StockFormComponent = ({
                 <FormSelectCommon
                     control={control}
                     options={stockStatusEnum.options.map(option => ({ value: option, label: option }))}
+                    defaultValue={stock?.status ? stock.status : stockStatusEnum.Values.IN_STOCK}
                     name={"stock.status"}
                     label={"Status"}
                 />

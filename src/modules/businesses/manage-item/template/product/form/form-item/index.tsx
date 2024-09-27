@@ -42,7 +42,6 @@ const FormItemMenu = ({
     const params = useParams();
     const storeProgress = useStoreProgress();
     const storeHead = useStoreHead();
-    
     const { toast } = useToast();
     const form = useForm<ProductSchema>({
         resolver: zodResolver(productSchema),
@@ -64,6 +63,8 @@ const FormItemMenu = ({
             categories: []
         }
     });
+    console.log()
+
     const handleSave = async (data: ProductSchema) => {
         storeProgress.inProgress();
         try {
@@ -73,31 +74,31 @@ const FormItemMenu = ({
                     formData.append(`productImages`, file);
                 }
             });
-            formData.append("products.storeId", params.bId.toString());
-            formData.append("products.nameTH", data.nameTH);
-            formData.append("products.nameEN", data.nameEN);
-            formData.append("products.price", data.price.toFixed(2).toString());
-            formData.append("products.descriptionTH", data.descriptionTH!);
-            formData.append("products.descriptionEN", data.descriptionEN!);
-            formData.append("products.stock.unitQuantity", data.stock.unitQuantity.toString());
-            formData.append("products.stock.unitType", data.stock.unitType);
-            formData.append("products.stock.quantity", data.stock.quantity.toString());
-            formData.append("products.stock.status", data.stock.status);
-            formData.append("products.stock.reOrder", Boolean(data.stock.reOrder).valueOf().toString());
+            formData.append("product.storeId", params.bId.toString());
+            formData.append("product.nameTH", data.nameTH);
+            formData.append("product.nameEN", data.nameEN);
+            formData.append("product.price", data.price.toFixed(2).toString());
+            formData.append("product.descriptionTH", data.descriptionTH!);
+            formData.append("product.descriptionEN", data.descriptionEN!);
+            formData.append("stock.unitQuantity", data.stock.unitQuantity.toString());
+            formData.append("stock.unitType", data.stock.unitType);
+            formData.append("stock.quantity", data.stock.quantity.toString());
+            formData.append("stock.status", data.stock.status);
+            formData.append("stock.reOrder", Boolean(data.stock.reOrder).valueOf().toString());
             if(data.categories.length){
                 data.categories.map((c, i) => {
-                    formData.append(`products.categories`, c.id!);
+                    formData.append(`categories`, c.id!);
                 });
             }else{
-                formData.append(`products.categories`, JSON.stringify([]));
+                formData.append(`categories`, JSON.stringify([]));
 
             }
             if(data.productOptions.length){
                 data.productOptions.map((c, i) => {
-                    formData.append(`products.productOptions`, c?.id!);
+                    formData.append(`productOptions`, c?.id!);
                 });
             }else {
-                formData.append(`product.productOptions`,JSON.stringify([]));
+                formData.append(`productOptions`,JSON.stringify([]));
             }
             if (product) {
                 await updateProduct(formData, product.id);
@@ -136,6 +137,7 @@ const FormItemMenu = ({
                         className='rounded-lg'
                         type='submit'
                     >Save</Button>
+                    
                 </HeadingModule>
                 <div className="flex flex-col gap-5">
                     <div className="content-container px-8 py-8 flex flex-col gap-10 col-span-7">

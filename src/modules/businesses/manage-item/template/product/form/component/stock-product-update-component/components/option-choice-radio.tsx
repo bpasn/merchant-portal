@@ -52,7 +52,7 @@ const OptionChoiceRadioGroup = <T extends FieldValues>({
                                                 <FormControl>
                                                     <RadioGroupItem value={choice.id} className="cursorp" id={choice.id} />
                                                 </FormControl>
-                                                <FormLabel htmlFor={choice.name} id={choice.id} className='!mx-3 !my-0 font-normal cursor-pointer' >{choice.name}</FormLabel>
+                                                <FormLabel htmlFor={choice.id} id={choice.id} className='!mx-3 !my-0 font-normal cursor-pointer' >{choice.name}</FormLabel>
                                             </FormItem>
                                         )}
                                     />

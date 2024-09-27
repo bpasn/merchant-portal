@@ -50,6 +50,7 @@ const OptionChoiceCheckGroup = <T extends FieldValues>({
                                                 <FormControl>
                                                     <Checkbox
                                                         checked={currentCheck.map(e => e.id).includes(choice.id)}
+                                                        id={choice.id}
                                                         onCheckedChange={(checked) => {
                                                             if (checked && !isValueNull(value)) {
                                                                 if (value.choice.length >= lengthSelect) {
@@ -69,7 +70,7 @@ const OptionChoiceCheckGroup = <T extends FieldValues>({
                                                         }}
                                                     />
                                                 </FormControl>
-                                                <FormLabel htmlFor={choice.name} className='!mx-3 !my-0 font-normal cursor-pointer' >{choice.name}</FormLabel>
+                                                <FormLabel htmlFor={choice.id} className='!mx-3 !my-0 font-normal cursor-pointer' >{choice.name}</FormLabel>
                                             </FormItem>
                                         )
                                     }}

@@ -145,7 +145,7 @@ interface OptionSelectProps {
 }
 interface FormFieldSelectCommonProps<T extends FieldValues> extends UseControllerProps<T> {
     options: OptionSelectProps[];
-    defaultValue?: string;
+    defaultValue: string;
 }
 
 export const FormSelectCommon = <T extends FieldValues,>({
@@ -153,7 +153,7 @@ export const FormSelectCommon = <T extends FieldValues,>({
     name,
     label,
     options,
-    defaultValue = options[0].value
+    defaultValue
 }: FormFieldSelectCommonProps<T>) => {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState<string>(defaultValue);
