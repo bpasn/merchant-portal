@@ -29,6 +29,7 @@ export declare interface UseControllerProps<
     type?: React.HTMLInputTypeAttribute;
     description?: string | null;
     disabled?: boolean;
+    readOnly?:boolean;
 
 };
 
@@ -41,6 +42,7 @@ export const FormFieldCommon = <T extends FieldValues,>({
     description,
     type = "text",
     disabled,
+    readOnly = false,
 }: UseControllerProps<T> ) => {
     return (
         <FormField
@@ -50,7 +52,7 @@ export const FormFieldCommon = <T extends FieldValues,>({
                 <FormItem >
                     {label ? <FormLabel>{label}</FormLabel> : null}
                     <FormControl>
-                        <Input {...field}  type={type} placeholder={placeholder ? placeholder : "Enter your " + name} disabled={disabled} className='rounded-lg' />
+                        <Input {...field} readOnly={readOnly} type={type} placeholder={placeholder ? placeholder : "Enter your " + name} disabled={disabled} className='rounded-lg' />
                     </FormControl>
                     {description ? <FormDescription className='text-xs text-gray-500'>{description}</FormDescription> : null}
                     <FormMessage className='mb-2' />
@@ -64,7 +66,8 @@ export const FormTextareaCommon = <T extends FieldValues,>({
     placeholder,
     label,
     description,
-    disabled
+    disabled,
+    readOnly = false
 }: Omit<UseControllerProps<T>, "type">) => {
     return (
         <FormField
@@ -74,7 +77,7 @@ export const FormTextareaCommon = <T extends FieldValues,>({
                 <FormItem >
                     {label ? <FormLabel>{label}</FormLabel> : null}
                     <FormControl>
-                        <Textarea {...field} placeholder={placeholder ? placeholder : "Enter your " + name} disabled={disabled} className='rounded-lg' />
+                        <Textarea {...field}readOnly={readOnly} placeholder={placeholder ? placeholder : "Enter your " + name} disabled={disabled} className='rounded-lg' />
                     </FormControl>
                     {description ? <FormDescription className='text-xs text-gray-500'>{description}</FormDescription> : null}
                     <FormMessage className='mb-2' />
@@ -161,6 +164,7 @@ export const FormSelectCommon = <T extends FieldValues,>({
         <FormField
             control={control}
             name={name}
+            
             render={({ field }) => {
                 return (
                     <FormItem className='flex flex-col gap-2 items-start'>

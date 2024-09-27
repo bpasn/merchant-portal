@@ -201,6 +201,7 @@ const FormMenuOption = ({
                                                     <FormFieldCommon
                                                         control={form.control}
                                                         name={`choices.${index}.name`}
+                                                        readOnly
                                                     />
                                                 </div>
                                                 <Select
