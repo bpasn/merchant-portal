@@ -93,7 +93,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                             )}
                         />
                     </div>
-                ) : value.length && value.every(e => (e as ObjectFile).uri !== undefined) ? (
+                ) : value.length && value.every(e => (e as ObjectFile).source !== undefined) ? (
                     <EachElement
                         of={value as ObjectFile[]}
                         render={(v, index) => {
@@ -101,7 +101,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                             return (
                                 <div key={index} className="relative w-[224px] h-[224px] flex flex-row justify-start gap-2">
                                     <Image
-                                        src={domain + "/" + v.uri}
+                                        src={domain + "/" + v.source}
                                         fill
                                         className='object-cover'
                                         alt={''} />

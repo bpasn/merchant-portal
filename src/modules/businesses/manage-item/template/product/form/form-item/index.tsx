@@ -194,7 +194,7 @@ const FormItemMenu = ({
                                             onDelete={async (id: string) => {
                                                 try {
                                                     await productImageDelete(id);
-                                                    if ((field.value.every(e => (e as ObjectFile).uri !== undefined))) {
+                                                    if ((field.value.every(e => (e as ObjectFile).source !== undefined))) {
                                                         field.onChange(field.value.filter(e => {
                                                             return (e as ObjectFile).id !== id;
                                                         }));

@@ -1,20 +1,20 @@
 export default class ObjectFile {
-    private _uri: string;  // ทำเป็น private เพื่อบังคับให้ใช้ getter และ setter
+    private _source: string;  // ทำเป็น private เพื่อบังคับให้ใช้ getter และ setter
     private _id: string;
 
     constructor(uri: string, id: string) {
-        this._uri = uri;
+        this._source = uri;
         this._id = id;
     }
 
     // Getter สำหรับ uri
-    get uri(): string {
-        return this._uri;
+    get source(): string {
+        return this._source;
     }
 
     // Setter สำหรับ uri
-    set uri(uri: string) {
-        this._uri = uri;
+    set source(source: string) {
+        this._source = source;
     }
 
     // Getter สำหรับ id

@@ -47,7 +47,7 @@ export const columnItems: ColumnDef<ProductModal>[] = [
                         <ImageProvider
                             fill
                             className="object-fill rounded-xl"
-                            src={row.original.productImages[0].uri}
+                            src={row.original.productImages[0].source}
                         />
                     </div>
                     <p>{row.getValue("nameTH")}</p>

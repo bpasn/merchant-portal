@@ -52,7 +52,7 @@ const StockProductUpdateComponent = ({ product }: IStockProductUpdateProps) => {
         <Form {...form}>
             <form className='flex flex-col gap-2 mt-2'>
                 <div className="w-full flex justify-center">
-                    <ImageProvider width={300} height={200} className="object-cover" src={product.productImages[0].uri} />
+                    <ImageProvider width={300} height={200} className="object-cover" src={product.productImages[0].source} />
                 </div>
                 <EachElement
                     of={product.productOptions}
