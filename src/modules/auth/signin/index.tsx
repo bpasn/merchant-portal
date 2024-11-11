@@ -54,6 +54,7 @@ const LoginForm = () => {
                 });
             }
         } catch (error) {
+            console.log(error)
             toast({
                 title: "Exception",
                 variant: "destructive",
@@ -64,6 +65,36 @@ const LoginForm = () => {
         }
 
     };
+
+    const handleSignInGitHub = async () => {
+        try {
+            const response = await signIn("github", {
+                redirect: false
+            });
+
+            if (response?.ok) {
+                // ตัวอย่าง: redirect ไปหน้าอื่นถ้าจำเป็น
+                router.push('/');
+            }
+            // จัดการข้อผิดพลาดและแสดง toast อย่างเหมาะสม
+            if (response?.error) {
+                console.log("ERROR THIS HERE : " , response.error);
+                toast({
+                    title: "Exception",
+                    description: response.error, // แสดงข้อผิดพลาดที่ถูกต้อง
+                    variant: "destructive",
+                    duration: 3 * 1000
+                });
+            }
+        } catch (error) {
+            console.log({ error })
+            toast({
+                title: "Exception",
+                variant: "destructive",
+                description: report(error)
+            });
+        }
+    }
 
 
 
@@ -94,6 +125,11 @@ const LoginForm = () => {
                         <Button
                             disabled={loading}
                             variant={"outline"}>Sign in</Button>
+                        <Button
+                            disabled={loading}
+                            onClick={handleSignInGitHub}
+                            type="button"
+                            variant={"outline"} className='bg-black/80 text-white hover:bg-black/70 hover:text-white'>Github</Button>
                         <p className="text-center text-sm text-gray-600">
                             Don't have an account? <Link href="/sign-up" className='font-semibold text-gray-800'>Sign up</Link> forfree
                         </p>

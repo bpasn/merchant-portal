@@ -1,7 +1,6 @@
 import HeadingModule from '@/modules/common/heading-module';
 import React, { Suspense } from 'react';
 import SwitchBranch from '../../component/switch-branch';
-import TabsClient from '../../component/tabs-client';
 import { getStoreById } from '@/lib/services/store.service';
 
 const layout = async ({
@@ -13,6 +12,7 @@ const layout = async ({
   };
   children: React.ReactNode;
 }) => {
+  console.log("GET STORE BY ID ", params.bId);
   await getStoreById(params.bId);
   return (
     <div className='flex flex-col'>

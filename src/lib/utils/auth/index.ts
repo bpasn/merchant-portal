@@ -1,10 +1,11 @@
+import { signIn, signUp, signUpWithProvider } from "@/lib/services/auth.service";
 import { report } from "@/lib/utils";
 import axiosServer from "@/lib/utils/axios-server";
-import axios, { AxiosError } from "axios";
-import { AuthOptions, getServerSession, User } from "next-auth";
+import axios, { AxiosError, isAxiosError } from "axios";
+import { AuthOptions, Awaitable, getServerSession, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { signOut } from "next-auth/react";
+import GithubProvider from 'next-auth/providers/github';
 
 const authOption: AuthOptions = ({
     pages: {
@@ -57,18 +58,14 @@ const authOption: AuthOptions = ({
                 email: {},
                 password: {}
             },
-            authorize: async (credential, req) => {
+            authorize: async (credential, _) => {
                 try {
-                    const { data } = await axiosServer.post<{
-                        accessToken: string,
-                        refreshToken: string,
-                    }>("/auth/login", {
-                        email: credential?.email,
-                        password: credential?.password
+                    const data = await signIn("default", {
+                        email: credential?.email!,
+                        password: credential?.password!
                     });
                     if (data) {
-                        const decode = parseJwt(data.accessToken);
-                        return { accessToken: data.accessToken, refreshToken: data.refreshToken, user: { email: decode.sub } } as any; // คืนค่าผู้ใช้ที่ได้รับการยืนยัน
+                        return { accessToken: data.accessToken, refreshToken: data.refreshToken, user: { email: credential?.email } } as any; // คืนค่าผู้ใช้ที่ได้รับการยืนยัน
                     } else {
                         return null; // ผู้ใช้ไม่ถูกต้อง
                     }
@@ -76,6 +73,44 @@ const authOption: AuthOptions = ({
                     throw new Error(report(error));
                 }
             }
+        }),
+        GithubProvider({
+            clientId: process.env.GITHUB_CLIENT_ID || "",
+            clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
+            profile: async (profile, _) => {
+                try {
+                    console.log("BODY : " , {
+                        email: profile.email,
+                        password: null,
+                        providerId: profile.id,
+                        name: profile.name,
+                        provider: "GITHUB",
+                    });
+                    // ตรวจสอบว่าผู้ใช้มีอยู่ในระบบแล้วหรือไม่
+                    const userResponse = await axiosServer.post(`/auth/provider`, {
+                        email: profile.email,
+                        password: null,
+                        providerId: profile.id,
+                        name: profile.name,
+                        provider: "GITHUB",
+                    });
+                    if (userResponse.data) {
+                        // ถ้ามีผู้ใช้แล้ว ให้ login ได้เลย
+                        return {
+                            id: profile.id,
+                            accessToken: userResponse.data.accessToken,
+                            refreshToken: userResponse.data.refreshToken,
+                            user: { email: profile.email },
+                        };
+                    } 
+                    throw new Error("Unauthorized");
+                } catch (error) {
+                    if(isAxiosError(error)){
+                        console.log("AXIOS ERROR " , error.response?.data)
+                    }
+                    throw error;
+                }
+            },
         })
     ],
 
@@ -123,7 +158,7 @@ export const refreshToken = async (token: any) => {
             refreshToken: data.refreshToken ?? token.refreshToken
         };
     } catch (error) {
-        if(error instanceof AxiosError){
+        if (error instanceof AxiosError) {
             window.location.assign("/sign-in");
         }
         return {

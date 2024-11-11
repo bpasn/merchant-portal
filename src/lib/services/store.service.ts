@@ -5,11 +5,14 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { StoreModal, StoreSchema } from "../schema/storeSchema";
 import axiosServer from "../utils/axios-server";
-
+import ApiRoute from "../constant/api-route";
+import logger from "../utils/logger";
+import { report } from "../utils";
 export const getStore = async () => {
-    const { data } = await axiosServer.get<ApiResponse<StoreModal>>(`/store/find-one`);
+    const { data } = await axiosServer.get<ApiResponse<StoreModal>>(ApiRoute.STORE + `/find-one`);
     if (data.payload) {
         const fullPath = await setFullPath(data.payload.id);
+        console.log({ fullPath })
         revalidatePath('/businesses');
         redirect(fullPath);
     }
@@ -26,17 +29,19 @@ export const getPathName = async () => {
 };
 export const getStoreById = async (id: string) => {
     try {
-        const { data } = await axiosServer.get<ApiResponse<StoreModal>>(`/store/${id}`);
+        const { data } = await axiosServer.get<ApiResponse<StoreModal>>(ApiRoute.STORE + `/${id}`);
         if (!data.payload) {
             redirect('/');
         }
     } catch (error) {
+        console.log(report(error))
+        logger.error((error as Error).message)
         redirect('/');
     }
 };
 
 export const getAllStore = async (): Promise<StoreModal[]> => {
-    const { data } = await axiosServer.get<ApiResponse<StoreModal[]>>(`/store`);
+    const { data } = await axiosServer.get<ApiResponse<StoreModal[]>>(ApiRoute.STORE);
     if (!data.payload.length) {
         const fullPath = await getPathName();
         redirect(fullPath);
@@ -45,6 +50,6 @@ export const getAllStore = async (): Promise<StoreModal[]> => {
 };
 
 export const createStore = async (store: StoreSchema): Promise<string> => {
-    const { data } = await axiosServer.post<ApiResponse<StoreModal>>("/store", store);
+    const { data } = await axiosServer.post<ApiResponse<StoreModal>>(ApiRoute.STORE, store);
     return data.payload.id;
 };

@@ -11,9 +11,7 @@ import Link from 'next/link';
 import { useForm } from "react-hook-form";
 import { toast } from '@/components/ui/use-toast';
 import { report } from '@/lib/utils';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { signUp } from '@/lib/services/auth.service';
 const signUpSchema = z.object({
     email: z.string().min(1, { message: "Email is required" }).regex(RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g), { message: "Email invalid format" }),

@@ -39,10 +39,12 @@ export const columnDefOrder: ColumnDef<Order>[] = [
     {
         header: "Create At",
         accessorKey: "createdAt",
+        cell:({getValue})=> new Date(getValue() as string).toDateString()
     },
     {
         header: "Update At",
         accessorKey: "updatedAt",
+        cell:({getValue})=> new Date(getValue() as string).toDateString()
     },
     {
         header: "Action",

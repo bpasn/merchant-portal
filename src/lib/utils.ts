@@ -22,6 +22,7 @@ export const delay = (duration: number) => new Promise((res) => setTimeout(res, 
 export const report = (error: unknown): string => {
   if (error instanceof AxiosError) {
     console.log(error.response?.data);
+    console.log(error.request)
     return error.response && error.response.data ? (error.response.data as ErrorResponse).message : error.message;
   }
   console.log((error as Error).message);
